@@ -24,7 +24,7 @@ get_header();
                             <?php
                             $banner_image = get_field('banner_image');
                             if ($banner_image) {
-                                ?>
+                            ?>
                                 <!-- Background Image (Bedroom) -->
                                 <img src="<?php echo $banner_image['url']; ?>" alt="<?php echo $banner_image['alt']; ?>"
                                     class="absolute inset-0 w-full h-full object-cover object-center slide-product opacity-0 transition-all duration-1000 ease-out delay-200" />
@@ -54,7 +54,7 @@ get_header();
                             <?php
                             $air_pro_image = get_field('air_pro_image');
                             if ($air_pro_image) {
-                                ?>
+                            ?>
                                 <img src="<?php echo $air_pro_image['url']; ?>" alt="<?php echo $air_pro_image['alt']; ?>"
                                     class="relative z-20 ml-[50%] md:ml-[0] mt-[40%] md:mt-[32%] h-[100px] md:h-[60%] max-h-[700px] w-auto object-contain drop-shadow-2xl slide-product opacity-0 translate-y-12 transition-all duration-1000 ease-out delay-500" />
                             <?php } ?>
@@ -121,7 +121,7 @@ get_header();
                                         $cta_url = $explore_collections_cta['url'];
                                         $cta_title = $explore_collections_cta['title'] ?? 'Explore Collections';
                                         $cta_target = $explore_collections_cta['target'] ?? '_self';
-                                        ?>
+                                    ?>
                                         <a href="<?php echo esc_url($cta_url); ?>"
                                             target="<?php echo esc_attr($cta_target); ?>"
                                             class="bg-[#111111] text-white text-[12px] tracking-[0.15em] font-bold uppercase px-6 lg:px-8 py-5 lg:py-4 hover:bg-[#156E8A] transition-colors flex items-center justify-between lg:justify-center gap-3 rounded-sm w-full lg:w-auto">
@@ -144,7 +144,7 @@ get_header();
                                             ?? 'Find My Purifier';
                                         $cta_target = $banner_find_my_purifier_cta['target']
                                             ?? '_self';
-                                        ?>
+                                    ?>
                                         <a href="<?php echo esc_url($cta_url); ?>"
                                             target="<?php echo esc_attr($cta_target); ?>"
                                             class="bg-[#FAFCFD] border border-gray-100 lg:bg-transparent lg:border-0 lg:border-b lg:border-gray-900 text-gray-900 text-[12px] tracking-[0.15em] font-bold uppercase px-6 lg:px-0 py-5 lg:py-1 hover:text-[#156E8A] hover:border-[#156E8A] transition-colors flex items-center justify-between lg:justify-center gap-3 rounded-sm lg:rounded-none w-full lg:w-auto">
@@ -180,6 +180,8 @@ get_header();
             <div class="swiper-pagination hidden lg:block"></div>
         </div>
     </section>
+
+    <!-- home page second slider -->
     <div class="w-full bg-tickerDark text-gray-300 py-4 border-t border-b border-gray-800 overflow-hidden relative">
         <div class="flex whitespace-nowrap animate-marquee">
             <div class="flex items-center gap-12 px-6">
@@ -271,62 +273,40 @@ get_header();
         <div class="max-w-5xl mx-auto text-center relative z-10 w-full">
             <!-- Eyebrow -->
             <div class="mb-4 scroll-reveal opacity-0 translate-y-4 transition-all duration-700 ease-out">
-                <span class="text-[11px] md:text-[12px] tracking-[0.3em] uppercase text-brandTeal font-bold">The
-                    Invisible Problem</span>
+                <span class="text-[11px] md:text-[12px] tracking-[0.3em] uppercase text-brandTeal font-bold">
+                    <?php echo the_field('problem_header_1'); ?></span>
             </div>
 
             <!-- Headline -->
             <h2
                 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-6 scroll-reveal opacity-0 transition-all duration-700 ease-out delay-100 leading-[1.2]">
-                Every breath carries <br class="hidden sm:block" />
-                <span class="text-brandTeal font-medium">invisible pollutants.</span>
+                <?php echo the_field('problem_header_2'); ?>
             </h2>
 
             <!-- Subtext -->
             <p
                 class="text-gray-400 text-xs md:text-[15px] font-light leading-relaxed max-w-2xl mx-auto mb-12 scroll-reveal opacity-0 transition-all duration-700 ease-out delay-200">
-                Indoor air in Indian homes is 2-5 times more polluted than outside —
-                and 14 of the world's 20 most polluted cities are in India. What you
-                cannot see may be affecting your sleep, your health, and your
-                family's wellbeing, every single day.
+                <?php echo the_field('problem_desc'); ?>
             </p>
 
             <!-- Pollutants Tags List -->
-            <div
-                class="flex flex-wrap justify-center gap-2.5 md:gap-4 max-w-3xl mx-auto mb-16 scroll-reveal opacity-0 transition-all duration-700 ease-out delay-300">
+            <?php if (have_rows('invisible_problem_repeater')) : ?>
                 <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    PM 2.5
+                    class="flex flex-wrap justify-center gap-2.5 md:gap-4 max-w-3xl mx-auto mb-16 scroll-reveal opacity-0 transition-all duration-700 ease-out delay-300">
+                    <?php while (have_rows('invisible_problem_repeater')) : the_row(); ?>
+
+                        <?php $title = get_sub_field('title'); ?>
+
+                        <?php if ($title) : ?>
+                            <div
+                                class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
+                                <?php echo esc_html($title); ?>
+                            </div>
+                        <?php endif; ?>
+
+                    <?php endwhile; ?>
                 </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    Allergens & Pollen
-                </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    Dust Mites
-                </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    Bacteria & Viruses
-                </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    VOCs
-                </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    Smoke & Odours
-                </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    Formaldehyde
-                </div>
-                <div
-                    class="border border-gray-800 px-4 py-2 text-[11px] md:text-[12px] tracking-widest uppercase text-gray-400 hover:text-white hover:border-brandTeal transition-colors cursor-default">
-                    Pet Dander
-                </div>
-            </div>
+            <?php endif; ?>
 
             <!-- Divider Line -->
             <div
@@ -380,44 +360,35 @@ get_header();
             <!-- flex-wrap forces the 100% width text to push the logos to the next line on mobile -->
             <div
                 class="flex flex-wrap md:flex-nowrap items-center justify-between md:justify-center gap-y-6 md:gap-8 min-w-full md:min-w-max mx-auto py-2">
-                <!-- Text block -->
-                <!-- w-full on mobile creates the line break. Left-aligned on mobile, center on desktop -->
+                <!-- Static heading -->
                 <span
                     class="w-full md:w-auto text-left md:text-center text-gray-500 md:text-white text-[12px] md:text-xl lg:text-2xl uppercase md:normal-case tracking-[0.2em] md:tracking-wide font-bold md:font-light shrink-0 leading-none">
                     Our Partners
                 </span>
 
-                <!-- Divider 1 (Hidden on Mobile) -->
-                <div class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div>
+                <?php if (have_rows('other_partners')) : ?>
+                    <?php while (have_rows('other_partners')) : the_row(); ?>
+                        <?php $partner_image = get_sub_field('brand_image_png'); ?>
+                        <?php if ($partner_image) : ?>
+                            <div
+                                class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div>
+                            <img
+                                src="<?php echo esc_url($partner_image['url']); ?>"
+                                alt="<?php echo esc_attr($partner_image['alt'] ?? 'Partner logo'); ?>"
+                                class="h-5 md:h-8 w-auto opacity-80 md:opacity-70 hover:opacity-100 transition-opacity duration-300 shrink-0 object-contain">
 
-                <!-- Logo 1: Full color preserved, just slightly transparent. Scaled down on mobile (h-5) -->
-                <img src="./assets/images/google-logo.png" alt="Google"
-                    class="h-5 md:h-8 w-auto opacity-80 md:opacity-70 hover:opacity-100 transition-opacity duration-300 shrink-0 object-contain" />
+                        <?php endif; ?>
 
-                <!-- Divider 2 (Hidden on Mobile) -->
-                <div class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div>
+                    <?php endwhile; ?>
 
-                <!-- Logo 2 -->
-                <img src="./assets/images/coca-cola-logo.png" alt="Coca-Cola"
-                    class="h-5 md:h-8 w-auto opacity-80 md:opacity-70 hover:opacity-100 transition-opacity duration-300 shrink-0 object-contain" />
-
-                <!-- Divider 3 (Hidden on Mobile) -->
-                <div class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div>
-
-                <!-- Logo 3 -->
-                <img src="./assets/images/google-logo.png" alt="Google"
-                    class="h-5 md:h-8 w-auto opacity-80 md:opacity-70 hover:opacity-100 transition-opacity duration-300 shrink-0 object-contain" />
-
-                <!-- Divider 4 (Hidden on Mobile) -->
-                <div class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div>
-
-                <!-- Logo 4 -->
-                <img src="./assets/images/coca-cola-logo.png" alt="Coca-Cola"
-                    class="h-5 md:h-8 w-auto opacity-80 md:opacity-70 hover:opacity-100 transition-opacity duration-300 shrink-0 object-contain" />
+                <?php endif; ?>
             </div>
         </div>
     </section>
 
+    <!-- ========================================== -->
+    <!-- SECTION 5: FIND YOUR MATCH                 -->
+    <!-- ========================================== -->
     <section class="w-full bg-white relative py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
         <div
             class="absolute top-0 left-0 w-[30%] h-[30%] bg-brandTeal/10 rounded-full blur-[120px] -translate-x-1/3 -translate-y-1/3 pointer-events-none">
@@ -556,6 +527,9 @@ get_header();
             </div>
         </div>
     </section>
+    <!-- ========================================== -->
+    <!-- SECTION 6: THE COLLECTIONS                 -->
+    <!-- ========================================== -->
     <section class="w-full bg-[#FAFCFD] py-10 md:py-20 px-6 md:px-16 lg:px-24">
         <div class="max-w-7xl mx-auto">
             <div
