@@ -386,10 +386,43 @@ get_header();
         </div>
     </section>
 
+    <?php
+    $matcher_products = function_exists('breathein_get_matcher_products')
+        ? breathein_get_matcher_products()
+        : [];
+
+    $matcher_slider_min   = 100;
+    $matcher_slider_max   = 1500;
+    $matcher_slider_value = 600;
+
+    if ($matcher_products) {
+        $largest_match = $matcher_products[count($matcher_products) - 1];
+        $matcher_slider_max = max(
+            $matcher_slider_min,
+            (int) $largest_match['coverage']
+        );
+        $matcher_slider_value = min(
+            $matcher_slider_value,
+            $matcher_slider_max
+        );
+    }
+
+    $initial_match = function_exists('breathein_find_matcher_product')
+        ? breathein_find_matcher_product(
+            $matcher_products,
+            $matcher_slider_value
+        )
+        : null;
+
+    $initial_product_id = $initial_match
+        ? (int) $initial_match['product']->get_id()
+        : 0;
+    ?>
+
     <!-- ========================================== -->
     <!-- SECTION 5: FIND YOUR MATCH                 -->
     <!-- ========================================== -->
-    <section class="w-full bg-white relative py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
+    <section id="find-your-match" data-product-matcher class="w-full bg-white relative py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
         <div
             class="absolute top-0 left-0 w-[30%] h-[30%] bg-brandTeal/10 rounded-full blur-[120px] -translate-x-1/3 -translate-y-1/3 pointer-events-none">
         </div>
@@ -422,350 +455,361 @@ get_header();
                         </div>
 
                         <div class="flex justify-between items-end mb-2">
-                            <span class="text-[12px] uppercase tracking-widest text-gray-400 font-bold">Room Area</span>
-                            <span class="text-2xl font-light text-gray-900"><span id="roomAreaValue">600</span>
-                                <span class="text-sm text-gray-400">sq ft</span></span>
+                            <label
+                                for="roomAreaSlider"
+                                class="text-[12px] uppercase tracking-widest text-gray-400 font-bold">
+                                Room Area
+                            </label>
+                            <span class="text-2xl font-light text-gray-900">
+                                <output id="roomAreaValue" for="roomAreaSlider">
+                                    <?php echo esc_html(number_format_i18n($matcher_slider_value)); ?>
+                                </output>
+                                <span class="text-sm text-gray-400">sq ft</span>
+                            </span>
                         </div>
 
+                        <p id="matcherSliderHelp" class="sr-only">
+                            <?php esc_html_e(
+                                'Choose your room area. The recommended purifier updates automatically.',
+                                'breathein'
+                            ); ?>
+                        </p>
+                        <p
+                            id="matcherStatus"
+                            class="sr-only"
+                            aria-live="polite"
+                            aria-atomic="true"></p>
+
                         <div class="relative w-full h-8 flex items-center">
-                            <input type="range" id="roomAreaSlider" min="100" max="1500" step="50" value="600"
-                                class="w-full custom-slider outline-none" />
+                            <input
+                                type="range"
+                                id="roomAreaSlider"
+                                min="<?php echo esc_attr((string) $matcher_slider_min); ?>"
+                                max="<?php echo esc_attr((string) $matcher_slider_max); ?>"
+                                step="10"
+                                value="<?php echo esc_attr((string) $matcher_slider_value); ?>"
+                                aria-describedby="matcherSliderHelp matcherStatus"
+                                class="w-full custom-slider focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brandTeal"
+                                <?php disabled(!$matcher_products); ?> />
                         </div>
                     </div>
                 </div>
 
                 <div class="scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200">
-                    <div
-                        class="bg-[#F7F9FA] border border-gray-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col h-full">
-                        <div class="p-6 md:p-8 border-b border-#DCE4E7 bg-[#F7F9FA] z-10 relative">
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="w-2 h-2 rounded-full bg-[#75C282]"></span>
-                                <span class="text-[12px] uppercase tracking-[0.15em] font-bold text-[#75C282]">Your
-                                    Match</span>
-                            </div>
-                            <h3 class="text-4xl font-light text-gray-900 mb-2">
-                                Air Pro 2
-                            </h3>
-                            <p class="text-sm text-gray-500 font-light">
-                                7-in-1 filtration with built-in humidification for large
-                                living spaces.
-                            </p>
-                        </div>
+                    <?php if ($matcher_products) : ?>
+                        <?php foreach ($matcher_products as $match) : ?>
+                            <?php
+                            $matched_product = $match['product'];
+                            $matched_product_id = (int) $matched_product->get_id();
+                            $matched_product_name = $matched_product->get_name();
+                            $matched_product_summary = wp_trim_words(
+                                wp_strip_all_tags(
+                                    (string) (
+                                        $matched_product->get_short_description()
+                                        ?: $matched_product->get_description()
+                                    )
+                                ),
+                                28,
+                                '…'
+                            );
+                            $matched_product_image_id = (int) $matched_product->get_image_id();
+                            $matched_product_price = $matched_product->get_price_html();
+                            $is_initial_match = $matched_product_id === $initial_product_id;
+                            ?>
+                            <article
+                                data-matcher-product
+                                data-coverage="<?php echo esc_attr((string) $match['coverage']); ?>"
+                                data-product-id="<?php echo esc_attr((string) $matched_product_id); ?>"
+                                data-product-name="<?php echo esc_attr($matched_product_name); ?>"
+                                class="bg-[#F7F9FA] border border-gray-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col h-full<?php echo $is_initial_match ? '' : ' hidden'; ?>"
+                                <?php if (!$is_initial_match) : ?>
+                                hidden aria-hidden="true"
+                                <?php endif; ?>>
+                                <div class="p-6 md:p-8 border-b border-[#DCE4E7] bg-[#F7F9FA] z-10 relative">
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <span class="w-2 h-2 rounded-full bg-[#75C282]"></span>
+                                        <span class="text-[12px] uppercase tracking-[0.15em] font-bold text-[#75C282]">Your
+                                            Match</span>
+                                    </div>
+                                    <h3 class="text-4xl font-light text-gray-900 mb-2">
+                                        <?php echo esc_html($matched_product_name); ?>
+                                    </h3>
+                                    <p class="text-sm text-gray-500 font-light">
+                                        <?php
+                                        echo $matched_product_summary !== ''
+                                            ? esc_html($matched_product_summary)
+                                            : esc_html__(
+                                                'View this purifier for complete product details.',
+                                                'breathein'
+                                            );
+                                        ?>
+                                    </p>
+                                </div>
 
-                        <div class="relative w-full h-[254px] flex items-center justify-center overflow-hidden" style="
+                                <div class="relative w-full h-[254px] flex items-center justify-center overflow-hidden" style="
                     background: radial-gradient(
                       70.71% 84.85% at 50% 60%,
                       rgba(168, 218, 242, 0.28) 0%,
                       rgba(168, 218, 242, 0) 70%
                     );
                   ">
-                            <div
-                                class="absolute w-[225px] h-[225px] rounded-full border border-dashed border-[#156E8A]/30">
-                            </div>
+                                    <div
+                                        class="absolute w-[225px] h-[225px] rounded-full border border-dashed border-[#156E8A]/30">
+                                    </div>
 
-                            <img src="./assets/images/air-pro.png" alt="Air Pro 2"
-                                class="h-[200px] w-[130px] object-contain drop-shadow-xl hover:scale-105 transition-transform duration-500 relative z-10" />
-                        </div>
+                                    <?php
+                                    $matcher_image_attributes = [
+                                        'class'    => 'h-[200px] max-w-[70%] w-auto object-contain drop-shadow-xl hover:scale-105 transition-transform duration-500 relative z-10',
+                                        'loading'  => 'lazy',
+                                        'decoding' => 'async',
+                                    ];
 
+                                    if ($matched_product_image_id) {
+                                        echo wp_get_attachment_image(
+                                            $matched_product_image_id,
+                                            'woocommerce_single',
+                                            false,
+                                            $matcher_image_attributes
+                                        );
+                                    } elseif (function_exists('wc_placeholder_img')) {
+                                        echo wc_placeholder_img(
+                                            'woocommerce_single',
+                                            $matcher_image_attributes
+                                        );
+                                    }
+                                    ?>
+                                </div>
+
+                                <div
+                                    class="grid grid-cols-3 divide-x divide-gray-200 border-t border-b border-gray-200 bg-[#F7F9FA]">
+                                    <div class="flex flex-col items-center justify-center text-center p-3 md:p-6 h-full">
+                                        <span class="text-[14px] font-medium text-gray-900 mb-2">
+                                            <?php
+                                            echo esc_html(
+                                                sprintf(
+                                                    __('%s sq ft', 'breathein'),
+                                                    number_format_i18n((int) $match['coverage'])
+                                                )
+                                            );
+                                            ?>
+                                        </span>
+                                        <span
+                                            class="text-[11px] uppercase tracking-[0.15em] text-[#A3A3A3] font-bold">Coverage</span>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center text-center p-3 md:p-6 h-full">
+                                        <span class="text-[14px] font-medium text-gray-900 mb-2">
+                                            <?php
+                                            echo $match['ideal_for'] !== ''
+                                                ? esc_html($match['ideal_for'])
+                                                : '&mdash;';
+                                            ?>
+                                        </span>
+                                        <span class="text-[11px] uppercase tracking-[0.15em] text-[#A3A3A3] font-bold">Ideal
+                                            For</span>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center text-center p-3 md:p-6 h-full">
+                                        <span class="text-[14px] font-medium text-gray-900 mb-2">
+                                            <?php
+                                            echo $match['filtration'] !== ''
+                                                ? esc_html($match['filtration'])
+                                                : '&mdash;';
+                                            ?>
+                                        </span>
+                                        <span
+                                            class="text-[11px] uppercase tracking-[0.15em] text-[#A3A3A3] font-bold">Filtration</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-6 md:p-8 flex items-center justify-between mt-auto bg-white">
+                                    <div class="flex flex-col">
+                                        <span class="text-[12px] text-gray-400 font-light mb-1">
+                                            <?php esc_html_e('Price', 'breathein'); ?>
+                                        </span>
+                                        <span class="text-2xl font-medium text-gray-900 tracking-tight">
+                                            <?php
+                                            echo $matched_product_price !== ''
+                                                ? wp_kses_post($matched_product_price)
+                                                : esc_html__('Contact for price', 'breathein');
+                                            ?>
+                                        </span>
+                                    </div>
+                                    <a href="<?php echo esc_url($matched_product->get_permalink()); ?>"
+                                        class="bg-[#111111] text-white text-[12px] tracking-[0.15em] font-bold uppercase px-6 py-4 hover:bg-brandTeal transition-colors flex items-center gap-3 rounded-sm shadow-md">
+                                        <span>
+                                            <?php
+                                            echo esc_html(
+                                                sprintf(
+                                                    __('View %s', 'breathein'),
+                                                    $matched_product_name
+                                                )
+                                            );
+                                            ?>
+                                        </span>
+                                        <span aria-hidden="true">&rarr;</span>
+                                    </a>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    <?php else : ?>
                         <div
-                            class="grid grid-cols-3 divide-x divide-gray-200 border-t border-b border-gray-200 bg-[#F7F9FA]">
-                            <div class="flex flex-col items-center justify-center text-center p-3 md:p-6 h-full">
-                                <span class="text-[14px] font-medium text-gray-900 mb-2">860 sq ft</span>
-                                <span
-                                    class="text-[11px] uppercase tracking-[0.15em] text-[#A3A3A3] font-bold">Coverage</span>
-                            </div>
-                            <div class="flex flex-col items-center justify-center text-center p-3 md:p-6 h-full">
-                                <span class="text-[14px] font-medium text-gray-900 mb-2">Large Living</span>
-                                <span class="text-[11px] uppercase tracking-[0.15em] text-[#A3A3A3] font-bold">Ideal
-                                    For</span>
-                            </div>
-                            <div class="flex flex-col items-center justify-center text-center p-3 md:p-6 h-full">
-                                <span class="text-[14px] font-medium text-gray-900 mb-2">HEPA H13</span>
-                                <span
-                                    class="text-[11px] uppercase tracking-[0.15em] text-[#A3A3A3] font-bold">Filtration</span>
-                            </div>
+                            class="bg-[#F7F9FA] border border-gray-200 rounded-xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-center min-h-[420px]">
+                            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-brandTeal mb-4">
+                                <?php esc_html_e('Find Your Match', 'breathein'); ?>
+                            </span>
+                            <h3 class="text-2xl md:text-3xl font-light text-gray-900 mb-4">
+                                <?php esc_html_e('No matcher products are configured yet.', 'breathein'); ?>
+                            </h3>
+                            <p class="text-sm text-gray-500 font-light leading-relaxed">
+                                <?php
+                                echo (
+                                    current_user_can('manage_woocommerce')
+                                    || current_user_can('activate_plugins')
+                                )
+                                    ? esc_html__(
+                                        'Install or activate WooCommerce, publish a product, and add its Matcher coverage value in Product data → General.',
+                                        'breathein'
+                                    )
+                                    : esc_html__(
+                                        'Our purifier recommendations will be available soon.',
+                                        'breathein'
+                                    );
+                                ?>
+                            </p>
                         </div>
+                    <?php endif; ?>
+                </div>
+            </div>
 
-                        <div class="p-6 md:p-8 flex items-center justify-between mt-auto bg-white">
-                            <div class="flex flex-col">
-                                <span class="text-[12px] text-gray-400 font-light mb-1">Starting from</span>
-                                <span class="text-2xl font-medium text-gray-900 tracking-tight">₹24,999</span>
-                            </div>
-                            <a href="#"
-                                class="bg-[#111111] text-white text-[12px] tracking-[0.15em] font-bold uppercase px-6 py-4 hover:bg-brandTeal transition-colors flex items-center gap-3 rounded-sm shadow-md">
-                                View Air Pro 2 <span>&rarr;</span>
-                            </a>
-                        </div>
+            <?php if ($matcher_products) : ?>
+                <?php
+                $matcher_form_status = isset($_GET['matcher_status'])
+                    && is_string($_GET['matcher_status'])
+                    ? sanitize_key(wp_unslash($_GET['matcher_status']))
+                    : '';
+                $matcher_form_messages = [
+                    'success' => __(
+                        'Thank you. Your recommendation request was sent successfully.',
+                        'breathein'
+                    ),
+                    'invalid' => __(
+                        'Please enter a valid email and phone number, then try again.',
+                        'breathein'
+                    ),
+                    'rate_limited' => __(
+                        'Your request was already sent. Please wait a minute before trying again.',
+                        'breathein'
+                    ),
+                    'mail_error' => __(
+                        'We could not send your request right now. Please try again shortly.',
+                        'breathein'
+                    ),
+                ];
+                $matcher_form_message = $matcher_form_messages[$matcher_form_status] ?? '';
+                $matcher_form_succeeded = $matcher_form_status === 'success';
+                $matcher_form_role = $matcher_form_succeeded
+                    ? 'status'
+                    : 'alert';
+                $matcher_form_classes = $matcher_form_succeeded
+                    ? 'border-green-200 bg-green-50 text-green-800'
+                    : 'border-red-200 bg-red-50 text-red-800';
+                ?>
+                <div
+                    class="w-full bg-[#EEF2F5] border border-gray-200/60 rounded-xl p-8 md:p-10 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-400">
+                    <div class="mb-6">
+                        <h4 class="text-base font-medium text-gray-900 mb-1">
+                            Lock in your match — and get a free air check.
+                        </h4>
+                        <p class="text-xs text-gray-500 font-light">
+                            We'll send your recommendation and arrange a complimentary
+                            in-home air-quality assessment. No obligation.
+                        </p>
                     </div>
+
+                    <?php if ($matcher_form_message !== '') : ?>
+                        <div
+                            role="<?php echo esc_attr($matcher_form_role); ?>"
+                            class="mb-5 rounded-sm border px-4 py-3 text-sm <?php echo esc_attr($matcher_form_classes); ?>">
+                            <?php echo esc_html($matcher_form_message); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form
+                        data-matcher-lead-form
+                        action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
+                        method="post"
+                        accept-charset="UTF-8"
+                        class="flex flex-col md:flex-row gap-4 w-full items-stretch">
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="breathein_matcher_lead" />
+                        <?php
+                        wp_nonce_field(
+                            'breathein_matcher_lead_submit',
+                            'breathein_matcher_nonce',
+                            false
+                        );
+                        ?>
+                        <input
+                            type="hidden"
+                            id="matcherProductId"
+                            name="matched_product_id"
+                            value="<?php echo esc_attr((string) $initial_product_id); ?>" />
+                        <input
+                            type="hidden"
+                            id="matcherRoomArea"
+                            name="room_area_sq_ft"
+                            value="<?php echo esc_attr((string) $matcher_slider_value); ?>" />
+
+                        <div class="hidden" aria-hidden="true">
+                            <label for="matcherCompanyWebsite">
+                                <?php esc_html_e('Company website', 'breathein'); ?>
+                            </label>
+                            <input
+                                id="matcherCompanyWebsite"
+                                name="company_website"
+                                type="text"
+                                tabindex="-1"
+                                autocomplete="off" />
+                        </div>
+
+                        <label for="matcherEmail" class="sr-only">
+                            <?php esc_html_e('Email address', 'breathein'); ?>
+                        </label>
+                        <input id="matcherEmail" name="email" type="email" autocomplete="email" maxlength="254" placeholder="Email address" required
+                            class="flex-1 px-5 py-3.5 text-xs bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition-all placeholder:text-gray-400 shadow-sm" />
+
+                        <label for="matcherPhone" class="sr-only">
+                            <?php esc_html_e('Phone number', 'breathein'); ?>
+                        </label>
+                        <input id="matcherPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" minlength="7" maxlength="25" placeholder="Phone (+91)" required
+                            class="flex-1 px-5 py-3.5 text-xs bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition-all placeholder:text-gray-400 shadow-sm" />
+
+                        <button type="submit"
+                            class="bg-[#111111] text-white text-[12px] tracking-widest font-bold uppercase px-8 py-3.5 hover:bg-brandTeal transition-colors rounded-sm shrink-0 shadow-sm">
+                            Send My Match
+                        </button>
+                    </form>
                 </div>
-            </div>
-
-            <div
-                class="w-full bg-[#EEF2F5] border border-gray-200/60 rounded-xl p-8 md:p-10 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-400">
-                <div class="mb-6">
-                    <h4 class="text-base font-medium text-gray-900 mb-1">
-                        Lock in your match — and get a free air check.
-                    </h4>
-                    <p class="text-xs text-gray-500 font-light">
-                        We'll send your recommendation and arrange a complimentary
-                        in-home air-quality assessment. No obligation.
-                    </p>
-                </div>
-
-                <form class="flex flex-col md:flex-row gap-4 w-full items-stretch">
-                    <input type="email" placeholder="Email address" required
-                        class="flex-1 px-5 py-3.5 text-xs bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition-all placeholder:text-gray-400 shadow-sm" />
-
-                    <input type="tel" placeholder="Phone (+91)" required
-                        class="flex-1 px-5 py-3.5 text-xs bg-white border border-gray-200 rounded-sm focus:outline-none focus:border-brandTeal focus:ring-1 focus:ring-brandTeal transition-all placeholder:text-gray-400 shadow-sm" />
-
-                    <button type="submit"
-                        class="bg-[#111111] text-white text-[12px] tracking-widest font-bold uppercase px-8 py-3.5 hover:bg-brandTeal transition-colors rounded-sm shrink-0 shadow-sm">
-                        Send My Match
-                    </button>
-                </form>
-            </div>
+            <?php endif; ?>
         </div>
     </section>
-    <!-- ========================================== -->
-    <!-- SECTION 6: THE COLLECTIONS                 -->
-    <!-- ========================================== -->
-    <section class="w-full bg-[#FAFCFD] py-10 md:py-20 px-6 md:px-16 lg:px-24">
-        <div class="max-w-7xl mx-auto">
-            <div
-                class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 md:mb-24 gap-6 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-                <div>
-                    <span class="text-[11px] uppercase tracking-[0.2em] text-brandTeal font-bold mb-6 block">The
-                        Collection</span>
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-gray-900 leading-[1.1]">
-                        Curated for <br class="hidden md:block" />
-                        every space.
-                    </h2>
-                </div>
+    <?php get_template_part('template-parts/home-collection'); ?>
 
-                <p class="text-gray-500 text-sm font-light text-left md:text-right max-w-sm leading-relaxed lg:pb-2">
-                    Four precisely crafted models. Each designed for a specific space
-                    and purpose - chosen not for a
-                    <br />
-                    shelf, but for a home.
-                </p>
-            </div>
+    <?php
+    $cam_page_id = (int) get_option('page_on_front');
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
-                <div
-                    class="bg-white flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100/50 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100 group">
-                    <div class="relative w-full aspect-[4/3] md:aspect-[4/5] bg-gray-100 overflow-hidden">
-                        <img src="./assets/images/air-pro.jpg" alt="Air Pro in Bedroom"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[8.5px] font-bold uppercase tracking-widest text-brandTeal">
-                            For Bedrooms
-                        </div>
-                    </div>
+    if (!$cam_page_id) {
+        $cam_page_id = get_queried_object_id();
+    }
 
-                    <div class="p-6 md:p-8 flex flex-col flex-grow">
-                        <span class="text-[11px] uppercase tracking-widest text-brandTeal font-bold mb-3">I &mdash; Air
-                            Pro</span>
-                        <h3 class="text-2xl font-light text-gray-900 mb-3">Air Pro</h3>
-                        <p class="text-[15px] text-gray-500 font-light mb-8 leading-relaxed">
-                            Compact double-sided suction for bedrooms & personal spaces.
-                        </p>
-
-                        <div class="mt-auto">
-                            <div class="w-full h-[1px] bg-[#DCE4E7] mb-5"></div>
-
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 mb-0.5">
-                                        430 sq ft
-                                    </div>
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">
-                                        Coverage Area
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">
-                                        Starting From
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-900">
-                                        ₹9,999
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a href="#"
-                                class="flex lg:inline-flex items-center justify-between lg:justify-start gap-3 lg:gap-1.5 w-full lg:w-auto px-6 py-5 lg:p-0 bg-[#111111] lg:bg-transparent text-white lg:text-brandTeal text-[12px] lg:text-[11px] tracking-[0.15em] lg:tracking-widest font-bold uppercase rounded-sm lg:rounded-none hover:bg-[#156E8A] lg:hover:bg-transparent lg:hover:text-gray-900 transition-colors">
-                                <span>Explore<span class="lg:hidden"> Collection</span></span>
-                                <span class="lg:text-[13px]">&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="bg-white flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100/50 lg:mt-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200 group">
-                    <div class="relative w-full aspect-[4/3] md:aspect-[4/5] bg-gray-100 overflow-hidden">
-                        <img src="./assets/images/air-pro-1.jpg" alt="Air Pro 1 in Living Room"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute top-4 left-4 bg-brandTeal px-3 py-1.5 text-[8.5px] font-bold uppercase tracking-widest text-white">
-                            Most Chosen
-                        </div>
-                    </div>
-
-                    <div class="p-6 md:p-8 flex flex-col flex-grow">
-                        <span class="text-[11px] uppercase tracking-widest text-brandTeal font-bold mb-3">II &mdash; Air
-                            Pro 1</span>
-                        <h3 class="text-2xl font-light text-gray-900 mb-3">
-                            Air Pro 1
-                        </h3>
-                        <p class="text-[15px] text-gray-500 font-light mb-8 leading-relaxed">
-                            AI-Intelligent 4-stage purification for medium to large rooms.
-                        </p>
-
-                        <div class="mt-auto">
-                            <div class="w-full h-[1px] bg-[#DCE4E7] mb-5"></div>
-
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 mb-0.5">
-                                        590 sq ft
-                                    </div>
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">
-                                        Coverage Area
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">
-                                        Starting From
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-900">
-                                        ₹19,999
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a href="#"
-                                class="flex lg:inline-flex items-center justify-between lg:justify-start gap-3 lg:gap-1.5 w-full lg:w-auto px-6 py-5 lg:p-0 bg-[#111111] lg:bg-transparent text-white lg:text-brandTeal text-[12px] lg:text-[11px] tracking-[0.15em] lg:tracking-widest font-bold uppercase rounded-sm lg:rounded-none hover:bg-[#156E8A] lg:hover:bg-transparent lg:hover:text-gray-900 transition-colors">
-                                <span>Explore<span class="lg:hidden"> Collection</span></span>
-                                <span class="lg:text-[13px]">&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="bg-white flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100/50 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-300 group">
-                    <div class="relative w-full aspect-[4/3] md:aspect-[4/5] bg-gray-100 overflow-hidden">
-                        <img src="./assets/images/air-pro-2.jpg" alt="Air Pro 2 in Open Space"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[8.5px] font-bold uppercase tracking-widest text-brandTeal">
-                            Open Spaces
-                        </div>
-                    </div>
-
-                    <div class="p-6 md:p-8 flex flex-col flex-grow">
-                        <span class="text-[11px] uppercase tracking-widest text-brandTeal font-bold mb-3">III &mdash;
-                            Air Pro 2</span>
-                        <h3 class="text-2xl font-light text-gray-900 mb-3">
-                            Air Pro 2
-                        </h3>
-                        <p class="text-[15px] text-gray-500 font-light mb-8 leading-relaxed">
-                            7-in-1 filtration with built-in humidification for large
-                            spaces.
-                        </p>
-
-                        <div class="mt-auto">
-                            <div class="w-full h-[1px] bg-[#DCE4E7] mb-5"></div>
-
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 mb-0.5">
-                                        860 sq ft
-                                    </div>
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">
-                                        Coverage Area
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">
-                                        Starting From
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-900">
-                                        ₹24,999
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a href="#"
-                                class="flex lg:inline-flex items-center justify-between lg:justify-start gap-3 lg:gap-1.5 w-full lg:w-auto px-6 py-5 lg:p-0 bg-[#111111] lg:bg-transparent text-white lg:text-brandTeal text-[12px] lg:text-[11px] tracking-[0.15em] lg:tracking-widest font-bold uppercase rounded-sm lg:rounded-none hover:bg-[#156E8A] lg:hover:bg-transparent lg:hover:text-gray-900 transition-colors">
-                                <span>Explore<span class="lg:hidden"> Collection</span></span>
-                                <span class="lg:text-[13px]">&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="bg-white flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100/50 lg:mt-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-400 group">
-                    <div class="relative w-full aspect-[4/3] md:aspect-[4/5] bg-gray-100 overflow-hidden">
-                        <img src="./assets/images/air-pro-max.jpg" alt="Air Pro Max on Entire Floor"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[8.5px] font-bold uppercase tracking-widest text-brandTeal">
-                            Entire Floors
-                        </div>
-                        <div
-                            class="absolute bottom-0 right-0 bg-[#0D1418] px-4 py-2.5 text-[8px] font-bold uppercase tracking-widest text-white">
-                            Coming Soon
-                        </div>
-                    </div>
-
-                    <div class="p-6 md:p-8 flex flex-col flex-grow">
-                        <span class="text-[11px] uppercase tracking-widest text-brandTeal font-bold mb-3">IV &mdash; Air
-                            Pro Max</span>
-                        <h3 class="text-2xl font-light text-gray-900 mb-3">
-                            Air Pro Max
-                        </h3>
-                        <p class="text-[15px] text-gray-500 font-light mb-8 leading-relaxed">
-                            Industrial 6-fold purification for large homes & commercial
-                            use.
-                        </p>
-
-                        <div class="mt-auto">
-                            <div class="w-full h-[1px] bg-[#DCE4E7] mb-5"></div>
-
-                            <div class="flex justify-between items-end mb-6">
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900 mb-0.5">
-                                        1,600 sq ft
-                                    </div>
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">
-                                        Coverage Area
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">
-                                        Starting From
-                                    </div>
-                                    <div class="text-sm font-medium text-gray-900">
-                                        ₹34,999
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a href="#"
-                                class="flex lg:inline-flex items-center justify-between lg:justify-start gap-3 lg:gap-1.5 w-full lg:w-auto px-6 py-5 lg:p-0 bg-[#111111] lg:bg-transparent text-white lg:text-brandTeal text-[12px] lg:text-[11px] tracking-[0.15em] lg:tracking-widest font-bold uppercase rounded-sm lg:rounded-none hover:bg-[#156E8A] lg:hover:bg-transparent lg:hover:text-gray-900 transition-colors">
-                                <span>Explore<span class="lg:hidden"> Collection</span></span>
-                                <span class="lg:text-[13px]">&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    $cam_header = function_exists('get_field')
+        ? get_field('cam_header', $cam_page_id)
+        : '';
+    $cam_desc = function_exists('get_field')
+        ? get_field('cam_desc', $cam_page_id)
+        : '';
+    ?>
 
     <!-- ========================================== -->
     <!-- SECTION 7: BENEFITS GRID                   -->
@@ -782,15 +826,13 @@ get_header();
             <!-- Headline -->
             <h2
                 class="text-[32px] md:text-4xl lg:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
-                The life you deserve starts with <br class="hidden md:block" />
-                the air you breathe.
+                <?php echo wp_kses_post((string) $cam_header); ?>
             </h2>
 
             <!-- Subtext -->
             <p
                 class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-2xl mx-0 md:mx-auto pr-4 md:pr-0">
-                Clean air is not a feature. It is a foundation for everything that
-                matters &mdash; sleep, health, focus, and family.
+                <?php echo wp_kses_post((string) $cam_desc); ?>
             </p>
         </div>
 
@@ -800,141 +842,165 @@ get_header();
         <div
             class="swiper benefitsSwiper max-w-[1400px] mx-auto pb-12 md:pb-0 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100 relative overflow-visible md:overflow-hidden">
             <!-- Wrapper: Flex for Swiper on Mobile, Grid on Desktop -->
-            <div class="swiper-wrapper md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-1.5 items-stretch">
-                <!-- CARD 1: Deeper Sleep -->
-                <div class="swiper-slide h-auto">
-                    <div
-                        class="relative w-full h-full aspect-[4/5] lg:aspect-[3/4] group overflow-hidden rounded-md md:rounded-none">
-                        <img src="./assets/images/benefit-sleep.png" alt="Deeper Sleep"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-[#090D10] via-[#090D10]/50 to-transparent opacity-90">
+            <?php if (function_exists('have_rows') && have_rows('cam_repeater', $cam_page_id)) : ?>
+
+                <div class="swiper-wrapper md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-1.5 items-stretch">
+
+                    <?php
+                    $card_index = 0;
+
+                    while (have_rows('cam_repeater', $cam_page_id)) :
+                        the_row();
+
+                        // These names match the ACF subfield names configured on the front page.
+                        $card_image = get_sub_field('cam_repeter_');
+                        $card_head  = get_sub_field('cam_repeater_');
+                        $card_desc  = get_sub_field('cam_repeater_desc');
+
+                        $card_image_id = is_array($card_image)
+                            ? absint($card_image['ID'] ?? $card_image['id'] ?? 0)
+                            : absint($card_image);
+                        $card_image_url = is_array($card_image)
+                            ? ($card_image['url'] ?? '')
+                            : (is_string($card_image) && !$card_image_id ? $card_image : '');
+                        $card_image_alt = is_array($card_image) && !empty($card_image['alt'])
+                            ? $card_image['alt']
+                            : $card_head;
+                    ?>
+
+                        <div class="swiper-slide h-auto">
+                            <div
+                                class="relative w-full h-full aspect-[4/5] lg:aspect-[3/4] group overflow-hidden rounded-md md:rounded-none">
+
+                                <?php if ($card_image_id) : ?>
+                                    <?php
+                                    echo wp_get_attachment_image(
+                                        $card_image_id,
+                                        'large',
+                                        false,
+                                        [
+                                            'alt'      => $card_image_alt,
+                                            'class'    => 'absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700',
+                                            'loading'  => 'lazy',
+                                            'decoding' => 'async',
+                                            'sizes'    => '(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 85vw',
+                                        ]
+                                    );
+                                    ?>
+                                <?php elseif ($card_image_url) : ?>
+                                    <img
+                                        src="<?php echo esc_url($card_image_url); ?>"
+                                        alt="<?php echo esc_attr($card_image_alt); ?>"
+                                        loading="lazy"
+                                        decoding="async"
+                                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <?php endif; ?>
+
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-[#090D10] via-[#090D10]/50 to-transparent opacity-90"></div>
+
+                                <div class="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-left">
+
+                                    <div class="text-brandTeal mb-4">
+
+                                        <?php if ($card_index === 0) : ?>
+
+                                            <svg
+                                                width="28"
+                                                height="28"
+                                                viewBox="0 0 28 28"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                aria-hidden="true">
+                                                <path
+                                                    d="M14 4C9 4 6 8 6 12C6 17.5 14 28 14 28C14 28 22 17.5 22 12C22 8 19 4 14 4Z"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+
+                                                <path
+                                                    d="M14 15C15.6569 15 17 13.6569 17 12C17 10.3431 15.6569 9 14 9C12.3431 9 11 10.3431 11 12C11 13.6569 12.3431 15 14 15Z"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.2" />
+                                            </svg>
+
+                                        <?php elseif ($card_index === 1) : ?>
+
+                                            <svg
+                                                class="w-6 h-6"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                                aria-hidden="true">
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="1.2"
+                                                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                            </svg>
+
+                                        <?php elseif ($card_index === 2) : ?>
+
+                                            <svg
+                                                width="28"
+                                                height="28"
+                                                viewBox="0 0 28 28"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                aria-hidden="true">
+                                                <path
+                                                    d="M14.0002 5C9.0002 5 6.0002 9 7.0002 13C8.0002 18 14.0002 24 14.0002 24C14.0002 24 20.0002 18 21.0002 13C22.0002 9 19.0002 5 14.0002 5Z"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+
+                                        <?php else : ?>
+
+                                            <svg
+                                                width="28"
+                                                height="28"
+                                                viewBox="0 0 28 28"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                aria-hidden="true">
+                                                <path
+                                                    d="M5 8H23M5 14H23M5 20H17"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.2"
+                                                    stroke-linecap="round" />
+                                            </svg>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                    <?php if ($card_head) : ?>
+                                        <h3 class="text-white text-xl md:text-2xl font-light mb-2.5">
+                                            <?php echo esc_html($card_head); ?>
+                                        </h3>
+                                    <?php endif; ?>
+
+                                    <?php if ($card_desc) : ?>
+                                        <p
+                                            class="text-gray-300 text-[11px] md:text-xs font-light leading-relaxed opacity-90 md:opacity-80">
+                                            <?php echo wp_kses_post((string) $card_desc); ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-left">
-                            <div class="text-brandTeal mb-4">
-                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <g clip-path="url(#clip0_181_5271)">
-                                        <path
-                                            d="M14 4C9 4 6 8 6 12C6 17.5 14 28 14 28C14 28 22 17.5 22 12C22 8 19 4 14 4Z"
-                                            stroke="#156E8A" stroke-width="1.2" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                        <path
-                                            d="M14 15C14.7956 15 15.5587 14.6839 16.1213 14.1213C16.6839 13.5587 17 12.7956 17 12C17 11.2044 16.6839 10.4413 16.1213 9.87868C15.5587 9.31607 14.7956 9 14 9C13.2044 9 12.4413 9.31607 11.8787 9.87868C11.3161 10.4413 11 11.2044 11 12C11 12.7956 11.3161 13.5587 11.8787 14.1213C12.4413 14.6839 13.2044 15 14 15Z"
-                                            stroke="#156E8A" stroke-width="1.2" />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_181_5271">
-                                            <rect width="28" height="28" fill="white" />
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                            </div>
-                            <h3 class="text-white text-xl md:text-2xl font-light mb-2.5">
-                                Deeper Sleep
-                            </h3>
-                            <p
-                                class="text-gray-300 text-[11px] md:text-xs font-light leading-relaxed opacity-90 md:opacity-80">
-                                Filtered, clean air at night allows your body to rest fully.
-                                Waking rested isn't luck &mdash; it's environment.
-                            </p>
-                        </div>
-                    </div>
+                        <?php $card_index++; ?>
+
+                    <?php endwhile; ?>
+
                 </div>
 
-                <!-- CARD 2: Protect Your Children -->
-                <div class="swiper-slide h-auto">
-                    <div
-                        class="relative w-full h-full aspect-[4/5] lg:aspect-[3/4] group overflow-hidden rounded-md md:rounded-none">
-                        <img src="./assets/images/benefit-children.png" alt="Protect Your Children"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-[#090D10] via-[#090D10]/50 to-transparent opacity-90">
-                        </div>
-
-                        <div class="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-left">
-                            <div class="text-brandTeal mb-4">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
-                                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <h3 class="text-white text-xl md:text-2xl font-light mb-2.5">
-                                Protect Your Children
-                            </h3>
-                            <p
-                                class="text-gray-300 text-[11px] md:text-xs font-light leading-relaxed opacity-90 md:opacity-80">
-                                Young lungs are more vulnerable. Give them the cleanest air
-                                in every room they grow, play, and sleep.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD 3: Allergy Relief -->
-                <div class="swiper-slide h-auto">
-                    <div
-                        class="relative w-full h-full aspect-[4/5] lg:aspect-[3/4] group overflow-hidden rounded-md md:rounded-none">
-                        <img src="./assets/images/benefit-allergy.png" alt="Allergy Relief"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-[#090D10] via-[#090D10]/50 to-transparent opacity-90">
-                        </div>
-
-                        <div class="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-left">
-                            <div class="text-brandTeal mb-4">
-                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M14.0002 5C9.0002 5 6.0002 9 7.0002 13C8.0002 18 14.0002 24 14.0002 24C14.0002 24 20.0002 18 21.0002 13C22.0002 9 19.0002 5 14.0002 5Z"
-                                        stroke="#156E8A" stroke-width="1.2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </div>
-                            <h3 class="text-white text-xl md:text-2xl font-light mb-2.5">
-                                Allergy Relief
-                            </h3>
-                            <p
-                                class="text-gray-300 text-[11px] md:text-xs font-light leading-relaxed opacity-90 md:opacity-80">
-                                HEPA H13 captures pollen, dust mites, pet dander, and mould
-                                spores before they reach you &mdash; or your family.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD 4: Healthier Workspaces -->
-                <div class="swiper-slide h-auto">
-                    <div
-                        class="relative w-full h-full aspect-[4/5] lg:aspect-[3/4] group overflow-hidden rounded-md md:rounded-none">
-                        <img src="./assets/images/benefit-workspace.png" alt="Healthier Workspaces"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-[#090D10] via-[#090D10]/50 to-transparent opacity-90">
-                        </div>
-
-                        <div class="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-left">
-                            <div class="text-brandTeal mb-4">
-                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M5 8H23M5 14H23M5 20H17" stroke="#156E8A" stroke-width="1.2"
-                                        stroke-linecap="round" />
-                                </svg>
-                            </div>
-                            <h3 class="text-white text-xl md:text-2xl font-light mb-2.5">
-                                Healthier Workspaces
-                            </h3>
-                            <p
-                                class="text-gray-300 text-[11px] md:text-xs font-light leading-relaxed opacity-90 md:opacity-80">
-                                Cleaner air at your desk or home office means sharper focus,
-                                fewer headaches, and sustained energy through the day.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endif; ?>
 
             <!-- Swiper Pagination (Mobile Only) -->
             <div class="swiper-pagination md:hidden !bottom-0"></div>

@@ -175,9 +175,76 @@ function initPageScripts() {
   const $roomSlider = $("#roomAreaSlider");
   const $roomValue = $("#roomAreaValue");
   if ($roomSlider.length) {
-    $roomSlider.on("input", function () {
-      $roomValue.text($(this).val());
-    });
+    const $matcherRoot = $roomSlider.closest("[data-product-matcher]");
+    const $matcherProducts = $matcherRoot.find("[data-matcher-product]");
+    const $matcherStatus = $matcherRoot.find("#matcherStatus");
+    const $matcherProductId = $matcherRoot.find("#matcherProductId");
+    const $matcherRoomArea = $matcherRoot.find("#matcherRoomArea");
+    const locale = document.documentElement.lang || "en-IN";
+    const numberFormatter = new Intl.NumberFormat(locale);
+    let activeProductId = null;
+
+    function updateProductMatcher() {
+      const roomArea = Number($roomSlider.val());
+      const formattedRoomArea = numberFormatter.format(roomArea);
+      let $matchedProduct = $();
+
+      $roomValue.text(formattedRoomArea);
+      $roomSlider.attr(
+        "aria-valuetext",
+        `${formattedRoomArea} square feet`,
+      );
+      $matcherRoomArea.val(roomArea);
+
+      $matcherProducts.each(function () {
+        const $candidate = $(this);
+        const coverage = Number($candidate.attr("data-coverage"));
+
+        if (!$matchedProduct.length && coverage >= roomArea) {
+          $matchedProduct = $candidate;
+        }
+      });
+
+      if (!$matchedProduct.length && $matcherProducts.length) {
+        $matchedProduct = $matcherProducts.last();
+      }
+
+      if (!$matchedProduct.length) {
+        return;
+      }
+
+      $matcherProducts.each(function () {
+        const $product = $(this);
+        const isActive = this === $matchedProduct.get(0);
+
+        $product.toggleClass("hidden", !isActive);
+
+        if (isActive) {
+          $product.removeAttr("hidden aria-hidden");
+        } else {
+          $product.attr({ hidden: true, "aria-hidden": "true" });
+        }
+      });
+
+      const productId = $matchedProduct.attr("data-product-id") || "";
+      const productName = $matchedProduct.attr("data-product-name") || "";
+      const productCoverage = Number(
+        $matchedProduct.attr("data-coverage"),
+      );
+
+      $matcherProductId.val(productId);
+
+      if (activeProductId !== productId) {
+        $matcherStatus.text(
+          `${productName} is your match and covers up to ` +
+            `${numberFormatter.format(productCoverage)} square feet.`,
+        );
+        activeProductId = productId;
+      }
+    }
+
+    $roomSlider.on("input change", updateProductMatcher);
+    updateProductMatcher();
   }
 
   // Other Swipers
