@@ -1006,178 +1006,324 @@ get_header();
             <div class="swiper-pagination md:hidden !bottom-0"></div>
         </div>
     </section>
+
+    <?php
+    $inside_unit_page_id = (int) get_option('page_on_front');
+
+    if (!$inside_unit_page_id) {
+        $inside_unit_page_id = get_queried_object_id();
+    }
+
+    $inside_unit_eyebrow     = '';
+    $inside_unit_heading     = '';
+    $inside_unit_description = '';
+    $inside_unit_stages      = [];
+    $inside_unit_authority   = [];
+
+    if (function_exists('get_field')) {
+        $inside_unit_eyebrow     = (string) get_field('inside_unit_eyebrow', $inside_unit_page_id);
+        $inside_unit_heading     = (string) get_field('inside_unit_heading', $inside_unit_page_id);
+        $inside_unit_description = (string) get_field('inside_unit_description', $inside_unit_page_id);
+        $inside_unit_stages      = get_field('inside_unit_stages', $inside_unit_page_id);
+        $inside_unit_authority   = get_field('inside_unit_authority', $inside_unit_page_id);
+    }
+
+    if (!is_array($inside_unit_stages)) {
+        $inside_unit_stages = [];
+    }
+
+    if (!is_array($inside_unit_authority)) {
+        $inside_unit_authority = [];
+    }
+
+    $inside_unit_badge_value = (string) (
+        $inside_unit_authority['inside_unit_badge_value'] ?? ''
+    );
+    $inside_unit_badge_label = (string) (
+        $inside_unit_authority['inside_unit_badge_label'] ?? ''
+    );
+    $inside_unit_authority_heading = (string) (
+        $inside_unit_authority['inside_unit_authority_heading'] ?? ''
+    );
+    $inside_unit_authority_description = (string) (
+        $inside_unit_authority['inside_unit_authority_description'] ?? ''
+    );
+
+    $inside_unit_has_content = $inside_unit_eyebrow
+        || $inside_unit_heading
+        || $inside_unit_description
+        || $inside_unit_stages
+        || $inside_unit_authority;
+    ?>
+
     <!-- ========================================== -->
     <!-- SECTION 8: TECHNOLOGY & FILTRATION         -->
     <!-- ========================================== -->
-    <section class="w-full bg-[#FAFCFD] py-16 md:py-32 px-6 md:px-16 lg:px-24">
-        <!-- Header Section (Responsive Alignment) -->
-        <div
-            class="max-w-3xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-24 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-            <!-- Eyebrow -->
-            <span
-                class="text-[11px] md:text-[8px] uppercase tracking-[0.25em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                Inside Every Unit
-            </span>
-
-            <!-- Headline -->
-            <h2
-                class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
-                BreathePure&trade; Technology
-            </h2>
-
-            <!-- Subtext -->
-            <p
-                class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-xl mx-0 md:mx-auto pr-4 md:pr-0">
-                A four-stage air intelligence system, engineered to eliminate what
-                you cannot see. No gimmicks. No compromises.
-            </p>
-        </div>
-
-        <!-- 4-Stage Technology Grid/List -->
-        <!-- Mobile: Transparent background, divided list. Desktop: White card, shadow, side-by-side grid -->
-        <div
-            class="max-w-6xl mx-auto bg-transparent md:bg-white border-0 md:border md:border-gray-100 md:shadow-[0_4px_20px_rgb(0,0,0,0.02)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y divide-gray-200/80 md:divide-y-0 md:divide-x md:divide-gray-100 mb-12 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
-            <!-- Stage 01: Capture -->
-            <div class="py-6 md:p-10 flex flex-col h-full lg:border-b-0 border-gray-100 md:border-b">
-                <!-- Header Row: Flex on mobile to align number/title, Block on desktop -->
-                <div class="flex items-start md:block mb-1.5 md:mb-4">
-                    <span
-                        class="text-[15px] md:text-[12px] text-[#156E8A] font-medium tracking-widest w-10 shrink-0 md:w-auto md:mb-5 block mt-0.5 md:mt-0">01</span>
-
-                    <!-- Simple Intake SVG Icon (Hidden on Mobile) -->
-                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 14H36M12 22H32M16 30H28" stroke="#141414" stroke-width="1.4"
-                            stroke-linecap="round" />
-                    </svg>
-
-                    <h3 class="text-[17px] font-normal text-gray-900">Capture</h3>
-                </div>
-
-                <!-- Description: Indented on mobile to align with title, standard on desktop -->
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed ml-10 md:ml-0 pr-4 md:pr-0">
-                    A 360&deg; air intake draws the full room volume through the unit
-                    up to 5 times per hour, leaving no corner untouched.
-                </p>
-            </div>
-
-            <!-- Stage 02: Filter -->
-            <div class="py-6 md:p-10 flex flex-col h-full lg:border-b-0 border-gray-100 md:border-b">
-                <div class="flex items-start md:block mb-1.5 md:mb-4">
-                    <span
-                        class="text-[15px] md:text-[12px] text-[#156E8A] font-medium tracking-widest w-10 shrink-0 md:w-auto md:mb-5 block mt-0.5 md:mt-0">02</span>
-
-                    <!-- Simple Filter Layers SVG Icon (Hidden on Mobile) -->
-                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M34 10H10C8.89543 10 8 10.8954 8 12V13C8 14.1046 8.89543 15 10 15H34C35.1046 15 36 14.1046 36 13V12C36 10.8954 35.1046 10 34 10Z"
-                            stroke="#141414" stroke-width="1.4" />
-                        <path
-                            d="M34 19H10C8.89543 19 8 19.8954 8 21V22C8 23.1046 8.89543 24 10 24H34C35.1046 24 36 23.1046 36 22V21C36 19.8954 35.1046 19 34 19Z"
-                            stroke="#141414" stroke-width="1.4" />
-                        <path
-                            d="M34 28H10C8.89543 28 8 28.8954 8 30V31C8 32.1046 8.89543 33 10 33H34C35.1046 33 36 32.1046 36 31V30C36 28.8954 35.1046 28 34 28Z"
-                            stroke="#141414" stroke-width="1.4" />
-                    </svg>
-
-                    <h3 class="text-[17px] font-normal text-gray-900">Filter</h3>
-                </div>
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed ml-10 md:ml-0 pr-4 md:pr-0">
-                    True HEPA H13 filtration captures 99.97% of particles as small as
-                    0.3 microns &mdash; including PM2.5, pollen, and bacteria.
-                </p>
-            </div>
-
-            <!-- Stage 03: Neutralise -->
-            <div class="py-6 md:p-10 flex flex-col h-full lg:border-t-0 lg:border-b-0 border-gray-100 border-t">
-                <div class="flex items-start md:block mb-1.5 md:mb-4">
-                    <span
-                        class="text-[15px] md:text-[12px] text-[#156E8A] font-medium tracking-widest w-10 shrink-0 md:w-auto md:mb-5 block mt-0.5 md:mt-0">03</span>
-
-                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 8V16M16 11L20 15M28 11L24 15M12 22H8M22 36V28M32 22H36M16 33L20 29M28 33L24 29"
-                            stroke="#141414" stroke-width="1.4" stroke-linecap="round" />
-                        <path
-                            d="M22 27C24.7614 27 27 24.7614 27 22C27 19.2386 24.7614 17 22 17C19.2386 17 17 19.2386 17 22C17 24.7614 19.2386 27 22 27Z"
-                            stroke="#141414" stroke-width="1.4" />
-                    </svg>
-
-                    <h3 class="text-[17px] font-normal text-gray-900">Neutralise</h3>
-                </div>
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed ml-10 md:ml-0 pr-4 md:pr-0">
-                    An activated carbon layer absorbs VOCs, cooking odours, smoke, and
-                    formaldehyde. What passes through is chemically neutral.
-                </p>
-            </div>
-
-            <!-- Stage 04: Monitor -->
-            <div class="py-6 md:p-10 flex flex-col h-full lg:border-t-0 border-gray-100 border-t">
-                <div class="flex items-start md:block mb-1.5 md:mb-4">
-                    <span
-                        class="text-[15px] md:text-[12px] text-[#156E8A] font-medium tracking-widest w-10 shrink-0 md:w-auto md:mb-5 block mt-0.5 md:mt-0">04</span>
-
-                    <!-- Simple Sensor/Clock SVG Icon (Hidden on Mobile) -->
-                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M22 34C28.6274 34 34 28.6274 34 22C34 15.3726 28.6274 10 22 10C15.3726 10 10 15.3726 10 22C10 28.6274 15.3726 34 22 34Z"
-                            stroke="#141414" stroke-width="1.4" />
-                        <path d="M22 14V22L27 25" stroke="#141414" stroke-width="1.4" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-
-                    <h3 class="text-[17px] font-normal text-gray-900">Monitor</h3>
-                </div>
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed ml-10 md:ml-0 pr-4 md:pr-0">
-                    Real-time laser sensors track PM2.5, CO&sub2;, humidity, and
-                    temperature &mdash; displayed instantly on the unit and the app.
-                </p>
-            </div>
-        </div>
-
-        <!-- Medical Grade Authority Banner -->
-        <div
-            class="max-w-6xl mx-auto bg-[#0C1216] text-white p-8 md:p-16 lg:px-20 flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200 mt-16 md:mt-0">
-            <!-- Desktop Circular Badge (Hidden on Mobile) -->
+    <?php if ($inside_unit_has_content) : ?>
+        <section class="w-full bg-[#FAFCFD] py-16 md:py-32 px-6 md:px-16 lg:px-24">
+            <!-- Header Section (Responsive Alignment) -->
             <div
-                class="hidden md:flex flex-shrink-0 w-[120px] h-[120px] rounded-full border border-gray-700/60 flex-col items-center justify-center text-center shadow-inner">
-                <span class="text-3xl font-light text-[#156E8A] mb-1">H13</span>
-                <span class="text-[6px] uppercase tracking-[0.25em] text-gray-400 font-bold leading-tight">
-                    True Hepa<br />Certified
-                </span>
-            </div>
+                class="max-w-3xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-24 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                <!-- Eyebrow -->
+                <?php if ($inside_unit_eyebrow) : ?>
+                    <span
+                        class="text-[11px] md:text-[8px] uppercase tracking-[0.25em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
+                        <?php echo esc_html($inside_unit_eyebrow); ?>
+                    </span>
+                <?php endif; ?>
 
-            <!-- Banner Content -->
-            <!-- Mobile: Flex to place badge left of the text group. Desktop: Block layout -->
-            <div class="text-left md:pr-[20%] w-full flex items-start md:block gap-4">
-                <!-- Mobile-Only Square Tag (Hidden on Desktop) -->
-                <div
-                    class="md:hidden bg-[#0A1F26] text-[#156E8A] font-semibold px-2.5 py-1 text-[11px] tracking-wider rounded-sm shrink-0 mt-0.5">
-                    H13
-                </div>
+                <!-- Headline -->
+                <?php if ($inside_unit_heading) : ?>
+                    <h2
+                        class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
+                        <?php echo esc_html($inside_unit_heading); ?>
+                    </h2>
+                <?php endif; ?>
 
-                <!-- Text Group: Headline and Paragraph are grouped so they align perfectly -->
-                <div>
-                    <h4
-                        class="text-[17px] md:text-2xl font-light tracking-wide leading-snug md:leading-normal mb-3 md:mb-5">
-                        Medical-Grade Filtration, In Your Living Room
-                    </h4>
-
-                    <p class="text-[15px] text-gray-400 font-light leading-relaxed max-w-3xl pr-2 md:pr-0">
-                        HEPA H13 is the same standard used in hospital operating
-                        theatres and pharmaceutical cleanrooms. Breathe In brings this
-                        standard into your home without compromise &mdash; removing
-                        particles invisible to the human eye, every hour, every day.
+                <!-- Subtext -->
+                <?php if ($inside_unit_description) : ?>
+                    <p
+                        class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-xl mx-0 md:mx-auto pr-4 md:pr-0">
+                        <?php echo esc_html($inside_unit_description); ?>
                     </p>
-                </div>
+                <?php endif; ?>
             </div>
-        </div>
+
+            <?php if ($inside_unit_stages) : ?>
+                <!-- Mobile: Transparent background, divided list. Desktop: White card, shadow, side-by-side grid -->
+                <div
+                    class="max-w-6xl mx-auto bg-transparent md:bg-white border-0 md:border md:border-gray-100 md:shadow-[0_4px_20px_rgb(0,0,0,0.02)] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y divide-gray-200/80 md:divide-y-0 md:divide-x md:divide-gray-100 mb-12 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
+                    <?php
+                    $inside_unit_stage_classes = [
+                        'py-6 md:p-10 flex flex-col h-full lg:border-b-0 border-gray-100 md:border-b',
+                        'py-6 md:p-10 flex flex-col h-full lg:border-b-0 border-gray-100 md:border-b',
+                        'py-6 md:p-10 flex flex-col h-full lg:border-t-0 lg:border-b-0 border-gray-100 border-t',
+                        'py-6 md:p-10 flex flex-col h-full lg:border-t-0 border-gray-100 border-t',
+                    ];
+
+                    foreach (array_values($inside_unit_stages) as $stage_index => $stage) :
+                        if (!is_array($stage)) {
+                            continue;
+                        }
+
+                        $stage_icon = sanitize_key(
+                            (string) ($stage['inside_unit_stage_icon'] ?? '')
+                        );
+                        $stage_title = (string) (
+                            $stage['inside_unit_stage_title'] ?? ''
+                        );
+                        $stage_description = (string) (
+                            $stage['inside_unit_stage_description'] ?? ''
+                        );
+                        $stage_class = $inside_unit_stage_classes[$stage_index]
+                            ?? 'py-6 md:p-10 flex flex-col h-full border-gray-100';
+                    ?>
+                        <div class="<?php echo esc_attr($stage_class); ?>">
+                            <div class="flex items-start md:block mb-1.5 md:mb-4">
+                                <span
+                                    class="text-[15px] md:text-[12px] text-[#156E8A] font-medium tracking-widest w-10 shrink-0 md:w-auto md:mb-5 block mt-0.5 md:mt-0">
+                                    <?php echo esc_html(sprintf('%02d', $stage_index + 1)); ?>
+                                </span>
+
+                                <?php if ('capture' === $stage_icon) : ?>
+                                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path d="M8 14H36M12 22H32M16 30H28" stroke="#141414" stroke-width="1.4"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                <?php elseif ('filter' === $stage_icon) : ?>
+                                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M34 10H10C8.89543 10 8 10.8954 8 12V13C8 14.1046 8.89543 15 10 15H34C35.1046 15 36 14.1046 36 13V12C36 10.8954 35.1046 10 34 10Z"
+                                            stroke="#141414" stroke-width="1.4" />
+                                        <path
+                                            d="M34 19H10C8.89543 19 8 19.8954 8 21V22C8 23.1046 8.89543 24 10 24H34C35.1046 24 36 23.1046 36 22V21C36 19.8954 35.1046 19 34 19Z"
+                                            stroke="#141414" stroke-width="1.4" />
+                                        <path
+                                            d="M34 28H10C8.89543 28 8 28.8954 8 30V31C8 32.1046 8.89543 33 10 33H34C35.1046 33 36 32.1046 36 31V30C36 28.8954 35.1046 28 34 28Z"
+                                            stroke="#141414" stroke-width="1.4" />
+                                    </svg>
+                                <?php elseif ('neutralise' === $stage_icon) : ?>
+                                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path d="M22 8V16M16 11L20 15M28 11L24 15M12 22H8M22 36V28M32 22H36M16 33L20 29M28 33L24 29"
+                                            stroke="#141414" stroke-width="1.4" stroke-linecap="round" />
+                                        <path
+                                            d="M22 27C24.7614 27 27 24.7614 27 22C27 19.2386 24.7614 17 22 17C19.2386 17 17 19.2386 17 22C17 24.7614 19.2386 27 22 27Z"
+                                            stroke="#141414" stroke-width="1.4" />
+                                    </svg>
+                                <?php elseif ('monitor' === $stage_icon) : ?>
+                                    <svg class="hidden md:block mb-4" width="44" height="44" viewBox="0 0 44 44" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M22 34C28.6274 34 34 28.6274 34 22C34 15.3726 28.6274 10 22 10C15.3726 10 10 15.3726 10 22C10 28.6274 15.3726 34 22 34Z"
+                                            stroke="#141414" stroke-width="1.4" />
+                                        <path d="M22 14V22L27 25" stroke="#141414" stroke-width="1.4" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                <?php endif; ?>
+
+                                <?php if ($stage_title) : ?>
+                                    <h3 class="text-[17px] font-normal text-gray-900">
+                                        <?php echo esc_html($stage_title); ?>
+                                    </h3>
+                                <?php endif; ?>
+                            </div>
+
+                            <?php if ($stage_description) : ?>
+                                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed ml-10 md:ml-0 pr-4 md:pr-0">
+                                    <?php echo esc_html($stage_description); ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Medical Grade Authority Banner -->
+            <?php if ($inside_unit_authority) : ?>
+                <div
+                    class="max-w-6xl mx-auto bg-[#0C1216] text-white p-8 md:p-16 lg:px-20 flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200 mt-16 md:mt-0">
+                    <!-- Desktop Circular Badge (Hidden on Mobile) -->
+                    <?php if ($inside_unit_badge_value || $inside_unit_badge_label) : ?>
+                        <div
+                            class="hidden md:flex flex-shrink-0 w-[120px] h-[120px] rounded-full border border-gray-700/60 flex-col items-center justify-center text-center shadow-inner">
+                            <?php if ($inside_unit_badge_value) : ?>
+                                <span class="text-3xl font-light text-[#156E8A] mb-1">
+                                    <?php echo esc_html($inside_unit_badge_value); ?>
+                                </span>
+                            <?php endif; ?>
+
+                            <?php if ($inside_unit_badge_label) : ?>
+                                <span class="text-[6px] uppercase tracking-[0.25em] text-gray-400 font-bold leading-tight">
+                                    <?php echo nl2br(esc_html($inside_unit_badge_label)); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Banner Content -->
+                    <!-- Mobile: Flex to place badge left of the text group. Desktop: Block layout -->
+                    <div class="text-left md:pr-[20%] w-full flex items-start md:block gap-4">
+                        <!-- Mobile-Only Square Tag (Hidden on Desktop) -->
+                        <?php if ($inside_unit_badge_value) : ?>
+                            <div
+                                class="md:hidden bg-[#0A1F26] text-[#156E8A] font-semibold px-2.5 py-1 text-[11px] tracking-wider rounded-sm shrink-0 mt-0.5">
+                                <?php echo esc_html($inside_unit_badge_value); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Text Group: Headline and Paragraph are grouped so they align perfectly -->
+                        <div>
+                            <?php if ($inside_unit_authority_heading) : ?>
+                                <h4
+                                    class="text-[17px] md:text-2xl font-light tracking-wide leading-snug md:leading-normal mb-3 md:mb-5">
+                                    <?php echo esc_html($inside_unit_authority_heading); ?>
+                                </h4>
+                            <?php endif; ?>
+
+                            <?php if ($inside_unit_authority_description) : ?>
+                                <p class="text-[15px] text-gray-400 font-light leading-relaxed max-w-3xl pr-2 md:pr-0">
+                                    <?php echo esc_html($inside_unit_authority_description); ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
     </section>
+    <?php endif; ?>
+
+    <?php
+    $breathe_app_page_id = (int) get_option('page_on_front');
+
+    if (!$breathe_app_page_id) {
+        $breathe_app_page_id = get_queried_object_id();
+    }
+
+    $breathe_app_eyebrow             = '';
+    $breathe_app_heading_intro       = '';
+    $breathe_app_heading_before      = '';
+    $breathe_app_heading_after       = '';
+    $breathe_app_description         = '';
+    $breathe_app_mobile_image_id     = 0;
+    $breathe_app_desktop_image_id    = 0;
+    $breathe_app_features            = [];
+    $breathe_app_download_links      = [];
+
+    if (function_exists('get_field')) {
+        $breathe_app_eyebrow = (string) get_field(
+            'breathe_app_eyebrow',
+            $breathe_app_page_id
+        );
+        $breathe_app_heading_intro = (string) get_field(
+            'breathe_app_heading_intro',
+            $breathe_app_page_id
+        );
+        $breathe_app_heading_before = (string) get_field(
+            'breathe_app_heading_before_break',
+            $breathe_app_page_id
+        );
+        $breathe_app_heading_after = (string) get_field(
+            'breathe_app_heading_after_break',
+            $breathe_app_page_id
+        );
+        $breathe_app_description = (string) get_field(
+            'breathe_app_description',
+            $breathe_app_page_id
+        );
+        $breathe_app_mobile_image_id = absint(
+            get_field('breathe_app_mobile_image', $breathe_app_page_id)
+        );
+        $breathe_app_desktop_image_id = absint(
+            get_field('breathe_app_desktop_image', $breathe_app_page_id)
+        );
+        $breathe_app_features = get_field(
+            'breathe_app_features',
+            $breathe_app_page_id
+        );
+        $breathe_app_download_links = get_field(
+            'breathe_app_download_links',
+            $breathe_app_page_id
+        );
+    }
+
+    if (!is_array($breathe_app_features)) {
+        $breathe_app_features = [];
+    }
+
+    if (!is_array($breathe_app_download_links)) {
+        $breathe_app_download_links = [];
+    }
+
+    $breathe_app_apple_link = $breathe_app_download_links['breathe_app_apple_link']
+        ?? [];
+    $breathe_app_google_link = $breathe_app_download_links['breathe_app_google_link']
+        ?? [];
+
+    if (!is_array($breathe_app_apple_link)) {
+        $breathe_app_apple_link = [];
+    }
+
+    if (!is_array($breathe_app_google_link)) {
+        $breathe_app_google_link = [];
+    }
+
+    $breathe_app_has_content = $breathe_app_eyebrow
+        || $breathe_app_heading_intro
+        || $breathe_app_heading_before
+        || $breathe_app_heading_after
+        || $breathe_app_description
+        || $breathe_app_mobile_image_id
+        || $breathe_app_desktop_image_id
+        || $breathe_app_features;
+    ?>
+
     <!-- ========================================== -->
     <!-- SECTION 9: APP INTEGRATION                 -->
     <!-- ========================================== -->
+    <?php if ($breathe_app_has_content) : ?>
     <section class="w-full bg-[#0A1014] md:bg-white py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
         <!-- Grid Layout allows reordering. Mobile: 1 column. Desktop: 2 columns, 2 rows -->
         <div
@@ -1188,25 +1334,43 @@ get_header();
             <div
                 class="order-1 lg:col-start-1 lg:row-start-1 w-full flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
                 <!-- Eyebrow -->
-                <span class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                    Breathe In App
-                </span>
+                <?php if ($breathe_app_eyebrow) : ?>
+                    <span class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
+                        <?php echo esc_html($breathe_app_eyebrow); ?>
+                    </span>
+                <?php endif; ?>
 
                 <!-- Headline -->
                 <!-- Responsive Text: White on mobile, Dark on desktop -->
-                <h2
-                    class="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-white md:text-gray-900 leading-[1.1] mb-6">
-                    Your air,
-                    <span class="text-[#156E8A] font-bold">in your <br class="hidden md:block" />
-                        hands.</span>
-                </h2>
+                <?php if (
+                    $breathe_app_heading_intro
+                    || $breathe_app_heading_before
+                    || $breathe_app_heading_after
+                ) : ?>
+                    <h2
+                        class="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-white md:text-gray-900 leading-[1.1] mb-6">
+                        <?php if ($breathe_app_heading_intro) : ?>
+                            <?php echo esc_html($breathe_app_heading_intro); ?>
+                        <?php endif; ?>
+
+                        <?php if ($breathe_app_heading_before || $breathe_app_heading_after) : ?>
+                            <span class="text-[#156E8A] font-bold">
+                                <?php echo esc_html($breathe_app_heading_before); ?>
+                                <?php if ($breathe_app_heading_after) : ?>
+                                    <br class="hidden md:block" />
+                                    <?php echo esc_html($breathe_app_heading_after); ?>
+                                <?php endif; ?>
+                            </span>
+                        <?php endif; ?>
+                    </h2>
+                <?php endif; ?>
 
                 <!-- Subtext -->
-                <p class="text-gray-400 md:text-gray-500 text-sm font-light leading-relaxed mb-4 md:mb-10 max-w-lg">
-                    Monitor and control every purifier in your home from one calm,
-                    considered app. See what you're breathing in real time, adjust
-                    from anywhere, and let it look after the rest.
-                </p>
+                <?php if ($breathe_app_description) : ?>
+                    <p class="text-gray-400 md:text-gray-500 text-sm font-light leading-relaxed mb-4 md:mb-10 max-w-lg">
+                        <?php echo esc_html($breathe_app_description); ?>
+                    </p>
+                <?php endif; ?>
             </div>
 
             <!-- ========================================== -->
@@ -1219,13 +1383,51 @@ get_header();
                     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] md:w-[300px] h-[250px] md:h-[300px] bg-brandTeal/10 md:bg-brandTeal/5 rounded-full blur-[60px] pointer-events-none">
                 </div>
 
-                <!-- Mobile Image -->
-                <img src="./assets/images/app-mockup-mobile.png" alt="Breathe In App Mobile"
-                    class="block md:hidden w-full max-w-[320px] h-auto object-contain relative z-10 animate-float" />
+                <?php
+                $breathe_app_base_image_id = $breathe_app_mobile_image_id
+                    ?: $breathe_app_desktop_image_id;
+                $breathe_app_large_image_id = $breathe_app_desktop_image_id
+                    ?: $breathe_app_base_image_id;
+                $breathe_app_desktop_src = $breathe_app_large_image_id
+                    ? wp_get_attachment_image_src($breathe_app_large_image_id, 'large')
+                    : false;
+                $breathe_app_desktop_srcset = $breathe_app_large_image_id
+                    ? wp_get_attachment_image_srcset($breathe_app_large_image_id, 'large')
+                    : false;
+                ?>
 
-                <!-- Desktop Image -->
-                <img src="./assets/images/app-mockup.png" alt="Breathe In App Interface"
-                    class="hidden md:block w-full max-w-[450px] h-auto object-contain relative z-10 animate-float" />
+                <?php if ($breathe_app_base_image_id) : ?>
+                    <picture class="relative z-10 block w-full">
+                        <?php if (
+                            $breathe_app_desktop_image_id
+                            && $breathe_app_desktop_image_id !== $breathe_app_base_image_id
+                            && $breathe_app_desktop_src
+                        ) : ?>
+                            <source
+                                media="(min-width: 768px)"
+                                srcset="<?php echo esc_attr(
+                                    $breathe_app_desktop_srcset ?: $breathe_app_desktop_src[0]
+                                ); ?>"
+                                sizes="450px"
+                                width="<?php echo esc_attr((string) $breathe_app_desktop_src[1]); ?>"
+                                height="<?php echo esc_attr((string) $breathe_app_desktop_src[2]); ?>" />
+                        <?php endif; ?>
+
+                        <?php
+                        echo wp_get_attachment_image(
+                            $breathe_app_base_image_id,
+                            'large',
+                            false,
+                            [
+                                'class'    => 'w-full max-w-[320px] md:max-w-[450px] h-auto object-contain mx-auto animate-float',
+                                'loading'  => 'lazy',
+                                'decoding' => 'async',
+                                'sizes'    => '(min-width: 768px) 450px, 320px',
+                            ]
+                        );
+                        ?>
+                    </picture>
+                <?php endif; ?>
             </div>
 
             <!-- ========================================== -->
@@ -1236,106 +1438,126 @@ get_header();
                 <!-- Feature List -->
                 <div
                     class="flex flex-col border-t border-gray-800/80 md:border-t-0 divide-y divide-gray-800/80 md:divide-gray-100 mb-10 md:mb-12">
-                    <!-- Feature 1 -->
-                    <div class="py-5 flex items-start gap-4 md:gap-5">
-                        <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
-                                    stroke="#156E8A" stroke-width="1.3" />
-                                <path d="M10 6V10L12.6 11.6" stroke="#156E8A" stroke-width="1.3" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
-                                Live Air Quality
-                            </h4>
-                            <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
-                                Real-time PM2.5, AQI, and filter status for every room,
-                                updated by the second.
-                            </p>
-                        </div>
-                    </div>
+                    <?php foreach (array_values($breathe_app_features) as $app_feature) : ?>
+                        <?php
+                        if (!is_array($app_feature)) {
+                            continue;
+                        }
 
-                    <!-- Feature 2 -->
-                    <div class="py-5 flex items-start gap-4 md:gap-5">
-                        <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M14.5 2.5H5.5C4.39543 2.5 3.5 3.39543 3.5 4.5V15.5C3.5 16.6046 4.39543 17.5 5.5 17.5H14.5C15.6046 17.5 16.5 16.6046 16.5 15.5V4.5C16.5 3.39543 15.6046 2.5 14.5 2.5Z"
-                                    stroke="#156E8A" stroke-width="1.3" />
-                                <path d="M8 14.5H12" stroke="#156E8A" stroke-width="1.3" stroke-linecap="round" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
-                                Control From Anywhere
-                            </h4>
-                            <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
-                                Switch modes, set fan speed, or start purifying before you
-                                walk through the door.
-                            </p>
-                        </div>
-                    </div>
+                        $app_feature_icon = sanitize_key(
+                            (string) ($app_feature['breathe_app_feature_icon'] ?? '')
+                        );
+                        $app_feature_title = (string) (
+                            $app_feature['breathe_app_feature_title'] ?? ''
+                        );
+                        $app_feature_description = (string) (
+                            $app_feature['breathe_app_feature_description'] ?? ''
+                        );
 
-                    <!-- Feature 3 -->
-                    <div class="py-5 flex items-start gap-4 md:gap-5">
-                        <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10 2.5V5.5M10 14.5V17.5M17.5 10H14.5M5.5 10H2.5M15 5L12.9 7.1M7.1 12.9L5 15M15 15L12.9 12.9M7.1 7.1L5 5"
-                                    stroke="#156E8A" stroke-width="1.3" stroke-linecap="round" />
-                                <path
-                                    d="M10 13C11.6569 13 13 11.6569 13 10C13 8.34315 11.6569 7 10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13Z"
-                                    stroke="#156E8A" stroke-width="1.3" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
-                                Schedules & Sleep Mode
-                            </h4>
-                            <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
-                                Automate quiet nights and active days. Your home breathes on
-                                its own rhythm.
-                            </p>
-                        </div>
-                    </div>
+                        if (!$app_feature_title && !$app_feature_description) {
+                            continue;
+                        }
+                        ?>
+                        <div class="py-5 flex items-start gap-4 md:gap-5">
+                            <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
+                                <?php if ('air_quality' === $app_feature_icon) : ?>
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
+                                            stroke="#156E8A" stroke-width="1.3" />
+                                        <path d="M10 6V10L12.6 11.6" stroke="#156E8A" stroke-width="1.3"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                <?php elseif ('remote_control' === $app_feature_icon) : ?>
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M14.5 2.5H5.5C4.39543 2.5 3.5 3.39543 3.5 4.5V15.5C3.5 16.6046 4.39543 17.5 5.5 17.5H14.5C15.6046 17.5 16.5 16.6046 16.5 15.5V4.5C16.5 3.39543 15.6046 2.5 14.5 2.5Z"
+                                            stroke="#156E8A" stroke-width="1.3" />
+                                        <path d="M8 14.5H12" stroke="#156E8A" stroke-width="1.3"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                <?php elseif ('schedules' === $app_feature_icon) : ?>
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M10 2.5V5.5M10 14.5V17.5M17.5 10H14.5M5.5 10H2.5M15 5L12.9 7.1M7.1 12.9L5 15M15 15L12.9 12.9M7.1 7.1L5 5"
+                                            stroke="#156E8A" stroke-width="1.3" stroke-linecap="round" />
+                                        <path
+                                            d="M10 13C11.6569 13 13 11.6569 13 10C13 8.34315 11.6569 7 10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13Z"
+                                            stroke="#156E8A" stroke-width="1.3" />
+                                    </svg>
+                                <?php elseif ('filter_care' === $app_feature_icon) : ?>
+                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path d="M10 2.5L4 5V9.2C4 12.9 6.5 16.3 10 17.5C13.5 16.3 16 12.9 16 9.2V5L10 2.5Z"
+                                            stroke="#156E8A" stroke-width="1.3" stroke-linejoin="round" />
+                                        <path d="M7.5 10L9.3 11.8L13 8" stroke="#156E8A" stroke-width="1.3"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                <?php endif; ?>
+                            </div>
 
-                    <!-- Feature 4 -->
-                    <div class="py-5 flex items-start gap-4 md:gap-5">
-                        <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 2.5L4 5V9.2C4 12.9 6.5 16.3 10 17.5C13.5 16.3 16 12.9 16 9.2V5L10 2.5Z"
-                                    stroke="#156E8A" stroke-width="1.3" stroke-linejoin="round" />
-                                <path d="M7.5 10L9.3 11.8L13 8" stroke="#156E8A" stroke-width="1.3"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
+                            <div>
+                                <?php if ($app_feature_title) : ?>
+                                    <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
+                                        <?php echo esc_html($app_feature_title); ?>
+                                    </h4>
+                                <?php endif; ?>
+
+                                <?php if ($app_feature_description) : ?>
+                                    <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
+                                        <?php echo esc_html($app_feature_description); ?>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
-                                Filter Care Reminders
-                            </h4>
-                            <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
-                                Know exactly when to replace a filter &mdash; and reorder
-                                genuine parts in a tap.
-                            </p>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
 
                 <!-- App Store Buttons -->
+                <?php
+                $breathe_app_button_class = 'flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]';
+
+                $breathe_app_apple_url = (string) (
+                    $breathe_app_apple_link['url'] ?? ''
+                );
+                $breathe_app_apple_title = (string) (
+                    $breathe_app_apple_link['title'] ?? 'App Store'
+                );
+                $breathe_app_apple_target = '_blank' === (
+                    $breathe_app_apple_link['target'] ?? ''
+                ) ? '_blank' : '';
+
+                $breathe_app_google_url = (string) (
+                    $breathe_app_google_link['url'] ?? ''
+                );
+                $breathe_app_google_title = (string) (
+                    $breathe_app_google_link['title'] ?? 'Google Play'
+                );
+                $breathe_app_google_target = '_blank' === (
+                    $breathe_app_google_link['target'] ?? ''
+                ) ? '_blank' : '';
+                ?>
                 <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-3 md:gap-4">
                     <!-- Apple App Store -->
-                    <a href="#"
-                        class="flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]">
+                    <?php if ($breathe_app_apple_url) : ?>
+                        <a
+                            href="<?php echo esc_url($breathe_app_apple_url); ?>"
+                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                            <?php if ($breathe_app_apple_target) : ?>
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            <?php endif; ?>>
+                    <?php else : ?>
+                        <span
+                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                            aria-disabled="true">
+                    <?php endif; ?>
                         <!-- fill="currentColor" allows the SVG to flip between white on mobile and dark on desktop -->
                         <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg">
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                             <path
                                 d="M15.6292 11.4953C15.6109 9.47859 17.2793 8.50693 17.3526 8.46109C16.4176 7.08609 14.9601 6.90276 14.4376 6.88443C13.2001 6.75609 12.0176 7.61776 11.3851 7.61776C10.7526 7.61776 9.79008 6.90276 8.76342 6.92109C7.41592 6.93943 6.16925 7.70943 5.47258 8.91943C4.07008 11.3578 5.11508 14.9694 6.48092 16.9494C7.15008 17.9211 7.94758 19.0119 8.99258 18.9753C10.0009 18.9386 10.3859 18.3244 11.6051 18.3244C12.8243 18.3244 13.1726 18.9753 14.2359 18.9569C15.3176 18.9386 16.0051 17.9669 16.6651 16.9861C17.4351 15.8586 17.7467 14.7678 17.7651 14.7128C17.7376 14.7036 15.6659 13.9061 15.6476 11.5136L15.6292 11.4953ZM13.6401 5.46359C14.1901 4.79443 14.5659 3.86859 14.4651 2.93359C13.6676 2.97026 12.6959 3.46526 12.1184 4.13443C11.6051 4.72109 11.1559 5.66526 11.2751 6.56359C12.1642 6.63693 13.0809 6.11443 13.6401 5.46359Z" />
                         </svg>
@@ -1343,16 +1565,33 @@ get_header();
                             <span
                                 class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Download
                                 on the</span>
-                            <span class="text-xs md:text-sm font-medium leading-none">App Store</span>
+                            <span class="text-xs md:text-sm font-medium leading-none">
+                                <?php echo esc_html($breathe_app_apple_title ?: 'App Store'); ?>
+                            </span>
                         </div>
-                    </a>
+                    <?php if ($breathe_app_apple_url) : ?>
+                        </a>
+                    <?php else : ?>
+                        </span>
+                    <?php endif; ?>
 
                     <!-- Google Play Store -->
-                    <a href="#"
-                        class="flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]">
+                    <?php if ($breathe_app_google_url) : ?>
+                        <a
+                            href="<?php echo esc_url($breathe_app_google_url); ?>"
+                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                            <?php if ($breathe_app_google_target) : ?>
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            <?php endif; ?>>
+                    <?php else : ?>
+                        <span
+                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                            aria-disabled="true">
+                    <?php endif; ?>
                         <!-- fill="currentColor" applied -->
                         <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg">
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                             <path
                                 d="M3.30042 2.20013C3.05292 2.4568 2.90625 2.86013 2.90625 3.37346V18.6268C2.90625 19.1401 3.05292 19.5435 3.30042 19.8001L3.35542 19.846L11.9171 11.0643V10.936L3.35542 2.1543L3.30042 2.20013ZM14.9421 14.0893L12.1004 11.2476V11.1193L14.9421 8.27763L15.0063 8.3143L18.3704 10.2301C19.3329 10.7801 19.3329 11.6693 18.3704 12.2193L15.0063 14.1351L14.9421 14.181V14.0893ZM14.6029 14.4285L11.6971 11.4585L3.30042 19.846C3.62125 20.1851 4.14375 20.2218 4.73958 19.8918L14.6029 14.4285ZM14.6029 8.48846L4.73958 3.02513C4.14375 2.69513 3.62125 2.7318 3.30042 3.07096L11.6971 11.4585L14.6029 8.48846Z" />
                         </svg>
@@ -1360,13 +1599,20 @@ get_header();
                             <span
                                 class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Get
                                 it on</span>
-                            <span class="text-xs md:text-sm font-medium leading-none">Google Play</span>
+                            <span class="text-xs md:text-sm font-medium leading-none">
+                                <?php echo esc_html($breathe_app_google_title ?: 'Google Play'); ?>
+                            </span>
                         </div>
-                    </a>
+                    <?php if ($breathe_app_google_url) : ?>
+                        </a>
+                    <?php else : ?>
+                        </span>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </section>
+    <?php endif; ?>
     <!-- ========================================== -->
     <!-- SECTION 10: SIDE-BY-SIDE COMPARISON        -->
     <!-- ========================================== -->
