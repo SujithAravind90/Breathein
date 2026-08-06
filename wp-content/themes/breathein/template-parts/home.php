@@ -1616,506 +1616,500 @@ get_header();
     <!-- ========================================== -->
     <!-- SECTION 10: SIDE-BY-SIDE COMPARISON        -->
     <!-- ========================================== -->
-    <section class="w-full bg-[#FAFCFD] py-10 md:py-20 px-6 md:px-16 lg:px-24">
-        <!-- Header Section (Responsive Alignment) -->
-        <div
-            class="max-w-3xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-            <!-- Eyebrow -->
-            <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                Side by Side
-            </span>
+    <?php
+    $comparison_page_id = (int) get_option('page_on_front');
 
-            <!-- Headline -->
-            <h2
-                class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
-                Find your perfect model.
-            </h2>
+    if (!$comparison_page_id) {
+        $comparison_page_id = get_queried_object_id();
+    }
 
-            <!-- Subtext -->
-            <p class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-xl mx-0 md:mx-auto">
-                Every home is different. Every Breathe In model is designed to match
-                yours precisely.
-            </p>
-        </div>
+    $comparison_eyebrow     = '';
+    $comparison_heading     = '';
+    $comparison_description = '';
+    $comparison_models      = [];
 
-        <!-- Comparison Table Wrapper -->
-        <!-- Added rounded corners, border, and horizontal scroll for mobile -->
-        <div class="max-w-6xl mx-auto scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100 pb-8">
+    if (function_exists('get_field')) {
+        $comparison_eyebrow = (string) get_field(
+            'comparison_eyebrow',
+            $comparison_page_id
+        );
+        $comparison_heading = (string) get_field(
+            'comparison_heading',
+            $comparison_page_id
+        );
+        $comparison_description = (string) get_field(
+            'comparison_description',
+            $comparison_page_id
+        );
+        $comparison_models = get_field(
+            'comparison_models',
+            $comparison_page_id
+        );
+    }
+
+    if (!is_array($comparison_models)) {
+        $comparison_models = [];
+    }
+
+    $comparison_models = array_values(
+        array_filter($comparison_models, 'is_array')
+    );
+    $comparison_models = array_slice($comparison_models, 0, 4);
+
+    $comparison_highlight_index = null;
+
+    foreach ($comparison_models as $model_index => $comparison_model) {
+        if (
+            null === $comparison_highlight_index
+            && !empty($comparison_model['comparison_highlighted'])
+        ) {
+            $comparison_highlight_index = $model_index;
+        }
+    }
+
+    $comparison_rows = [
+        [
+            'label' => 'Coverage Area',
+            'key'   => 'comparison_coverage_area',
+            'type'  => 'text',
+        ],
+        [
+            'label' => 'Ideal Space',
+            'key'   => 'comparison_ideal_space',
+            'type'  => 'text',
+        ],
+        [
+            'label' => 'Smart Features',
+            'key'   => 'comparison_smart_features',
+            'type'  => 'text',
+        ],
+        [
+            'label' => 'Filter Life',
+            'key'   => 'comparison_filter_life',
+            'type'  => 'text',
+        ],
+        [
+            'label' => 'Noise Level',
+            'key'   => 'comparison_noise_level',
+            'type'  => 'text',
+        ],
+        [
+            'label' => 'Warranty',
+            'key'   => 'comparison_warranty',
+            'type'  => 'text',
+        ],
+        [
+            'label' => 'HEPA H13',
+            'key'   => 'comparison_hepa_h13',
+            'type'  => 'boolean',
+        ],
+        [
+            'label' => 'Active Carbon',
+            'key'   => 'comparison_active_carbon',
+            'type'  => 'boolean',
+        ],
+        [
+            'label' => 'PM2.5 Sensor',
+            'key'   => 'comparison_pm25_sensor',
+            'type'  => 'boolean',
+        ],
+    ];
+
+    $comparison_has_content = function_exists('wc_get_product')
+        && 4 === count($comparison_models)
+        && (
+            $comparison_eyebrow
+            || $comparison_heading
+            || $comparison_description
+        );
+    ?>
+
+    <?php if ($comparison_has_content) : ?>
+        <section class="w-full bg-[#FAFCFD] py-10 md:py-20 px-6 md:px-16 lg:px-24">
+            <!-- Header Section (Responsive Alignment) -->
             <div
-                class="overflow-x-auto md:overflow-visible no-scrollbar rounded-xl border border-gray-200 bg-white shadow-sm relative">
-                <!-- CSS Grid for the Table -->
-                <!-- Mobile: Fixed 120px first column, auto-sizing for the rest. Desktop: 5 equal columns -->
+                class="max-w-3xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                <?php if ($comparison_eyebrow) : ?>
+                    <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
+                        <?php echo esc_html($comparison_eyebrow); ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ($comparison_heading) : ?>
+                    <h2
+                        class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
+                        <?php echo esc_html($comparison_heading); ?>
+                    </h2>
+                <?php endif; ?>
+
+                <?php if ($comparison_description) : ?>
+                    <p class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-xl mx-0 md:mx-auto">
+                        <?php echo esc_html($comparison_description); ?>
+                    </p>
+                <?php endif; ?>
+            </div>
+
+            <!-- Comparison Table Wrapper -->
+            <div class="max-w-6xl mx-auto scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100 pb-8">
                 <div
-                    class="grid grid-cols-[120px_repeat(4,minmax(140px,1fr))] md:grid-cols-5 min-w-[700px] md:min-w-full">
-                    <!-- ================= ROW 1: HEADERS ================= -->
-
-                    <!-- Col 1: Label Space (Sticky on mobile) -->
+                    class="overflow-x-auto md:overflow-visible no-scrollbar rounded-xl border border-gray-200 bg-white shadow-sm relative"
+                    aria-label="<?php esc_attr_e('Product comparison', 'breathein'); ?>">
+                    <!-- The four-model ACF limit preserves this responsive grid contract. -->
                     <div
-                        class="p-5 md:p-8 sticky left-0 bg-white z-20 flex items-end text-[11px] uppercase tracking-[0.2em] text-gray-400 font-bold border-b border-gray-100">
-                        Feature
-                    </div>
-
-                    <!-- Col 2: Air Pro -->
-                    <div
-                        class="p-5 md:p-8 flex flex-col items-center justify-center text-center border-b border-gray-100">
-                        <h3 class="text-base md:text-xl font-medium md:font-normal text-gray-900 mb-1 md:mb-2">
-                            Air Pro
-                        </h3>
-                        <span class="text-[11px] md:text-sm text-gray-400 md:text-[#156E8A] font-light">From
-                            ₹24,990</span>
-                    </div>
-
-                    <!-- Col 3: Air Pro 1 (HIGHLIGHTED COLUMN) -->
-                    <div
-                        class="p-5 md:p-8 flex flex-col items-center justify-center text-center bg-[#EDF3F6] relative border-b border-gray-100">
-                        <!-- Badge -->
+                        class="grid grid-cols-[120px_repeat(4,minmax(140px,1fr))] md:grid-cols-5 min-w-[700px] md:min-w-full">
                         <div
-                            class="absolute top-0 right-0 md:-top-3 md:left-1/2 md:-translate-x-1/2 bg-[#156E8A] text-white text-[7px] md:text-[8px] uppercase tracking-widest font-bold px-3 py-1.5 md:whitespace-nowrap z-10 rounded-bl-md md:rounded-none">
-                            Most Chosen
+                            class="p-5 md:p-8 sticky left-0 bg-white z-20 flex items-end text-[11px] uppercase tracking-[0.2em] text-gray-400 font-bold border-b border-gray-100">
+                            <?php esc_html_e('Feature', 'breathein'); ?>
                         </div>
-                        <h3
-                            class="text-base md:text-xl font-medium md:font-normal text-gray-900 mb-1 md:mb-2 mt-4 md:mt-0">
-                            Air Pro 1
-                        </h3>
-                        <span class="text-[11px] md:text-sm text-gray-400 md:text-[#156E8A] font-light">From
-                            ₹44,990</span>
-                    </div>
 
-                    <!-- Col 4: Air Pro 2 -->
-                    <div
-                        class="p-5 md:p-8 flex flex-col items-center justify-center text-center border-b border-gray-100">
-                        <h3 class="text-base md:text-xl font-medium md:font-normal text-gray-900 mb-1 md:mb-2">
-                            Air Pro 2
-                        </h3>
-                        <span class="text-[11px] md:text-sm text-gray-400 md:text-[#156E8A] font-light">From
-                            ₹74,990</span>
-                    </div>
+                        <?php foreach ($comparison_models as $model_index => $comparison_model) : ?>
+                            <?php
+                            $product_value = $comparison_model['comparison_product'] ?? 0;
+                            $product_id = is_object($product_value)
+                                ? (int) $product_value->ID
+                                : absint($product_value);
+                            $comparison_product = $product_id
+                                ? wc_get_product($product_id)
+                                : false;
+                            $is_highlighted = $model_index === $comparison_highlight_index;
+                            $comparison_badge = (string) (
+                                $comparison_model['comparison_badge'] ?? ''
+                            );
 
-                    <!-- Col 5: Air Pro Max -->
-                    <div
-                        class="p-5 md:p-8 flex flex-col items-center justify-center text-center border-b border-gray-100">
-                        <h3 class="text-base md:text-xl font-medium md:font-normal text-gray-900 mb-1 md:mb-2">
-                            Air Pro Max
-                        </h3>
-                        <span class="text-[11px] md:text-sm text-gray-400 md:text-[#156E8A] font-light">From
-                            ₹1,24,990</span>
-                    </div>
+                            $header_class = 'p-5 md:p-8 flex flex-col items-center justify-center text-center border-b border-gray-100';
+                            $title_class = 'text-base md:text-xl font-medium md:font-normal text-gray-900 mb-1 md:mb-2';
 
-                    <!-- ================= ROW 2: COVERAGE AREA ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Coverage Area
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Up to 400 sq ft
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 bg-[#EDF3F6] text-right md:text-center">
-                        Up to 650 sq ft
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Up to 900 sq ft
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Up to 1,200 sq ft
-                    </div>
+                            if ($is_highlighted) {
+                                $header_class .= ' bg-[#EDF3F6] relative';
+                                $title_class .= ' mt-4 md:mt-0';
+                            }
+                            ?>
+                            <div class="<?php echo esc_attr($header_class); ?>">
+                                <?php if ($is_highlighted && $comparison_badge) : ?>
+                                    <div
+                                        class="absolute top-0 right-0 md:-top-3 md:left-1/2 md:-translate-x-1/2 bg-[#156E8A] text-white text-[7px] md:text-[8px] uppercase tracking-widest font-bold px-3 py-1.5 md:whitespace-nowrap z-10 rounded-bl-md md:rounded-none">
+                                        <?php echo esc_html($comparison_badge); ?>
+                                    </div>
+                                <?php endif; ?>
 
-                    <!-- ================= ROW 3: IDEAL SPACE ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Ideal Space
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Studio / Bedroom
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 bg-[#EDF3F6] text-right md:text-center">
-                        Living Room
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Open Plan Living
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Entire Floor
-                    </div>
+                                <?php if ($comparison_product) : ?>
+                                    <h3 class="<?php echo esc_attr($title_class); ?>">
+                                        <?php echo esc_html($comparison_product->get_name()); ?>
+                                    </h3>
 
-                    <!-- ================= ROW 4: SMART FEATURES ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Smart Features
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Air Quality Display
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 bg-[#EDF3F6] text-right md:text-center">
-                        App + Voice Control
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Full Smart Home
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        Professional Suite
-                    </div>
+                                    <?php if ($comparison_product->get_price_html()) : ?>
+                                        <span class="text-[11px] md:text-sm text-gray-400 md:text-[#156E8A] font-light">
+                                            <?php esc_html_e('From', 'breathein'); ?>
+                                            <?php echo wp_kses_post($comparison_product->get_price_html()); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
 
-                    <!-- ================= ROW 5: FILTER LIFE ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Filter Life
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        8 months
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 bg-[#EDF3F6] text-right md:text-center">
-                        10 months
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        12 months
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        12 months
-                    </div>
+                        <?php foreach ($comparison_rows as $row_index => $comparison_row) : ?>
+                            <?php
+                            $is_last_row = $row_index === count($comparison_rows) - 1;
+                            $row_border = $is_last_row
+                                ? ''
+                                : 'border-b border-gray-100 ';
+                            ?>
+                            <div
+                                class="<?php echo esc_attr(
+                                    $row_border
+                                    . 'p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none'
+                                ); ?>">
+                                <?php echo esc_html($comparison_row['label']); ?>
+                            </div>
 
-                    <!-- ================= ROW 6: NOISE LEVEL ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Noise Level
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        22 &ndash; 45 dB
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 bg-[#EDF3F6] text-right md:text-center">
-                        20 &ndash; 42 dB
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        18 &ndash; 40 dB
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        18 &ndash; 38 dB
-                    </div>
+                            <?php foreach ($comparison_models as $model_index => $comparison_model) : ?>
+                                <?php
+                                $is_highlighted = $model_index === $comparison_highlight_index;
+                                $comparison_value = $comparison_model[$comparison_row['key']]
+                                    ?? '';
+                                ?>
 
-                    <!-- ================= ROW 7: WARRANTY ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Warranty
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        1 Year
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 bg-[#EDF3F6] text-right md:text-center">
-                        2 Years
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        2 Years
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 text-center">
-                        3 Years
-                    </div>
+                                <?php if ('boolean' === $comparison_row['type']) : ?>
+                                    <?php
+                                    $boolean_class = $row_border
+                                        . 'p-4 md:p-6 flex items-center justify-center';
 
-                    <!-- ================= ROW 8: HEPA H13 (Booleans) ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        HEPA H13
-                    </div>
-                    <div class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A] bg-[#EDF3F6]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
+                                    if ($is_highlighted) {
+                                        $boolean_class .= ' bg-[#EDF3F6]';
+                                    }
 
-                    <!-- ================= ROW 9: ACTIVE CARBON ================= -->
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        Active Carbon
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-gray-300 font-light">
-                        &mdash;
-                    </div>
-                    <div
-                        class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A] bg-[#EDF3F6]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="border-b border-gray-100 p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
+                                    $boolean_class .= $comparison_value
+                                        ? ' text-[#156E8A]'
+                                        : ' text-gray-300 font-light';
+                                    ?>
+                                    <div class="<?php echo esc_attr($boolean_class); ?>">
+                                        <?php if ($comparison_value) : ?>
+                                            <svg
+                                                class="w-4 h-4 md:w-5 md:h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                                aria-hidden="true"
+                                                focusable="false">
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M5 13l4 4L19 7">
+                                                </path>
+                                            </svg>
+                                            <span class="sr-only">
+                                                <?php esc_html_e('Yes', 'breathein'); ?>
+                                            </span>
+                                        <?php else : ?>
+                                            <span aria-hidden="true">&mdash;</span>
+                                            <span class="sr-only">
+                                                <?php esc_html_e('No', 'breathein'); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php else : ?>
+                                    <?php
+                                    $value_class = $row_border
+                                        . 'p-4 md:p-6 flex items-center justify-center text-[13px] md:text-sm font-light text-gray-600 ';
 
-                    <!-- ================= ROW 10: PM2.5 SENSOR ================= -->
-                    <div
-                        class="p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">
-                        PM2.5 Sensor
-                    </div>
-                    <div class="p-4 md:p-6 flex items-center justify-center text-gray-300 font-light">
-                        &mdash;
-                    </div>
-                    <div class="p-4 md:p-6 flex items-center justify-center text-[#156E8A] bg-[#EDF3F6]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="p-4 md:p-6 flex items-center justify-center text-[#156E8A]">
-                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
+                                    $value_class .= $is_highlighted
+                                        ? 'bg-[#EDF3F6] text-right md:text-center'
+                                        : 'text-center';
+                                    ?>
+                                    <div class="<?php echo esc_attr($value_class); ?>">
+                                        <?php echo esc_html((string) $comparison_value); ?>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    <?php endif; ?>
     <!-- ========================================== -->
     <!-- SECTION 11: CASE STUDIES (Zig-Zag Grid)    -->
     <!-- ========================================== -->
-    <section class="w-full bg-[#FAFCFD] py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
-        <!-- Header Section (Responsive Alignment) -->
-        <div
-            class="max-w-3xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-20 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-            <!-- Eyebrow -->
-            <span
-                class="text-[11px] md:text-[12px] uppercase tracking-[0.25em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                As Lived In
-            </span>
+    <?php
+    $case_studies_page_id = (int) get_option('page_on_front');
 
-            <!-- Headline -->
-            <h2
-                class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
-                Homes that breathe differently.
-            </h2>
+    if (!$case_studies_page_id) {
+        $case_studies_page_id = get_queried_object_id();
+    }
 
-            <!-- Subtext -->
-            <p
-                class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-xl mx-0 md:mx-auto pr-4 md:pr-0">
-                Real installations. Real results. Measured improvements in the homes
-                of those who chose to live better.
-            </p>
-        </div>
+    $case_studies_eyebrow     = '';
+    $case_studies_heading     = '';
+    $case_studies_description = '';
+    $case_studies             = [];
 
-        <!-- Carousel/Checkerboard Wrapper -->
-        <!-- Mobile: Transparent wrapper for Swiper. Desktop: White box with shadow for the whole grid -->
-        <div
-            class="max-w-6xl mx-auto bg-transparent md:bg-white md:border md:border-gray-100 md:shadow-[0_4px_30px_rgb(0,0,0,0.03)] relative">
-            <!-- Swiper Container -->
-            <div class="swiper caseStudiesSwiper pb-12 md:pb-0 overflow-visible md:overflow-hidden w-full">
-                <!-- Swiper Wrapper overrides Swiper's horizontal flex on desktop -->
-                <div class="swiper-wrapper md:!flex md:!flex-col md:!transform-none md:!w-full md:!h-auto">
-                    <!-- ================= SLIDE / ROW 1 ================= -->
-                    <div class="swiper-slide h-auto md:!h-auto">
-                        <!-- Card Styling on Mobile, Grid Row on Desktop -->
-                        <div
-                            class="grid grid-cols-1 md:grid-cols-2 h-full bg-white border border-gray-200 md:border-0 rounded-xl md:rounded-none overflow-hidden">
-                            <!-- Image (Always top on mobile, left on desktop) -->
-                            <div class="relative w-full h-[240px] sm:h-[300px] md:h-auto md:min-h-[400px] order-1">
-                                <img src="./assets/images/case-study-1.png" alt="South Mumbai Penthouse"
-                                    class="absolute inset-0 w-full h-full object-cover" />
-                            </div>
+    if (function_exists('get_field')) {
+        $case_studies_eyebrow = (string) get_field(
+            'case_studies_eyebrow',
+            $case_studies_page_id
+        );
+        $case_studies_heading = (string) get_field(
+            'case_studies_heading',
+            $case_studies_page_id
+        );
+        $case_studies_description = (string) get_field(
+            'case_studies_description',
+            $case_studies_page_id
+        );
+        $case_studies = get_field(
+            'case_studies',
+            $case_studies_page_id
+        );
+    }
 
-                            <!-- Text Content -->
-                            <div class="p-6 md:p-16 flex flex-col justify-center order-2">
-                                <span
-                                    class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                                    South Mumbai Penthouse
-                                </span>
+    if (!is_array($case_studies)) {
+        $case_studies = [];
+    }
 
-                                <h3
-                                    class="text-[17px] md:text-xl lg:text-[25px] font-medium md:font-light text-gray-900 leading-snug mb-4 md:mb-6">
-                                    "I didn't realise how much better sleep could feel until
-                                    my daughter stopped waking up with a blocked nose every
-                                    morning."
-                                </h3>
+    $case_studies = array_values(array_filter($case_studies, 'is_array'));
 
-                                <p
-                                    class="text-[11px] md:text-[12px] text-gray-400 font-light mb-8 md:mb-10 lg:uppercase tracking-wide">
-                                    Priya Mehta, Homeowner &mdash; 3,420 sq ft residence, Air
-                                    Pro Max model
-                                </p>
+    $case_studies_has_content = $case_studies
+        && (
+            $case_studies_eyebrow
+            || $case_studies_heading
+            || $case_studies_description
+        );
+    ?>
 
-                                <!-- Stats Grid -->
-                                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                                    <div
-                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
-                                        <span
-                                            class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">PM2.5
-                                            Reduction</span>
-                                        <span class="text-xl md:text-2xl font-normal text-gray-900">94%</span>
-                                    </div>
-                                    <div
-                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
-                                        <span
-                                            class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">Sleep
-                                            Quality Score</span>
-                                        <span class="text-xl md:text-2xl font-normal text-gray-900">+38%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <?php if ($case_studies_has_content) : ?>
+        <section class="w-full bg-[#FAFCFD] py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
+            <!-- Header Section (Responsive Alignment) -->
+            <div
+                class="max-w-3xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-20 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                <?php if ($case_studies_eyebrow) : ?>
+                    <span
+                        class="text-[11px] md:text-[12px] uppercase tracking-[0.25em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
+                        <?php echo esc_html($case_studies_eyebrow); ?>
+                    </span>
+                <?php endif; ?>
 
-                    <!-- ================= SLIDE / ROW 2 ================= -->
-                    <div class="swiper-slide h-auto md:!h-auto">
-                        <div
-                            class="grid grid-cols-1 md:grid-cols-2 h-full bg-white border border-gray-200 md:border-0 md:border-t border-gray-100 rounded-xl md:rounded-none overflow-hidden">
-                            <!-- Image (Top on mobile, Right on desktop) -->
-                            <!-- order-1 on mobile, md:order-2 shifts it to the right on desktop -->
-                            <div
-                                class="relative w-full h-[240px] sm:h-[300px] md:h-auto md:min-h-[400px] order-1 md:order-2">
-                                <img src="./assets/images/case-study-2.png" alt="Whitefield Villa"
-                                    class="absolute inset-0 w-full h-full object-cover" />
-                            </div>
+                <?php if ($case_studies_heading) : ?>
+                    <h2
+                        class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
+                        <?php echo esc_html($case_studies_heading); ?>
+                    </h2>
+                <?php endif; ?>
 
-                            <!-- Text Content (Bottom on mobile, Left on desktop) -->
-                            <div class="p-6 md:p-16 flex flex-col justify-center order-2 md:order-1">
-                                <span
-                                    class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                                    Whitefield Villa, Bengaluru
-                                </span>
-
-                                <h3
-                                    class="text-[17px] md:text-xl lg:text-[25px] font-medium md:font-light text-gray-900 leading-snug mb-4 md:mb-6">
-                                    "As a cardiologist, I was already aware of what indoor
-                                    pollution does. Now my home reflects those values."
-                                </h3>
-
-                                <p
-                                    class="text-[11px] md:text-[12px] text-gray-400 font-light mb-8 md:mb-10 lg:uppercase tracking-wide">
-                                    Dr. Ananya Krishnan &mdash; 5,000 sq ft villa, 2&times;
-                                    Air Pro 2 models
-                                </p>
-
-                                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                                    <div
-                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
-                                        <span
-                                            class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">VOC
-                                            Removal</span>
-                                        <span class="text-xl md:text-2xl font-normal text-gray-900">99%</span>
-                                    </div>
-                                    <div
-                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
-                                        <span
-                                            class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">Allergy
-                                            Incidents</span>
-                                        <span class="text-xl md:text-2xl font-normal text-gray-900">&minus;81%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ================= SLIDE / ROW 3 ================= -->
-                    <div class="swiper-slide h-auto md:!h-auto">
-                        <div
-                            class="grid grid-cols-1 md:grid-cols-2 h-full bg-white border border-gray-200 md:border-0 md:border-t border-gray-100 rounded-xl md:rounded-none overflow-hidden">
-                            <!-- Image (Always top on mobile, left on desktop) -->
-                            <div class="relative w-full h-[240px] sm:h-[300px] md:h-auto md:min-h-[400px] order-1">
-                                <img src="./assets/images/case-study-3.png" alt="Aerocity Residence"
-                                    class="absolute inset-0 w-full h-full object-cover" />
-                            </div>
-
-                            <!-- Text Content -->
-                            <div class="p-6 md:p-16 flex flex-col justify-center order-2">
-                                <span
-                                    class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                                    Aerocity Residence, New Delhi
-                                </span>
-
-                                <h3
-                                    class="text-[17px] md:text-xl lg:text-[25px] font-medium md:font-light text-gray-900 leading-snug mb-4 md:mb-6">
-                                    "Our senior team noticed the difference within two days.
-                                    The air feels lighter. Focus is tangibly sharper."
-                                </h3>
-
-                                <p
-                                    class="text-[11px] md:text-[12px] text-gray-400 font-light mb-8 md:mb-10 lg:uppercase tracking-wide">
-                                    Vikram Anand, Facilities Director &mdash; 8,000 sq ft
-                                    workspace, Air Pro 1 models
-                                </p>
-
-                                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                                    <div
-                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
-                                        <span
-                                            class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">Dust
-                                            Reduction</span>
-                                        <span class="text-xl md:text-2xl font-normal text-gray-900">97%</span>
-                                    </div>
-                                    <div
-                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
-                                        <span
-                                            class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">Team
-                                            Focus Rating</span>
-                                        <span class="text-xl md:text-2xl font-normal text-gray-900">+29%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Swiper Pagination (Mobile Only) -->
-                <div class="swiper-pagination md:hidden !bottom-0"></div>
+                <?php if ($case_studies_description) : ?>
+                    <p
+                        class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-xl mx-0 md:mx-auto pr-4 md:pr-0">
+                        <?php echo esc_html($case_studies_description); ?>
+                    </p>
+                <?php endif; ?>
             </div>
-        </div>
-    </section>
+
+            <!-- Mobile carousel / desktop checkerboard -->
+            <div
+                class="max-w-6xl mx-auto bg-transparent md:bg-white md:border md:border-gray-100 md:shadow-[0_4px_30px_rgb(0,0,0,0.03)] relative">
+                <div class="swiper caseStudiesSwiper pb-12 md:pb-0 overflow-visible md:overflow-hidden w-full">
+                    <div class="swiper-wrapper md:!flex md:!flex-col md:!transform-none md:!w-full md:!h-auto">
+                        <?php foreach ($case_studies as $case_index => $case_study) : ?>
+                            <?php
+                            $image_value = $case_study['case_study_image'] ?? 0;
+                            $image_id = is_array($image_value)
+                                ? absint($image_value['ID'] ?? $image_value['id'] ?? 0)
+                                : absint($image_value);
+                            $location = (string) (
+                                $case_study['case_study_location'] ?? ''
+                            );
+                            $quote = (string) (
+                                $case_study['case_study_quote'] ?? ''
+                            );
+                            $customer_name = (string) (
+                                $case_study['case_study_customer_name'] ?? ''
+                            );
+                            $customer_role = (string) (
+                                $case_study['case_study_customer_role'] ?? ''
+                            );
+                            $installation_details = (string) (
+                                $case_study['case_study_installation_details'] ?? ''
+                            );
+                            $results = $case_study['case_study_results'] ?? [];
+
+                            if (!is_array($results)) {
+                                $results = [];
+                            }
+
+                            $results = array_slice(
+                                array_values(array_filter($results, 'is_array')),
+                                0,
+                                2
+                            );
+
+                            $is_reversed = 1 === ($case_index % 2);
+                            $card_class = 'grid grid-cols-1 md:grid-cols-2 h-full bg-white border border-gray-200 md:border-0 rounded-xl md:rounded-none overflow-hidden';
+
+                            if ($case_index > 0) {
+                                $card_class .= ' md:border-t border-gray-100';
+                            }
+
+                            $image_class = 'relative w-full h-[240px] sm:h-[300px] md:h-auto md:min-h-[400px] order-1';
+                            $content_class = 'p-6 md:p-16 flex flex-col justify-center order-2';
+
+                            if ($is_reversed) {
+                                $image_class .= ' md:order-2';
+                                $content_class .= ' md:order-1';
+                            }
+                            ?>
+                            <div class="swiper-slide h-auto md:!h-auto md:!w-full">
+                                <article class="<?php echo esc_attr($card_class); ?>">
+                                    <div class="<?php echo esc_attr($image_class); ?>">
+                                        <?php if ($image_id) : ?>
+                                            <?php
+                                            echo wp_get_attachment_image(
+                                                $image_id,
+                                                'large',
+                                                false,
+                                                [
+                                                    'class'    => 'absolute inset-0 w-full h-full object-cover',
+                                                    'loading'  => 'lazy',
+                                                    'decoding' => 'async',
+                                                    'sizes'    => '(min-width: 768px) 50vw, 100vw',
+                                                ]
+                                            );
+                                            ?>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <div class="<?php echo esc_attr($content_class); ?>">
+                                        <?php if ($location) : ?>
+                                            <span
+                                                class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
+                                                <?php echo esc_html($location); ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if ($quote) : ?>
+                                            <blockquote
+                                                class="m-0 text-[17px] md:text-xl lg:text-[25px] font-medium md:font-light text-gray-900 leading-snug mb-4 md:mb-6">
+                                                &ldquo;<?php echo esc_html($quote); ?>&rdquo;
+                                            </blockquote>
+                                        <?php endif; ?>
+
+                                        <?php if (
+                                            $customer_name
+                                            || $customer_role
+                                            || $installation_details
+                                        ) : ?>
+                                            <p
+                                                class="text-[11px] md:text-[12px] text-gray-400 font-light mb-8 md:mb-10 lg:uppercase tracking-wide">
+                                                <?php echo esc_html($customer_name); ?>
+                                                <?php if ($customer_role) : ?>
+                                                    <?php echo esc_html(', ' . $customer_role); ?>
+                                                <?php endif; ?>
+                                                <?php if ($installation_details) : ?>
+                                                    &mdash;
+                                                    <?php echo esc_html($installation_details); ?>
+                                                <?php endif; ?>
+                                            </p>
+                                        <?php endif; ?>
+
+                                        <?php if ($results) : ?>
+                                            <div class="grid grid-cols-2 gap-3 md:gap-4">
+                                                <?php foreach ($results as $result) : ?>
+                                                    <?php
+                                                    $result_label = (string) (
+                                                        $result['case_study_result_label'] ?? ''
+                                                    );
+                                                    $result_value = (string) (
+                                                        $result['case_study_result_value'] ?? ''
+                                                    );
+                                                    ?>
+                                                    <div
+                                                        class="bg-[#F8FAFC] border-l-[2px] border-[#156E8A] p-4 flex flex-col justify-center">
+                                                        <?php if ($result_label) : ?>
+                                                            <span
+                                                                class="text-[7px] md:text-[8px] uppercase tracking-[0.15em] text-gray-400 font-bold mb-1">
+                                                                <?php echo esc_html($result_label); ?>
+                                                            </span>
+                                                        <?php endif; ?>
+
+                                                        <?php if ($result_value) : ?>
+                                                            <span class="text-xl md:text-2xl font-normal text-gray-900">
+                                                                <?php echo esc_html($result_value); ?>
+                                                            </span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </article>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Swiper Pagination (Mobile Only) -->
+                    <div class="swiper-pagination md:hidden !bottom-0"></div>
+                </div>
+            </div>
+        </section>
+    <?php endif; ?>
 
     <!-- ========================================== -->
     <!-- SECTION 12: TRUST & CERTIFICATIONS         -->
