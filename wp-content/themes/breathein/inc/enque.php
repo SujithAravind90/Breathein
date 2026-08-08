@@ -118,6 +118,67 @@ function breathein_enqueue_assets(): void
             ]
         );
     }
+
+    if (function_exists('is_cart') && is_cart()) {
+        $cart_style_path = $theme_path . '/assets/css/cart.css';
+
+        if (file_exists($cart_style_path)) {
+            wp_enqueue_style(
+                'breathein-cart-style',
+                $theme_uri . '/assets/css/cart.css',
+                ['breathein-tailwind-style'],
+                filemtime($cart_style_path)
+            );
+        }
+
+        $cart_script_path = $theme_path . '/assets/js/cart.js';
+
+        if (file_exists($cart_script_path)) {
+            wp_enqueue_script(
+                'breathein-cart-script',
+                $theme_uri . '/assets/js/cart.js',
+                ['jquery', 'wc-cart'],
+                filemtime($cart_script_path),
+                [
+                    'strategy'  => 'defer',
+                    'in_footer' => true,
+                ]
+            );
+        }
+    }
+
+    if (function_exists('is_checkout') && is_checkout()) {
+        $checkout_style_path = $theme_path . '/assets/css/checkout.css';
+
+        if (file_exists($checkout_style_path)) {
+            wp_enqueue_style(
+                'breathein-checkout-style',
+                $theme_uri . '/assets/css/checkout.css',
+                ['breathein-tailwind-style'],
+                filemtime($checkout_style_path)
+            );
+        }
+
+        $is_order_received = function_exists('is_order_received_page')
+            && is_order_received_page();
+        $checkout_script_path = $theme_path . '/assets/js/checkout.js';
+
+        if (
+            !$is_order_received
+            && file_exists($checkout_script_path)
+        ) {
+            wp_enqueue_script(
+                'breathein-checkout-script',
+                $theme_uri . '/assets/js/checkout.js',
+                ['jquery', 'wc-checkout'],
+                filemtime($checkout_script_path),
+                [
+                    'strategy'  => 'defer',
+                    'in_footer' => true,
+                ]
+            );
+        }
+    }
 }
 
 add_action('wp_enqueue_scripts', 'breathein_enqueue_assets');

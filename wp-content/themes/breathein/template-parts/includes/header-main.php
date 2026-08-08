@@ -454,13 +454,31 @@ $aqi_locations = [
 
         <div
             class="flex shrink-0 items-center gap-3 md:gap-5">
-            <?php 
-            $cart = get_field('cart', 'option');
+            <?php
+            $cart_link = function_exists('get_field')
+                ? get_field('cart', 'option')
+                : [];
+            $cart_link_url = is_array($cart_link)
+                ? (string) ($cart_link['url'] ?? '')
+                : '';
+            $cart_link_target = is_array($cart_link)
+                && '_blank' === ($cart_link['target'] ?? '')
+                ? '_blank'
+                : '_self';
+
+            if ($cart_link_url === '' || $cart_link_url === '#') {
+                $cart_link_url = $cart_url;
+                $cart_link_target = '_self';
+            }
             ?>
             <!-- WooCommerce Cart -->
             <a
                 id="cartBtn"
-                href="<?php echo $cart['url']; ?>" target="<?php echo $cart['target']; ?>"
+                href="<?php echo esc_url($cart_link_url); ?>"
+                target="<?php echo esc_attr($cart_link_target); ?>"
+                <?php if ('_blank' === $cart_link_target) : ?>
+                    rel="noopener noreferrer"
+                <?php endif; ?>
                 class="relative flex items-center justify-center p-1.5 text-gray-900 transition-colors hover:text-brandTeal"
                 aria-label="<?php esc_attr_e('View shopping cart', 'breathein'); ?>">
                 <svg

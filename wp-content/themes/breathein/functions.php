@@ -28,6 +28,9 @@ add_action('after_setup_theme', 'breathein_setup');
 require_once get_template_directory() . '/inc/setup.php';
 require_once get_template_directory() . '/inc/enque.php';
 require_once get_template_directory() . '/inc/product-matcher.php';
+require_once get_template_directory() . '/inc/cart.php';
+require_once get_template_directory() . '/inc/payment-gateways.php';
+require_once get_template_directory() . '/inc/order-admin.php';
 
 /**
  * Register ACF Theme Settings page.
