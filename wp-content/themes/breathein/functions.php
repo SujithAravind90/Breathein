@@ -54,6 +54,7 @@ require_once get_template_directory() . '/inc/payment-gateways.php';
 require_once get_template_directory() . '/inc/order-admin.php';
 require_once get_template_directory() . '/inc/collection.php';
 require_once get_template_directory() . '/inc/product-detail.php';
+require_once get_template_directory() . '/inc/book-a-demo.php';
 
 /**
  * Register ACF Theme Settings page.
