@@ -27,9 +27,10 @@ if ($custom_logo_id) {
     $logo_alt = get_bloginfo('name');
 }
 
-$shop_url = function_exists('wc_get_page_permalink')
-    ? wc_get_page_permalink('shop')
-    : home_url('/shop/');
+$collection_page = get_page_by_path('collection');
+$shop_url = $collection_page instanceof WP_Post
+    ? get_permalink($collection_page)
+    : home_url('/collection/');
 
 $brochure_url = apply_filters(
     'breathein_brochure_url',
