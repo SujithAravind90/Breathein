@@ -1,0 +1,65 @@
+.column-breathein_payment_method {
+  width: 150px;
+}
+
+.breathein-payment-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+}
+
+.breathein-payment-badge--cod {
+  border-color: #dba617;
+  background: #fff7d6;
+  color: #684700;
+}
+
+.breathein-payment-state {
+  display: block;
+  margin-top: 4px;
+  color: #646970;
+  font-size: 11px;
+}
+
+.breathein-payment-state--due {
+  color: #8a5a00;
+  font-weight: 600;
+}
+
+.breathein-payment-state--paid {
+  color: #18794e;
+}
+
+.breathein-cod-order-notice {
+  margin-top: 14px;
+  border-left: 4px solid #dba617;
+  background: #fff8dd;
+  padding: 10px 12px;
+  color: #3c434a;
+}
+
+.breathein-cod-order-notice strong,
+.breathein-cod-order-notice span {
+  display: block;
+}
+
+.breathein-cod-order-notice strong {
+  margin-bottom: 3px;
+  color: #684700;
+}
+
+.breathein-cod-order-notice--paid {
+  border-left-color: #18794e;
+  background: #edf9f2;
+}
+
+.breathein-cod-order-notice--terminal {
+  border-left-color: #8c8f94;
+  background: #f6f7f7;
+}

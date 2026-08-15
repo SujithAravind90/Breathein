@@ -1,0 +1,4 @@
+2026-08-14T13:00:21+00:00 INFO Email "new_order" for order #565 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"admin","order":565}
+2026-08-14T13:00:30+00:00 INFO Email "customer_on_hold_order" for order #565 sent CONTEXT: {"email_type":"customer_on_hold_order","status":"sent","recipient":"sujitharavind90.gmail.com","order":565}
+2026-08-14T13:17:51+00:00 INFO Email "customer_processing_order" for order #565 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"sujitharavind90.gmail.com","order":565}
+2026-08-14T13:20:49+00:00 INFO Email "customer_verify_email" for user #3 sent CONTEXT: {"email_type":"customer_verify_email","status":"sent","recipient":"sujitharavind90.gmail.com","user":3}

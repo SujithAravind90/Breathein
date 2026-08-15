@@ -1,0 +1,90 @@
+services:
+  wordpress:
+    image: wordpress:php8.2-apache
+    container_name: breathein_wordpress
+    restart: unless-stopped
+
+    ports:
+      - "8080:80"
+
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_NAME: breathein_db
+      WORDPRESS_DB_USER: breathein_user
+      WORDPRESS_DB_PASSWORD: breathein_password
+
+      WORDPRESS_DEBUG: 1
+
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content:/var/www/html/wp-content
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - breathein_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: breathein_mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_DATABASE: breathein_db
+      MYSQL_USER: breathein_user
+      MYSQL_PASSWORD: breathein_password
+      MYSQL_ROOT_PASSWORD: breathein_root_password
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-pbreathein_root_password"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - breathein_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: breathein_phpmyadmin
+    restart: unless-stopped
+
+    ports:
+      - "8081:80"
+
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: breathein_root_password
+      UPLOAD_LIMIT: 128M
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - breathein_network
+
+volumes:
+  wordpress_data:
+  mysql_data:
+
+networks:
+  breathein_network:
+    driver: bridge

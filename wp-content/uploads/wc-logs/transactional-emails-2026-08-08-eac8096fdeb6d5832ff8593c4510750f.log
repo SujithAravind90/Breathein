@@ -1,0 +1,6 @@
+2026-08-08T18:11:02+00:00 INFO Email "admin_payment_gateway_enabled" sent CONTEXT: {"email_type":"admin_payment_gateway_enabled","status":"sent","recipient":"admin","WC_Razorpay":null}
+2026-08-08T18:25:41+00:00 INFO Email "admin_payment_gateway_enabled" sent CONTEXT: {"email_type":"admin_payment_gateway_enabled","status":"sent","recipient":"admin","WC_Razorpay":null}
+2026-08-08T18:33:25+00:00 INFO Email "new_order" for order #251 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"admin","order":251}
+2026-08-08T18:33:31+00:00 INFO Email "customer_processing_order" for order #251 sent CONTEXT: {"email_type":"customer_processing_order","status":"sent","recipient":"guest","order":251}
+2026-08-08T19:11:46+00:00 INFO Email "new_order" for order #252 sent CONTEXT: {"email_type":"new_order","status":"sent","recipient":"admin","order":252}
+2026-08-08T19:11:52+00:00 INFO Email "customer_on_hold_order" for order #252 sent CONTEXT: {"email_type":"customer_on_hold_order","status":"sent","recipient":"guest","order":252}

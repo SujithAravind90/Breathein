@@ -1,0 +1,366 @@
+/* Breathein account styles. Keep these selectors scoped so checkout and shop
+ * templates are not affected by the account dashboard design. */
+
+.breathein-account-page {
+  --breathein-teal: #156e8a;
+  --breathein-border: #e5e7eb;
+}
+
+.breathein-account-page .woocommerce-MyAccount-content {
+  width: 100%;
+  float: none;
+  margin: 0;
+}
+
+.breathein-account-page .woocommerce-MyAccount-content > :first-child {
+  margin-top: 0;
+}
+
+.breathein-account-page .woocommerce-notices-wrapper:empty {
+  display: none;
+}
+
+.breathein-customer-auth-form .form-row {
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+
+.breathein-customer-auth-form .form-row label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.breathein-customer-auth-form .form-row input:not([type='checkbox']) {
+  width: 100%;
+  min-height: 2.9rem;
+  border: 1px solid var(--breathein-border);
+  border-radius: 0;
+  background: #fff;
+  padding: 0.75rem 0.9rem;
+  color: #111827;
+  font-size: 0.875rem;
+  outline: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.breathein-customer-auth-form .form-row input:not([type='checkbox']):focus {
+  border-color: var(--breathein-teal);
+  box-shadow: 0 0 0 1px var(--breathein-teal);
+}
+
+.breathein-account-page .woocommerce-error,
+.breathein-account-page .woocommerce-info,
+.breathein-account-page .woocommerce-message {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--breathein-border);
+  background: #fafcfd;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.breathein-account-page .woocommerce-error::before,
+.breathein-account-page .woocommerce-info::before,
+.breathein-account-page .woocommerce-message::before {
+  display: none;
+}
+
+.breathein-account-page .woocommerce-error a,
+.breathein-account-page .woocommerce-info a,
+.breathein-account-page .woocommerce-message a {
+  color: var(--breathein-teal);
+  font-weight: 600;
+}
+
+.breathein-account-nav-icon,
+.breathein-account-nav-link svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 1rem;
+}
+
+.breathein-account-nav-link svg {
+  display: block;
+}
+
+.breathein-account-nav-arrow {
+  color: currentColor;
+  font-size: 1.25rem;
+  line-height: 1;
+  opacity: 0;
+  transform: translateX(-0.2rem);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.breathein-account-nav-link:hover .breathein-account-nav-arrow,
+.breathein-account-nav-link.bg-\[\#156E8A0F\] .breathein-account-nav-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.breathein-account-nav-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.breathein-account-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.breathein-account-page .breathein-account-address address {
+  margin: 0;
+  font-style: normal;
+}
+
+.breathein-account-page .breathein-account-address br {
+  content: '';
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.breathein-account-page .woocommerce form.woocommerce-EditAccountForm,
+.breathein-account-page .woocommerce form.woocommerce-form-login,
+.breathein-account-page .woocommerce form.woocommerce-form-register,
+.breathein-account-page .woocommerce form.edit-account {
+  margin: 0;
+  padding: 1.5rem;
+  border: 1px solid var(--breathein-border);
+}
+
+.breathein-account-page .woocommerce form .form-row {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+
+.breathein-account-page .woocommerce form .form-row label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.breathein-account-page .woocommerce form .form-row input.input-text,
+.breathein-account-page .woocommerce form .form-row textarea,
+.breathein-account-page .woocommerce form .form-row select,
+.breathein-account-page .woocommerce form .input-text {
+  width: 100%;
+  min-height: 2.9rem;
+  border: 1px solid var(--breathein-border);
+  border-radius: 0;
+  background: #fff;
+  padding: 0.75rem 0.9rem;
+  color: #111827;
+  font-size: 0.875rem;
+  outline: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.breathein-account-page .woocommerce form .form-row textarea {
+  min-height: 7rem;
+}
+
+.breathein-account-page .woocommerce form .form-row input:focus,
+.breathein-account-page .woocommerce form .form-row textarea:focus,
+.breathein-account-page .woocommerce form .form-row select:focus {
+  border-color: var(--breathein-teal);
+  box-shadow: 0 0 0 1px var(--breathein-teal);
+}
+
+.breathein-account-page .woocommerce form .form-row em,
+.breathein-account-page .woocommerce form .form-row .description {
+  display: block;
+  margin-top: 0.4rem;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.breathein-account-page .woocommerce form fieldset {
+  margin: 1.5rem 0 0;
+  border: 1px solid var(--breathein-border);
+  padding: 1.25rem;
+}
+
+.breathein-account-page .woocommerce form fieldset legend {
+  padding: 0 0.5rem;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.breathein-account-page .woocommerce button.button,
+.breathein-account-page .woocommerce a.button,
+.breathein-account-page .woocommerce input.button {
+  min-height: 2.8rem;
+  border: 0;
+  border-radius: 0.125rem;
+  background: var(--breathein-teal);
+  padding: 0.75rem 1.25rem;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease;
+}
+
+.breathein-account-page .woocommerce button.button:hover,
+.breathein-account-page .woocommerce a.button:hover,
+.breathein-account-page .woocommerce input.button:hover {
+  background: #115a72;
+  color: #fff;
+}
+
+.breathein-account-page .woocommerce-Addresses,
+.breathein-account-page .woocommerce-Address {
+  width: 100%;
+}
+
+.breathein-account-page .woocommerce-Address {
+  border: 1px solid var(--breathein-border);
+  padding: 1.5rem;
+}
+
+.breathein-account-page .woocommerce-Address-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.breathein-account-page .woocommerce-Address-title h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.breathein-account-page .woocommerce-Address-title .edit {
+  color: var(--breathein-teal);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.breathein-account-page .woocommerce-Address address {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: normal;
+  line-height: 1.65;
+}
+
+.breathein-account-page .woocommerce-order-details,
+.breathein-account-page .woocommerce-customer-details {
+  margin-top: 1.5rem;
+}
+
+.breathein-account-page .woocommerce-order-details__title,
+.breathein-account-page .woocommerce-column__title {
+  margin: 0 0 1rem;
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.breathein-account-page .woocommerce table.shop_table {
+  width: 100%;
+  border: 1px solid var(--breathein-border);
+  border-collapse: collapse;
+  border-radius: 0;
+  font-size: 0.875rem;
+}
+
+.breathein-account-page .woocommerce table.shop_table th,
+.breathein-account-page .woocommerce table.shop_table td {
+  border: 0;
+  border-bottom: 1px solid var(--breathein-border);
+  padding: 0.9rem 1rem;
+  text-align: left;
+}
+
+.breathein-account-page .woocommerce table.shop_table th {
+  color: #6b7280;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.breathein-account-page .woocommerce table.shop_table tfoot tr:last-child th,
+.breathein-account-page .woocommerce table.shop_table tfoot tr:last-child td,
+.breathein-account-page .woocommerce table.shop_table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.breathein-account-page .woocommerce table.shop_table a {
+  color: var(--breathein-teal);
+}
+
+.breathein-account-page .woocommerce-OrderUpdates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 640px) {
+  .breathein-account-page .woocommerce form.woocommerce-EditAccountForm,
+  .breathein-account-page .woocommerce form.woocommerce-form-login,
+  .breathein-account-page .woocommerce form.woocommerce-form-register,
+  .breathein-account-page .woocommerce form.edit-account {
+    padding: 1.25rem;
+  }
+
+  .breathein-account-page .woocommerce table.shop_table,
+  .breathein-account-page .woocommerce table.shop_table thead,
+  .breathein-account-page .woocommerce table.shop_table tbody,
+  .breathein-account-page .woocommerce table.shop_table tr,
+  .breathein-account-page .woocommerce table.shop_table th,
+  .breathein-account-page .woocommerce table.shop_table td {
+    display: block;
+  }
+
+  .breathein-account-page .woocommerce table.shop_table thead {
+    display: none;
+  }
+
+  .breathein-account-page .woocommerce table.shop_table tr {
+    border-bottom: 1px solid var(--breathein-border);
+    padding: 0.65rem 0;
+  }
+
+  .breathein-account-page .woocommerce table.shop_table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .breathein-account-page .woocommerce table.shop_table th,
+  .breathein-account-page .woocommerce table.shop_table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 0;
+    padding: 0.45rem 1rem;
+    text-align: right;
+  }
+
+  .breathein-account-page .woocommerce table.shop_table td::before,
+  .breathein-account-page .woocommerce table.shop_table th::before {
+    color: #9ca3af;
+    content: attr(data-title);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+}

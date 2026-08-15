@@ -1,0 +1,182 @@
+/* Product detail layout built from the supplied Breathe In product design. */
+.breathein-product-page {
+  min-height: 40vh;
+}
+
+.breathein-product-page .breathein-product-main-swiper,
+.breathein-product-page .breathein-product-thumb-swiper {
+  --swiper-theme-color: #156e8a;
+}
+
+.breathein-product-page .breathein-product-main-swiper .swiper-slide img {
+  max-height: 100%;
+}
+
+.breathein-product-page .breathein-product-thumb-swiper .swiper-slide {
+  height: auto;
+}
+
+.breathein-product-page .breathein-product-thumb-swiper .swiper-slide-thumb-active {
+  border-color: #156e8a;
+}
+
+.breathein-product-page .breathein-product-price .price {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  color: #111827;
+  font-size: 2.25rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.breathein-product-page .breathein-product-price .price del {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.breathein-product-page .breathein-product-price .price ins {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+.breathein-product-page .breathein-product-price .price .woocommerce-Price-currencySymbol {
+  font-size: 0.72em;
+}
+
+.breathein-product-page .breathein-product-native-cart form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.breathein-product-page .breathein-product-native-cart .quantity {
+  margin-right: 0.5rem;
+}
+
+.breathein-product-page .breathein-review-form .comment-reply-title {
+  margin: 0 0 2rem;
+  color: #111827;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.breathein-product-page .breathein-review-comment-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.breathein-product-page .breathein-review-comment-form p {
+  margin: 0;
+}
+
+.breathein-product-page .breathein-review-comment-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #9ca3af;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.breathein-product-page .breathein-review-comment-form input,
+.breathein-product-page .breathein-review-comment-form select,
+.breathein-product-page .breathein-review-comment-form textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 2px;
+  padding: 0.875rem;
+  color: #111827;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.breathein-product-page .breathein-review-comment-form textarea {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+.breathein-product-page .breathein-review-comment-form input:focus,
+.breathein-product-page .breathein-review-comment-form select:focus,
+.breathein-product-page .breathein-review-comment-form textarea:focus {
+  border-color: #156e8a;
+}
+
+.breathein-product-page .breathein-review-submit {
+  width: max-content;
+  border: 0;
+  border-radius: 0;
+  background: #111111;
+  padding: 1rem 2rem;
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease;
+}
+
+.breathein-product-page .breathein-review-submit:hover {
+  background: #156e8a;
+}
+
+.breathein-product-page .comment-form-cookies-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.breathein-product-page .comment-form-cookies-consent input {
+  width: auto;
+  margin-top: 0.2rem;
+}
+
+.breathein-product-page .comment-form-cookies-consent label {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.breathein-product-page .hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.breathein-product-page .hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .breathein-product-page .breathein-product-price .price {
+    font-size: 2.75rem;
+  }
+
+  .breathein-product-page .breathein-review-comment-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .breathein-product-page .breathein-review-comment-form .comment-form-comment,
+  .breathein-product-page .breathein-review-comment-form .comment-form-cookies-consent,
+  .breathein-product-page .breathein-review-comment-form .form-submit,
+  .breathein-product-page .breathein-review-comment-form .logged-in-as,
+  .breathein-product-page .breathein-review-comment-form .comment-notes {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .breathein-product-page .breathein-review-submit {
+    width: 100%;
+  }
+}
