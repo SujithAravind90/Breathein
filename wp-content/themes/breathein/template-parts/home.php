@@ -10,168 +10,134 @@ get_header();
     <!-- ========================================== -->
     <!-- HERO SECTION                               -->
     <!-- ========================================== -->
+    <?php
+    $resolve_home_image = static function ($image, $fallback_alt = '') {
+        $data = [
+            'url' => '',
+            'alt' => $fallback_alt,
+        ];
+
+        if (is_array($image)) {
+            $data['url'] = !empty($image['url']) ? $image['url'] : '';
+            $data['alt'] = !empty($image['alt']) ? $image['alt'] : $fallback_alt;
+
+            if (empty($data['url']) && !empty($image['ID'])) {
+                $data['url'] = wp_get_attachment_image_url((int) $image['ID'], 'full');
+            }
+        } elseif (is_numeric($image)) {
+            $data['url'] = wp_get_attachment_image_url((int) $image, 'full');
+            $data['alt'] = get_post_meta((int) $image, '_wp_attachment_image_alt', true) ?: $fallback_alt;
+        } elseif (is_string($image)) {
+            $data['url'] = $image;
+        }
+
+        return $data;
+    };
+
+    $banner_image_data = $resolve_home_image(get_field('banner_image'), 'Air purifier in a bedroom setup');
+    $mobile_banner_image_data = $resolve_home_image(get_field('banner_mobile_image'), $banner_image_data['alt']);
+    $banner_image_url = $banner_image_data['url'] ?: get_template_directory_uri() . '/assets/images/air-pro.png';
+    $mobile_banner_image_url = $mobile_banner_image_data['url'] ?: $banner_image_url;
+    $banner_image_alt = $banner_image_data['alt'] ?: 'Air purifier in a bedroom setup';
+
+    $banner_top_text = get_field('banner_top_text') ?: 'The Right Air<span class="hidden lg:inline text-gray-400">&middot; Made for India</span>';
+    $banner_main_text = get_field('banner_main_text') ?: 'Clean air is not a luxury.<br class="hidden lg:block" />It\'s a<span class="text-[#156E8A] font-bold"> necessity.</span>';
+    $banner_desc_text = get_field('banner_desc_text') ?: 'Sophisticated Japanese air-purification technology, thoughtfully designed for Indian homes. Starting at &#8377;9,999.';
+
+    $explore_collections_cta = get_field('explore_collections_cta');
+    $collection_page = get_page_by_path('collection');
+    $explore_url = is_array($explore_collections_cta) && !empty($explore_collections_cta['url'])
+        ? $explore_collections_cta['url']
+        : ($collection_page ? get_permalink($collection_page) : home_url('/collection/'));
+    $explore_title = is_array($explore_collections_cta) && !empty($explore_collections_cta['title'])
+        ? $explore_collections_cta['title']
+        : 'Explore Collection';
+    $explore_target = is_array($explore_collections_cta) && !empty($explore_collections_cta['target'])
+        ? $explore_collections_cta['target']
+        : '_self';
+
+    $banner_find_my_purifier_cta = get_field('banner_find_my_purifier_cta');
+    $find_purifier_page = get_page_by_path('find-my-purifier');
+    $find_purifier_url = is_array($banner_find_my_purifier_cta) && !empty($banner_find_my_purifier_cta['url'])
+        ? $banner_find_my_purifier_cta['url']
+        : ($find_purifier_page ? get_permalink($find_purifier_page) : home_url('/find-my-purifier/'));
+    $find_purifier_title = is_array($banner_find_my_purifier_cta) && !empty($banner_find_my_purifier_cta['title'])
+        ? $banner_find_my_purifier_cta['title']
+        : 'Find My Purifier';
+    $find_purifier_target = is_array($banner_find_my_purifier_cta) && !empty($banner_find_my_purifier_cta['target'])
+        ? $banner_find_my_purifier_cta['target']
+        : '_self';
+    ?>
     <section class="w-full relative bg-white border-b border-gray-100">
         <div class="swiper heroSwiper w-full min-h-[100dvh] lg:min-h-[600px]">
             <div class="swiper-wrapper w-full h-full">
                 <div class="swiper-slide w-full h-full">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 w-full h-full">
-                        <!-- ============================================== -->
-                        <!-- 1. VISUAL COLUMN (Top Mobile, Right Desktop)   -->
-                        <!-- ============================================== -->
-
+                    <div class="grid grid-cols-1 lg:grid-cols-2 w-full h-screen">
+                        <!-- Visual column: top on mobile, right on desktop. -->
                         <div
-                            class="relative w-full min-h-[350px] lg:h-full lg:min-h-full order-1 lg:order-2 bg-gray-100 flex items-center justify-center overflow-hidden">
-                            <?php
-                            $banner_image = get_field('banner_image');
-                            if ($banner_image) {
-                            ?>
-                                <!-- Background Image (Bedroom) -->
-                                <img src="<?php echo $banner_image['url']; ?>" alt="<?php echo $banner_image['alt']; ?>"
-                                    class="absolute inset-0 w-full h-full object-cover object-center slide-product opacity-0 transition-all duration-1000 ease-out delay-200" />
-                            <?php } ?>
-                            <!-- Gradient Overlay 1 -->
-                            <div class="absolute inset-0 z-10 pointer-events-none hidden lg:block" style="
-                      background: linear-gradient(
-                        180deg,
-                        rgba(0, 0, 0, 0) 0%,
-                        rgba(0, 0, 0, 0) 3.83%,
-                        rgba(255, 255, 255, 0.28) 3.83%,
-                        rgba(255, 255, 255, 0.28) 4%
-                      );
-                    "></div>
-
-                            <!-- Gradient Overlay 2 -->
-                            <div class="absolute inset-0 z-10 pointer-events-none hidden lg:block" style="
-                      background: linear-gradient(
-                        164.38deg,
-                        rgba(168, 218, 242, 0.32) 0%,
-                        rgba(21, 110, 138, 0.14) 45%,
-                        rgba(247, 249, 250, 0.5) 100%
-                      );
-                    "></div>
-
-                            <!-- Desktop Product Overlay (Hidden on Mobile) -->
-                            <?php
-                            $air_pro_image = get_field('air_pro_image');
-                            if ($air_pro_image) {
-                            ?>
-                                <img src="<?php echo $air_pro_image['url']; ?>" alt="<?php echo $air_pro_image['alt']; ?>"
-                                    class="relative z-20 ml-[50%] md:ml-[0] mt-[40%] md:mt-[32%] h-[100px] md:h-[60%] max-h-[700px] w-auto object-contain drop-shadow-2xl slide-product opacity-0 translate-y-12 transition-all duration-1000 ease-out delay-500" />
-                            <?php } ?>
-                            <!-- Floating AQI Badge -->
-                            <div
-                                class="absolute bottom-6 left-6 lg:bottom-28 lg:left-12 xl:left-28 bg-white/95 backdrop-blur-md px-4 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center gap-3 z-30 slide-product opacity-0 translate-y-4 transition-all duration-700 delay-700">
-                                <span class="w-2.5 h-2.5 rounded-full bg-[#39B54A]"></span>
-                                <div class="flex flex-col text-left">
-                                    <span
-                                        class="text-[7px] uppercase tracking-[0.15em] text-gray-400 font-bold leading-none mb-0.5">Indoor
-                                        Air Quality</span>
-                                    <span
-                                        class="text-sm font-medium text-gray-900 leading-none"><?php echo the_field('indoor_air_quality'); ?></span>
-                                </div>
-                            </div>
+                            class="relative w-full min-h-[118px] md:min-h-[350px] lg:h-full lg:min-h-full order-1 lg:order-2 bg-gray-100 flex items-center justify-center overflow-hidden">
+                            <picture class="absolute inset-0 w-full h-full z-0">
+                                <source media="(max-width: 1023px)" srcset="<?php echo esc_url($mobile_banner_image_url); ?>">
+                                <img src="<?php echo esc_url($banner_image_url); ?>"
+                                    alt="<?php echo esc_attr($banner_image_alt); ?>"
+                                    class="w-full h-full object-cover object-center slide-product opacity-0 transition-all duration-1000 ease-out delay-200" />
+                            </picture>
                         </div>
 
-                        <!-- ============================================== -->
-                        <!-- 2. TEXT COLUMN (Bottom Mobile, Left Desktop)   -->
-                        <!-- ============================================== -->
+                        <!-- Text column: bottom on mobile, left on desktop. -->
                         <div
-                            class="bg-white text-gray-900 flex flex-col justify-center px-6 py-10 lg:px-16 lg:pl-[10%] lg:pr-16 relative order-2 lg:order-1">
+                            class="bg-white text-gray-900 flex flex-col justify-center px-6 py-5 md:py-10 lg:px-16 lg:pl-[10%] lg:pr-16 relative order-2 lg:order-1">
                             <div
                                 class="slide-content w-full opacity-0 translate-y-8 transition-all duration-700 ease-out delay-300 max-w-xl mx-auto lg:mx-0">
-
-                                <!-- Responsive Eyebrow -->
                                 <div class="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
                                     <div class="hidden lg:block w-8 h-[1px] bg-gray-300"></div>
                                     <span class="text-[11px] tracking-[0.2em] uppercase text-[#156E8A] font-bold">
                                         <span class="lg:hidden">Breathe In &mdash; </span>
-                                        <?php echo the_field('banner_top_text'); ?>
+                                        <?php echo wp_kses_post($banner_top_text); ?>
                                     </span>
                                 </div>
 
-                                <!-- Responsive Headline -->
                                 <h1
                                     class="text-[32px] sm:text-4xl lg:text-6xl xl:text-7xl font-light tracking-tight leading-[1.15] lg:leading-[1.1] mb-4 lg:mb-6">
-                                    <?php echo the_field('banner_main_text'); ?>
+                                    <?php echo wp_kses_post($banner_main_text); ?>
                                 </h1>
 
-                                <!-- Subtext -->
-                                <p
-                                    class="text-gray-500 text-[15px] lg:text-[15px] leading-relaxed mb-8 lg:mb-10 font-light lg:pr-10">
-                                    <?php echo the_field('banner_desc_text'); ?>
+                                <p class="text-gray-500 text-[15px] lg:text-[15px] leading-relaxed mb-8 lg:mb-10 font-light lg:pr-10">
+                                    <?php echo wp_kses_post($banner_desc_text); ?>
                                 </p>
 
-                                <!-- Mobile-Only Product Box (Hidden on Desktop) -->
-                                <div
-                                    class="hidden w-full bg-[#F2F6F8] rounded-2xl py-10 flex justify-center items-center mb-8">
-                                    <img src="./assets/images/air-pro.png" alt="Air Pro"
+                                <!-- Kept dynamic for future mobile variants; hidden as in the supplied design. -->
+                                <div class="hidden w-full bg-[#F2F6F8] rounded-2xl py-10 flex justify-center items-center mb-8">
+                                    <img src="<?php echo esc_url($banner_image_url); ?>" alt="<?php echo esc_attr($banner_image_alt); ?>"
                                         class="h-[200px] object-contain drop-shadow-md" />
                                 </div>
 
-                                <!-- Responsive Action Buttons -->
-                                <div
-                                    class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-8 w-full">
-                                    <!-- Primary Button -->
-                                    <?php
-                                    $explore_collections_cta = get_field('explore_collections_cta');
-                                    if (
-                                        is_array($explore_collections_cta) &&
-                                        !empty($explore_collections_cta['url'])
-                                    ):
-                                        $cta_url = $explore_collections_cta['url'];
-                                        $cta_title = $explore_collections_cta['title'] ?? 'Explore Collections';
-                                        $cta_target = $explore_collections_cta['target'] ?? '_self';
-                                    ?>
-                                        <a href="<?php echo esc_url($cta_url); ?>"
-                                            target="<?php echo esc_attr($cta_target); ?>"
-                                            class="bg-[#111111] text-white text-[12px] tracking-[0.15em] font-bold uppercase px-6 lg:px-8 py-5 lg:py-4 hover:bg-[#156E8A] transition-colors flex items-center justify-between lg:justify-center gap-3 rounded-sm w-full lg:w-auto">
-                                            <span><?php echo esc_html($cta_title); ?></span>
-                                            <span aria-hidden="true">&rarr;</span>
-                                        </a>
-                                    <?php endif; ?>
+                                <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-8 w-full">
+                                    <a href="<?php echo esc_url($explore_url); ?>"
+                                        target="<?php echo esc_attr($explore_target); ?>"
+                                        class="bg-[#111111] text-white text-[12px] tracking-[0.15em] font-bold uppercase px-6 lg:px-8 py-5 lg:py-4 hover:bg-[#156E8A] transition-colors flex items-center justify-between lg:justify-center gap-3 rounded-sm w-full lg:w-auto">
+                                        <span><?php echo esc_html($explore_title); ?></span>
+                                        <span aria-hidden="true">&rarr;</span>
+                                    </a>
 
-                                    <!-- Secondary Button -->
-                                    <?php
-                                    $banner_find_my_purifier_cta = get_field(
-                                        'banner_find_my_purifier_cta'
-                                    );
-                                    if (
-                                        is_array($banner_find_my_purifier_cta) &&
-                                        !empty($banner_find_my_purifier_cta['url'])
-                                    ):
-                                        $cta_url = $banner_find_my_purifier_cta['url'];
-                                        $cta_title = $banner_find_my_purifier_cta['title']
-                                            ?? 'Find My Purifier';
-                                        $cta_target = $banner_find_my_purifier_cta['target']
-                                            ?? '_self';
-                                    ?>
-                                        <a href="<?php echo esc_url($cta_url); ?>"
-                                            target="<?php echo esc_attr($cta_target); ?>"
-                                            class="bg-[#FAFCFD] border border-gray-100 lg:bg-transparent lg:border-0 lg:border-b lg:border-gray-900 text-gray-900 text-[12px] tracking-[0.15em] font-bold uppercase px-6 lg:px-0 py-5 lg:py-1 hover:text-[#156E8A] hover:border-[#156E8A] transition-colors flex items-center justify-between lg:justify-center gap-3 rounded-sm lg:rounded-none w-full lg:w-auto">
-                                            <span>
-                                                <?php echo esc_html($cta_title); ?>
-                                            </span>
-                                            <span class="lg:hidden text-gray-400 font-light" aria-hidden="true">
-                                                &rarr;
-                                            </span>
-                                        </a>
-                                    <?php endif; ?>
+                                    <a href="<?php echo esc_url($find_purifier_url); ?>"
+                                        target="<?php echo esc_attr($find_purifier_target); ?>"
+                                        class="bg-[#FAFCFD] border border-gray-100 lg:bg-transparent lg:border-0 lg:border-b lg:border-gray-900 text-gray-900 text-[12px] tracking-[0.15em] font-bold uppercase px-6 lg:px-0 py-5 lg:py-1 hover:text-[#156E8A] hover:border-[#156E8A] transition-colors flex items-center justify-between lg:justify-center gap-3 rounded-sm lg:rounded-none w-full lg:w-auto">
+                                        <span><?php echo esc_html($find_purifier_title); ?></span>
+                                        <span class="lg:hidden text-gray-400 font-light" aria-hidden="true">&rarr;</span>
+                                    </a>
                                 </div>
 
-                                <!-- Mobile Scroll Indicator -->
                                 <div class="flex lg:hidden items-center gap-4 opacity-40 w-full mt-6">
                                     <div class="w-8 h-[1px] bg-gray-400"></div>
-                                    <span class="text-[8px] tracking-[0.2em] uppercase text-gray-500 font-bold">
-                                        Scroll to explore</span>
+                                    <span class="text-[8px] tracking-[0.2em] uppercase text-gray-500 font-bold">Scroll to explore</span>
                                 </div>
                             </div>
 
-                            <!-- Desktop Scroll Indicator -->
                             <div
                                 class="hidden lg:flex absolute bottom-8 left-[10%] items-center gap-4 opacity-40 slide-content opacity-0 transition-all duration-700 delay-500">
                                 <div class="w-8 h-[1px] bg-gray-400"></div>
-                                <span class="text-[8px] tracking-[0.2em] uppercase text-gray-500 font-bold">Scroll to
-                                    explore</span>
+                                <span class="text-[8px] tracking-[0.2em] uppercase text-gray-500 font-bold">Scroll to explore</span>
                             </div>
                         </div>
                     </div>
@@ -353,7 +319,7 @@ get_header();
     <!-- SECTION: OUR PARTNERS                      -->
     <!-- ========================================== -->
     <!-- Removed borders on mobile (md:border-t md:border-b), tightened padding -->
-    <section class="w-full bg-[#030608] md:bg-tickerDark md:border-t md:border-b border-gray-800/60 py-4 md:py-8">
+    <section class="w-full py-4 md:py-8">
         <div
             class="max-w-6xl mx-auto px-6 overflow-x-auto no-scrollbar scroll-reveal opacity-0 transition-all duration-700 ease-out">
             <!-- Single Unified Container -->
@@ -362,7 +328,7 @@ get_header();
                 class="flex flex-wrap md:flex-nowrap items-center justify-between md:justify-center gap-y-6 md:gap-8 min-w-full md:min-w-max mx-auto py-2">
                 <!-- Static heading -->
                 <span
-                    class="w-full md:w-auto text-left md:text-center text-gray-500 md:text-white text-[12px] md:text-xl lg:text-2xl uppercase md:normal-case tracking-[0.2em] md:tracking-wide font-bold md:font-light shrink-0 leading-none">
+                    class="w-full md:w-auto text-left md:text-center text-[12px] md:text-xl lg:text-2xl uppercase md:normal-case tracking-[0.2em] md:tracking-wide font-bold md:font-light shrink-0 leading-none">
                     Our Partners
                 </span>
 
@@ -370,8 +336,8 @@ get_header();
                     <?php while (have_rows('other_partners')) : the_row(); ?>
                         <?php $partner_image = get_sub_field('brand_image_png'); ?>
                         <?php if ($partner_image) : ?>
-                            <div
-                                class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div>
+                            <!-- <div
+                                class="hidden md:block w-[1px] h-6 bg-gray-700 shrink-0"></div> -->
                             <img
                                 src="<?php echo esc_url($partner_image['url']); ?>"
                                 alt="<?php echo esc_attr($partner_image['alt'] ?? 'Partner logo'); ?>"
@@ -382,6 +348,68 @@ get_header();
                     <?php endwhile; ?>
 
                 <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <?php
+    $business_eyebrow = get_field('business_eyebrow') ?: 'For Business';
+    $business_heading = get_field('business_heading') ?: 'Purifying offices, clinics &';
+    $business_heading_highlight = get_field('business_heading_highlight') ?: 'hotels.';
+    $business_description = get_field('business_description') ?: 'Bulk pricing and dedicated support';
+    $business_watermark = get_field('business_watermark') ?: 'B';
+    $business_cta = get_field('business_cta');
+    $business_demo_page = get_page_by_path('book-a-demo', OBJECT, 'page');
+    $business_cta_url = is_array($business_cta) && !empty($business_cta['url'])
+        ? $business_cta['url']
+        : ($business_demo_page ? get_permalink($business_demo_page) : home_url('/book-a-demo/'));
+    $business_cta_title = is_array($business_cta) && !empty($business_cta['title'])
+        ? $business_cta['title']
+        : 'Talk to Sales';
+    $business_cta_target = is_array($business_cta) && !empty($business_cta['target'])
+        ? $business_cta['target']
+        : '_self';
+    ?>
+    <!-- ========================================== -->
+    <!-- SECTION: FOR BUSINESS                      -->
+    <!-- ========================================== -->
+    <section
+        class="w-full relative overflow-hidden flex flex-col items-center justify-center min-h-[50vh] bg-[#FAFCFD] py-16 md:py-20 px-6 md:px-16 lg:px-24">
+        <span
+            class="text-[11px] text-left md:text-center uppercase tracking-[0.25em] text-[#4A99B2] md:text-[#156E8A] font-bold mb-6 md:mb-8 block w-full">
+            <?php echo esc_html($business_eyebrow); ?>
+        </span>
+
+        <div class="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none select-none z-0">
+            <span
+                class="text-[400px] lg:text-[600px] font-bold text-gray-900 opacity-[0.02] leading-none transform absolute bottom-[-100px]"><?php echo esc_html($business_watermark); ?></span>
+        </div>
+
+        <div
+            class="relative z-10 max-w-5xl mx-auto md:text-center scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out w-full">
+            <h2
+                class="text-[34px] md:text-5xl lg:text-7xl font-light tracking-tight text-gray-900 leading-[1.2] md:leading-[1.1] mb-6 md:mb-8">
+                <?php echo esc_html($business_heading); ?>
+                <span class="text-[#156E8A] font-normal md:font-medium"><?php echo esc_html($business_heading_highlight); ?></span>
+            </h2>
+
+            <p
+                class="text-gray-300 md:text-gray-500 text-[15px] md:text-base font-light leading-relaxed max-w-2xl mx-auto mb-10 md:mb-14 px-2 md:px-0">
+                <?php echo esc_html($business_description); ?>
+            </p>
+
+            <div
+                class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full md:max-w-[280px] mx-auto md:max-w-none">
+                <a href="<?php echo esc_url($business_cta_url); ?>"
+                    target="<?php echo esc_attr($business_cta_target); ?>"
+                    class="bg-[#111111] text-white text-[12px] tracking-[0.15em] font-bold uppercase px-8 py-4 md:py-5 hover:bg-gray-100 md:hover:bg-[#156E8A] transition-colors flex items-center justify-between md:justify-center gap-3 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)] md:shadow-xl md:shadow-gray-200 w-full md:w-auto">
+                    <span><?php echo esc_html($business_cta_title); ?></span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                        </path>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
@@ -1232,7 +1260,7 @@ get_header();
                     </div>
                 </div>
             <?php endif; ?>
-    </section>
+        </section>
     <?php endif; ?>
 
     <?php
@@ -1324,294 +1352,294 @@ get_header();
     <!-- SECTION 9: APP INTEGRATION                 -->
     <!-- ========================================== -->
     <?php if ($breathe_app_has_content) : ?>
-    <section class="w-full bg-[#0A1014] md:bg-white py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
-        <!-- Grid Layout allows reordering. Mobile: 1 column. Desktop: 2 columns, 2 rows -->
-        <div
-            class="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 lg:grid-rows-[auto_1fr] gap-x-16 lg:gap-x-24 lg:gap-y-2 items-start lg:items-center">
-            <!-- ========================================== -->
-            <!-- 1. Text Group (Top Mobile / Top-Left Desktop) -->
-            <!-- ========================================== -->
+        <section class="w-full bg-[#0A1014] md:bg-white py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
+            <!-- Grid Layout allows reordering. Mobile: 1 column. Desktop: 2 columns, 2 rows -->
             <div
-                class="order-1 lg:col-start-1 lg:row-start-1 w-full flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-                <!-- Eyebrow -->
-                <?php if ($breathe_app_eyebrow) : ?>
-                    <span class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
-                        <?php echo esc_html($breathe_app_eyebrow); ?>
-                    </span>
-                <?php endif; ?>
-
-                <!-- Headline -->
-                <!-- Responsive Text: White on mobile, Dark on desktop -->
-                <?php if (
-                    $breathe_app_heading_intro
-                    || $breathe_app_heading_before
-                    || $breathe_app_heading_after
-                ) : ?>
-                    <h2
-                        class="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-white md:text-gray-900 leading-[1.1] mb-6">
-                        <?php if ($breathe_app_heading_intro) : ?>
-                            <?php echo esc_html($breathe_app_heading_intro); ?>
-                        <?php endif; ?>
-
-                        <?php if ($breathe_app_heading_before || $breathe_app_heading_after) : ?>
-                            <span class="text-[#156E8A] font-bold">
-                                <?php echo esc_html($breathe_app_heading_before); ?>
-                                <?php if ($breathe_app_heading_after) : ?>
-                                    <br class="hidden md:block" />
-                                    <?php echo esc_html($breathe_app_heading_after); ?>
-                                <?php endif; ?>
-                            </span>
-                        <?php endif; ?>
-                    </h2>
-                <?php endif; ?>
-
-                <!-- Subtext -->
-                <?php if ($breathe_app_description) : ?>
-                    <p class="text-gray-400 md:text-gray-500 text-sm font-light leading-relaxed mb-4 md:mb-10 max-w-lg">
-                        <?php echo esc_html($breathe_app_description); ?>
-                    </p>
-                <?php endif; ?>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- 2. Image (Middle Mobile / Right Desktop)   -->
-            <!-- ========================================== -->
-            <div
-                class="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 relative w-full flex justify-center scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200">
-                <!-- Soft background glow behind the phone -->
+                class="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 lg:grid-rows-[auto_1fr] gap-x-16 lg:gap-x-24 lg:gap-y-2 items-start lg:items-center">
+                <!-- ========================================== -->
+                <!-- 1. Text Group (Top Mobile / Top-Left Desktop) -->
+                <!-- ========================================== -->
                 <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] md:w-[300px] h-[250px] md:h-[300px] bg-brandTeal/10 md:bg-brandTeal/5 rounded-full blur-[60px] pointer-events-none">
-                </div>
-
-                <?php
-                $breathe_app_base_image_id = $breathe_app_mobile_image_id
-                    ?: $breathe_app_desktop_image_id;
-                $breathe_app_large_image_id = $breathe_app_desktop_image_id
-                    ?: $breathe_app_base_image_id;
-                $breathe_app_desktop_src = $breathe_app_large_image_id
-                    ? wp_get_attachment_image_src($breathe_app_large_image_id, 'large')
-                    : false;
-                $breathe_app_desktop_srcset = $breathe_app_large_image_id
-                    ? wp_get_attachment_image_srcset($breathe_app_large_image_id, 'large')
-                    : false;
-                ?>
-
-                <?php if ($breathe_app_base_image_id) : ?>
-                    <picture class="relative z-10 block w-full">
-                        <?php if (
-                            $breathe_app_desktop_image_id
-                            && $breathe_app_desktop_image_id !== $breathe_app_base_image_id
-                            && $breathe_app_desktop_src
-                        ) : ?>
-                            <source
-                                media="(min-width: 768px)"
-                                srcset="<?php echo esc_attr(
-                                    $breathe_app_desktop_srcset ?: $breathe_app_desktop_src[0]
-                                ); ?>"
-                                sizes="450px"
-                                width="<?php echo esc_attr((string) $breathe_app_desktop_src[1]); ?>"
-                                height="<?php echo esc_attr((string) $breathe_app_desktop_src[2]); ?>" />
-                        <?php endif; ?>
-
-                        <?php
-                        echo wp_get_attachment_image(
-                            $breathe_app_base_image_id,
-                            'large',
-                            false,
-                            [
-                                'class'    => 'w-full max-w-[320px] md:max-w-[450px] h-auto object-contain mx-auto animate-float',
-                                'loading'  => 'lazy',
-                                'decoding' => 'async',
-                                'sizes'    => '(min-width: 768px) 450px, 320px',
-                            ]
-                        );
-                        ?>
-                    </picture>
-                <?php endif; ?>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- 3. Features & Buttons (Bottom Mobile / Bottom-Left Desktop) -->
-            <!-- ========================================== -->
-            <div
-                class="order-3 lg:col-start-1 lg:row-start-2 w-full flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-100">
-                <!-- Feature List -->
-                <div
-                    class="flex flex-col border-t border-gray-800/80 md:border-t-0 divide-y divide-gray-800/80 md:divide-gray-100 mb-10 md:mb-12">
-                    <?php foreach (array_values($breathe_app_features) as $app_feature) : ?>
-                        <?php
-                        if (!is_array($app_feature)) {
-                            continue;
-                        }
-
-                        $app_feature_icon = sanitize_key(
-                            (string) ($app_feature['breathe_app_feature_icon'] ?? '')
-                        );
-                        $app_feature_title = (string) (
-                            $app_feature['breathe_app_feature_title'] ?? ''
-                        );
-                        $app_feature_description = (string) (
-                            $app_feature['breathe_app_feature_description'] ?? ''
-                        );
-
-                        if (!$app_feature_title && !$app_feature_description) {
-                            continue;
-                        }
-                        ?>
-                        <div class="py-5 flex items-start gap-4 md:gap-5">
-                            <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
-                                <?php if ('air_quality' === $app_feature_icon) : ?>
-                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                        <path
-                                            d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
-                                            stroke="#156E8A" stroke-width="1.3" />
-                                        <path d="M10 6V10L12.6 11.6" stroke="#156E8A" stroke-width="1.3"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                <?php elseif ('remote_control' === $app_feature_icon) : ?>
-                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                        <path
-                                            d="M14.5 2.5H5.5C4.39543 2.5 3.5 3.39543 3.5 4.5V15.5C3.5 16.6046 4.39543 17.5 5.5 17.5H14.5C15.6046 17.5 16.5 16.6046 16.5 15.5V4.5C16.5 3.39543 15.6046 2.5 14.5 2.5Z"
-                                            stroke="#156E8A" stroke-width="1.3" />
-                                        <path d="M8 14.5H12" stroke="#156E8A" stroke-width="1.3"
-                                            stroke-linecap="round" />
-                                    </svg>
-                                <?php elseif ('schedules' === $app_feature_icon) : ?>
-                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                        <path
-                                            d="M10 2.5V5.5M10 14.5V17.5M17.5 10H14.5M5.5 10H2.5M15 5L12.9 7.1M7.1 12.9L5 15M15 15L12.9 12.9M7.1 7.1L5 5"
-                                            stroke="#156E8A" stroke-width="1.3" stroke-linecap="round" />
-                                        <path
-                                            d="M10 13C11.6569 13 13 11.6569 13 10C13 8.34315 11.6569 7 10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13Z"
-                                            stroke="#156E8A" stroke-width="1.3" />
-                                    </svg>
-                                <?php elseif ('filter_care' === $app_feature_icon) : ?>
-                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                        <path d="M10 2.5L4 5V9.2C4 12.9 6.5 16.3 10 17.5C13.5 16.3 16 12.9 16 9.2V5L10 2.5Z"
-                                            stroke="#156E8A" stroke-width="1.3" stroke-linejoin="round" />
-                                        <path d="M7.5 10L9.3 11.8L13 8" stroke="#156E8A" stroke-width="1.3"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                <?php endif; ?>
-                            </div>
-
-                            <div>
-                                <?php if ($app_feature_title) : ?>
-                                    <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
-                                        <?php echo esc_html($app_feature_title); ?>
-                                    </h4>
-                                <?php endif; ?>
-
-                                <?php if ($app_feature_description) : ?>
-                                    <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
-                                        <?php echo esc_html($app_feature_description); ?>
-                                    </p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <!-- App Store Buttons -->
-                <?php
-                $breathe_app_button_class = 'flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]';
-
-                $breathe_app_apple_url = (string) (
-                    $breathe_app_apple_link['url'] ?? ''
-                );
-                $breathe_app_apple_title = (string) (
-                    $breathe_app_apple_link['title'] ?? 'App Store'
-                );
-                $breathe_app_apple_target = '_blank' === (
-                    $breathe_app_apple_link['target'] ?? ''
-                ) ? '_blank' : '';
-
-                $breathe_app_google_url = (string) (
-                    $breathe_app_google_link['url'] ?? ''
-                );
-                $breathe_app_google_title = (string) (
-                    $breathe_app_google_link['title'] ?? 'Google Play'
-                );
-                $breathe_app_google_target = '_blank' === (
-                    $breathe_app_google_link['target'] ?? ''
-                ) ? '_blank' : '';
-                ?>
-                <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-3 md:gap-4">
-                    <!-- Apple App Store -->
-                    <?php if ($breathe_app_apple_url) : ?>
-                        <a
-                            href="<?php echo esc_url($breathe_app_apple_url); ?>"
-                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
-                            <?php if ($breathe_app_apple_target) : ?>
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            <?php endif; ?>>
-                    <?php else : ?>
-                        <span
-                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
-                            aria-disabled="true">
-                    <?php endif; ?>
-                        <!-- fill="currentColor" allows the SVG to flip between white on mobile and dark on desktop -->
-                        <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                            <path
-                                d="M15.6292 11.4953C15.6109 9.47859 17.2793 8.50693 17.3526 8.46109C16.4176 7.08609 14.9601 6.90276 14.4376 6.88443C13.2001 6.75609 12.0176 7.61776 11.3851 7.61776C10.7526 7.61776 9.79008 6.90276 8.76342 6.92109C7.41592 6.93943 6.16925 7.70943 5.47258 8.91943C4.07008 11.3578 5.11508 14.9694 6.48092 16.9494C7.15008 17.9211 7.94758 19.0119 8.99258 18.9753C10.0009 18.9386 10.3859 18.3244 11.6051 18.3244C12.8243 18.3244 13.1726 18.9753 14.2359 18.9569C15.3176 18.9386 16.0051 17.9669 16.6651 16.9861C17.4351 15.8586 17.7467 14.7678 17.7651 14.7128C17.7376 14.7036 15.6659 13.9061 15.6476 11.5136L15.6292 11.4953ZM13.6401 5.46359C14.1901 4.79443 14.5659 3.86859 14.4651 2.93359C13.6676 2.97026 12.6959 3.46526 12.1184 4.13443C11.6051 4.72109 11.1559 5.66526 11.2751 6.56359C12.1642 6.63693 13.0809 6.11443 13.6401 5.46359Z" />
-                        </svg>
-                        <div class="flex flex-col">
-                            <span
-                                class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Download
-                                on the</span>
-                            <span class="text-xs md:text-sm font-medium leading-none">
-                                <?php echo esc_html($breathe_app_apple_title ?: 'App Store'); ?>
-                            </span>
-                        </div>
-                    <?php if ($breathe_app_apple_url) : ?>
-                        </a>
-                    <?php else : ?>
+                    class="order-1 lg:col-start-1 lg:row-start-1 w-full flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                    <!-- Eyebrow -->
+                    <?php if ($breathe_app_eyebrow) : ?>
+                        <span class="text-[11px] uppercase tracking-[0.2em] text-[#156E8A] font-bold mb-4 md:mb-6 block">
+                            <?php echo esc_html($breathe_app_eyebrow); ?>
                         </span>
                     <?php endif; ?>
 
-                    <!-- Google Play Store -->
-                    <?php if ($breathe_app_google_url) : ?>
-                        <a
-                            href="<?php echo esc_url($breathe_app_google_url); ?>"
-                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
-                            <?php if ($breathe_app_google_target) : ?>
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            <?php endif; ?>>
-                    <?php else : ?>
-                        <span
-                            class="<?php echo esc_attr($breathe_app_button_class); ?>"
-                            aria-disabled="true">
+                    <!-- Headline -->
+                    <!-- Responsive Text: White on mobile, Dark on desktop -->
+                    <?php if (
+                        $breathe_app_heading_intro
+                        || $breathe_app_heading_before
+                        || $breathe_app_heading_after
+                    ) : ?>
+                        <h2
+                            class="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-white md:text-gray-900 leading-[1.1] mb-6">
+                            <?php if ($breathe_app_heading_intro) : ?>
+                                <?php echo esc_html($breathe_app_heading_intro); ?>
+                            <?php endif; ?>
+
+                            <?php if ($breathe_app_heading_before || $breathe_app_heading_after) : ?>
+                                <span class="text-[#156E8A] font-bold">
+                                    <?php echo esc_html($breathe_app_heading_before); ?>
+                                    <?php if ($breathe_app_heading_after) : ?>
+                                        <br class="hidden md:block" />
+                                        <?php echo esc_html($breathe_app_heading_after); ?>
+                                    <?php endif; ?>
+                                </span>
+                            <?php endif; ?>
+                        </h2>
                     <?php endif; ?>
-                        <!-- fill="currentColor" applied -->
-                        <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                            <path
-                                d="M3.30042 2.20013C3.05292 2.4568 2.90625 2.86013 2.90625 3.37346V18.6268C2.90625 19.1401 3.05292 19.5435 3.30042 19.8001L3.35542 19.846L11.9171 11.0643V10.936L3.35542 2.1543L3.30042 2.20013ZM14.9421 14.0893L12.1004 11.2476V11.1193L14.9421 8.27763L15.0063 8.3143L18.3704 10.2301C19.3329 10.7801 19.3329 11.6693 18.3704 12.2193L15.0063 14.1351L14.9421 14.181V14.0893ZM14.6029 14.4285L11.6971 11.4585L3.30042 19.846C3.62125 20.1851 4.14375 20.2218 4.73958 19.8918L14.6029 14.4285ZM14.6029 8.48846L4.73958 3.02513C4.14375 2.69513 3.62125 2.7318 3.30042 3.07096L11.6971 11.4585L14.6029 8.48846Z" />
-                        </svg>
-                        <div class="flex flex-col">
-                            <span
-                                class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Get
-                                it on</span>
-                            <span class="text-xs md:text-sm font-medium leading-none">
-                                <?php echo esc_html($breathe_app_google_title ?: 'Google Play'); ?>
-                            </span>
-                        </div>
-                    <?php if ($breathe_app_google_url) : ?>
-                        </a>
-                    <?php else : ?>
-                        </span>
+
+                    <!-- Subtext -->
+                    <?php if ($breathe_app_description) : ?>
+                        <p class="text-gray-400 md:text-gray-500 text-sm font-light leading-relaxed mb-4 md:mb-10 max-w-lg">
+                            <?php echo esc_html($breathe_app_description); ?>
+                        </p>
                     <?php endif; ?>
                 </div>
+
+                <!-- ========================================== -->
+                <!-- 2. Image (Middle Mobile / Right Desktop)   -->
+                <!-- ========================================== -->
+                <div
+                    class="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 relative w-full flex justify-center scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200">
+                    <!-- Soft background glow behind the phone -->
+                    <div
+                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] md:w-[300px] h-[250px] md:h-[300px] bg-brandTeal/10 md:bg-brandTeal/5 rounded-full blur-[60px] pointer-events-none">
+                    </div>
+
+                    <?php
+                    $breathe_app_base_image_id = $breathe_app_mobile_image_id
+                        ?: $breathe_app_desktop_image_id;
+                    $breathe_app_large_image_id = $breathe_app_desktop_image_id
+                        ?: $breathe_app_base_image_id;
+                    $breathe_app_desktop_src = $breathe_app_large_image_id
+                        ? wp_get_attachment_image_src($breathe_app_large_image_id, 'large')
+                        : false;
+                    $breathe_app_desktop_srcset = $breathe_app_large_image_id
+                        ? wp_get_attachment_image_srcset($breathe_app_large_image_id, 'large')
+                        : false;
+                    ?>
+
+                    <?php if ($breathe_app_base_image_id) : ?>
+                        <picture class="relative z-10 block w-full">
+                            <?php if (
+                                $breathe_app_desktop_image_id
+                                && $breathe_app_desktop_image_id !== $breathe_app_base_image_id
+                                && $breathe_app_desktop_src
+                            ) : ?>
+                                <source
+                                    media="(min-width: 768px)"
+                                    srcset="<?php echo esc_attr(
+                                                $breathe_app_desktop_srcset ?: $breathe_app_desktop_src[0]
+                                            ); ?>"
+                                    sizes="450px"
+                                    width="<?php echo esc_attr((string) $breathe_app_desktop_src[1]); ?>"
+                                    height="<?php echo esc_attr((string) $breathe_app_desktop_src[2]); ?>" />
+                            <?php endif; ?>
+
+                            <?php
+                            echo wp_get_attachment_image(
+                                $breathe_app_base_image_id,
+                                'large',
+                                false,
+                                [
+                                    'class'    => 'w-full max-w-[320px] md:max-w-[450px] h-auto object-contain mx-auto animate-float',
+                                    'loading'  => 'lazy',
+                                    'decoding' => 'async',
+                                    'sizes'    => '(min-width: 768px) 450px, 320px',
+                                ]
+                            );
+                            ?>
+                        </picture>
+                    <?php endif; ?>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 3. Features & Buttons (Bottom Mobile / Bottom-Left Desktop) -->
+                <!-- ========================================== -->
+                <div
+                    class="order-3 lg:col-start-1 lg:row-start-2 w-full flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-100">
+                    <!-- Feature List -->
+                    <div
+                        class="flex flex-col border-t border-gray-800/80 md:border-t-0 divide-y divide-gray-800/80 md:divide-gray-100 mb-10 md:mb-12">
+                        <?php foreach (array_values($breathe_app_features) as $app_feature) : ?>
+                            <?php
+                            if (!is_array($app_feature)) {
+                                continue;
+                            }
+
+                            $app_feature_icon = sanitize_key(
+                                (string) ($app_feature['breathe_app_feature_icon'] ?? '')
+                            );
+                            $app_feature_title = (string) (
+                                $app_feature['breathe_app_feature_title'] ?? ''
+                            );
+                            $app_feature_description = (string) (
+                                $app_feature['breathe_app_feature_description'] ?? ''
+                            );
+
+                            if (!$app_feature_title && !$app_feature_description) {
+                                continue;
+                            }
+                            ?>
+                            <div class="py-5 flex items-start gap-4 md:gap-5">
+                                <div class="mt-0.5 text-[#156E8A] bg-[#111A20] md:bg-sky-50 p-2.5 md:p-2 rounded-full">
+                                    <?php if ('air_quality' === $app_feature_icon) : ?>
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <path
+                                                d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
+                                                stroke="#156E8A" stroke-width="1.3" />
+                                            <path d="M10 6V10L12.6 11.6" stroke="#156E8A" stroke-width="1.3"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    <?php elseif ('remote_control' === $app_feature_icon) : ?>
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <path
+                                                d="M14.5 2.5H5.5C4.39543 2.5 3.5 3.39543 3.5 4.5V15.5C3.5 16.6046 4.39543 17.5 5.5 17.5H14.5C15.6046 17.5 16.5 16.6046 16.5 15.5V4.5C16.5 3.39543 15.6046 2.5 14.5 2.5Z"
+                                                stroke="#156E8A" stroke-width="1.3" />
+                                            <path d="M8 14.5H12" stroke="#156E8A" stroke-width="1.3"
+                                                stroke-linecap="round" />
+                                        </svg>
+                                    <?php elseif ('schedules' === $app_feature_icon) : ?>
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <path
+                                                d="M10 2.5V5.5M10 14.5V17.5M17.5 10H14.5M5.5 10H2.5M15 5L12.9 7.1M7.1 12.9L5 15M15 15L12.9 12.9M7.1 7.1L5 5"
+                                                stroke="#156E8A" stroke-width="1.3" stroke-linecap="round" />
+                                            <path
+                                                d="M10 13C11.6569 13 13 11.6569 13 10C13 8.34315 11.6569 7 10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13Z"
+                                                stroke="#156E8A" stroke-width="1.3" />
+                                        </svg>
+                                    <?php elseif ('filter_care' === $app_feature_icon) : ?>
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <path d="M10 2.5L4 5V9.2C4 12.9 6.5 16.3 10 17.5C13.5 16.3 16 12.9 16 9.2V5L10 2.5Z"
+                                                stroke="#156E8A" stroke-width="1.3" stroke-linejoin="round" />
+                                            <path d="M7.5 10L9.3 11.8L13 8" stroke="#156E8A" stroke-width="1.3"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div>
+                                    <?php if ($app_feature_title) : ?>
+                                        <h4 class="text-[15px] text-gray-100 md:text-gray-900 font-medium mb-1">
+                                            <?php echo esc_html($app_feature_title); ?>
+                                        </h4>
+                                    <?php endif; ?>
+
+                                    <?php if ($app_feature_description) : ?>
+                                        <p class="text-[11px] text-gray-400 md:text-gray-500 font-light leading-relaxed">
+                                            <?php echo esc_html($app_feature_description); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- App Store Buttons -->
+                    <?php
+                    $breathe_app_button_class = 'flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]';
+
+                    $breathe_app_apple_url = (string) (
+                        $breathe_app_apple_link['url'] ?? ''
+                    );
+                    $breathe_app_apple_title = (string) (
+                        $breathe_app_apple_link['title'] ?? 'App Store'
+                    );
+                    $breathe_app_apple_target = '_blank' === (
+                        $breathe_app_apple_link['target'] ?? ''
+                    ) ? '_blank' : '';
+
+                    $breathe_app_google_url = (string) (
+                        $breathe_app_google_link['url'] ?? ''
+                    );
+                    $breathe_app_google_title = (string) (
+                        $breathe_app_google_link['title'] ?? 'Google Play'
+                    );
+                    $breathe_app_google_target = '_blank' === (
+                        $breathe_app_google_link['target'] ?? ''
+                    ) ? '_blank' : '';
+                    ?>
+                    <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-3 md:gap-4">
+                        <!-- Apple App Store -->
+                        <?php if ($breathe_app_apple_url) : ?>
+                            <a
+                                href="<?php echo esc_url($breathe_app_apple_url); ?>"
+                                class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                                <?php if ($breathe_app_apple_target) : ?>
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                <?php endif; ?>>
+                            <?php else : ?>
+                                <span
+                                    class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                                    aria-disabled="true">
+                                <?php endif; ?>
+                                <!-- fill="currentColor" allows the SVG to flip between white on mobile and dark on desktop -->
+                                <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M15.6292 11.4953C15.6109 9.47859 17.2793 8.50693 17.3526 8.46109C16.4176 7.08609 14.9601 6.90276 14.4376 6.88443C13.2001 6.75609 12.0176 7.61776 11.3851 7.61776C10.7526 7.61776 9.79008 6.90276 8.76342 6.92109C7.41592 6.93943 6.16925 7.70943 5.47258 8.91943C4.07008 11.3578 5.11508 14.9694 6.48092 16.9494C7.15008 17.9211 7.94758 19.0119 8.99258 18.9753C10.0009 18.9386 10.3859 18.3244 11.6051 18.3244C12.8243 18.3244 13.1726 18.9753 14.2359 18.9569C15.3176 18.9386 16.0051 17.9669 16.6651 16.9861C17.4351 15.8586 17.7467 14.7678 17.7651 14.7128C17.7376 14.7036 15.6659 13.9061 15.6476 11.5136L15.6292 11.4953ZM13.6401 5.46359C14.1901 4.79443 14.5659 3.86859 14.4651 2.93359C13.6676 2.97026 12.6959 3.46526 12.1184 4.13443C11.6051 4.72109 11.1559 5.66526 11.2751 6.56359C12.1642 6.63693 13.0809 6.11443 13.6401 5.46359Z" />
+                                </svg>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Download
+                                        on the</span>
+                                    <span class="text-xs md:text-sm font-medium leading-none">
+                                        <?php echo esc_html($breathe_app_apple_title ?: 'App Store'); ?>
+                                    </span>
+                                </div>
+                                <?php if ($breathe_app_apple_url) : ?>
+                            </a>
+                        <?php else : ?>
+                            </span>
+                        <?php endif; ?>
+
+                        <!-- Google Play Store -->
+                        <?php if ($breathe_app_google_url) : ?>
+                            <a
+                                href="<?php echo esc_url($breathe_app_google_url); ?>"
+                                class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                                <?php if ($breathe_app_google_target) : ?>
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                <?php endif; ?>>
+                            <?php else : ?>
+                                <span
+                                    class="<?php echo esc_attr($breathe_app_button_class); ?>"
+                                    aria-disabled="true">
+                                <?php endif; ?>
+                                <!-- fill="currentColor" applied -->
+                                <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M3.30042 2.20013C3.05292 2.4568 2.90625 2.86013 2.90625 3.37346V18.6268C2.90625 19.1401 3.05292 19.5435 3.30042 19.8001L3.35542 19.846L11.9171 11.0643V10.936L3.35542 2.1543L3.30042 2.20013ZM14.9421 14.0893L12.1004 11.2476V11.1193L14.9421 8.27763L15.0063 8.3143L18.3704 10.2301C19.3329 10.7801 19.3329 11.6693 18.3704 12.2193L15.0063 14.1351L14.9421 14.181V14.0893ZM14.6029 14.4285L11.6971 11.4585L3.30042 19.846C3.62125 20.1851 4.14375 20.2218 4.73958 19.8918L14.6029 14.4285ZM14.6029 8.48846L4.73958 3.02513C4.14375 2.69513 3.62125 2.7318 3.30042 3.07096L11.6971 11.4585L14.6029 8.48846Z" />
+                                </svg>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Get
+                                        it on</span>
+                                    <span class="text-xs md:text-sm font-medium leading-none">
+                                        <?php echo esc_html($breathe_app_google_title ?: 'Google Play'); ?>
+                                    </span>
+                                </div>
+                                <?php if ($breathe_app_google_url) : ?>
+                            </a>
+                        <?php else : ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
     <!-- ========================================== -->
     <!-- SECTION 10: SIDE-BY-SIDE COMPARISON        -->
@@ -1816,9 +1844,9 @@ get_header();
                             ?>
                             <div
                                 class="<?php echo esc_attr(
-                                    $row_border
-                                    . 'p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none'
-                                ); ?>">
+                                            $row_border
+                                                . 'p-4 md:p-6 flex items-center text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-gray-800 sticky left-0 bg-white z-10 md:static shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none'
+                                        ); ?>">
                                 <?php echo esc_html($comparison_row['label']); ?>
                             </div>
 
@@ -2239,177 +2267,177 @@ SVG,
 
     <?php if ($trust_certifications_has_content) : ?>
         <section class="w-full bg-[#FAFCFD] py-16 md:py-20 px-6 md:px-16 lg:px-24">
-        <!-- Header Section (Responsive Alignment) -->
-        <div
-            class="max-w-4xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-24 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-            <?php if ($trust_certifications_eyebrow) : ?>
-                <!-- Eyebrow with decorative lines (Lines hidden on mobile) -->
-                <div class="flex items-center justify-start md:justify-center gap-4 mb-4 md:mb-6">
-                    <div class="hidden md:block w-8 h-[1px] bg-gray-300"></div>
-                    <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold">
-                        <?php echo esc_html($trust_certifications_eyebrow); ?>
-                    </span>
-                    <div class="hidden md:block w-8 h-[1px] bg-gray-300"></div>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($trust_certifications_has_heading) : ?>
-                <!-- Headline -->
-                <h2
-                    class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
-                    <?php if ($trust_certifications_heading_line_one) : ?>
-                        <?php echo esc_html($trust_certifications_heading_line_one); ?>
-                    <?php endif; ?>
-                    <?php if ($trust_certifications_heading_line_two) : ?>
-                        <?php if ($trust_certifications_heading_line_one) : ?>
-                            <br class="hidden md:block" />
-                        <?php endif; ?>
-                        <?php echo esc_html($trust_certifications_heading_line_two); ?>
-                    <?php endif; ?>
-                    <?php if ($trust_certifications_heading_highlight) : ?>
-                        <span class="text-[#156E8A] font-medium">
-                            <?php echo esc_html($trust_certifications_heading_highlight); ?>
+            <!-- Header Section (Responsive Alignment) -->
+            <div
+                class="max-w-4xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-24 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                <?php if ($trust_certifications_eyebrow) : ?>
+                    <!-- Eyebrow with decorative lines (Lines hidden on mobile) -->
+                    <div class="flex items-center justify-start md:justify-center gap-4 mb-4 md:mb-6">
+                        <div class="hidden md:block w-8 h-[1px] bg-gray-300"></div>
+                        <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold">
+                            <?php echo esc_html($trust_certifications_eyebrow); ?>
                         </span>
-                    <?php endif; ?>
-                </h2>
-            <?php endif; ?>
-
-            <?php if ($trust_certifications_description) : ?>
-                <!-- Subtext -->
-                <p
-                    class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-2xl mx-0 md:mx-auto pr-4 md:pr-0">
-                    <?php echo esc_html($trust_certifications_description); ?>
-                </p>
-            <?php endif; ?>
-        </div>
-
-        <!-- 4-Column Feature Grid (Stacking on mobile, side-by-side flex inside cards) -->
-        <div
-            class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mb-16 md:mb-20 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
-            <!-- Card 1: Certified Performance -->
-            <?php $trust_card = $trust_certification_cards[0] ?? null; ?>
-            <?php if (is_array($trust_card)) : ?>
-            <div
-                class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 rounded-md md:rounded-none">
-                <!-- Card Header: Flex Row on Mobile, Flex Col on Desktop -->
-                <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
-                    <!-- Icon -->
-                    <div
-                        class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
-                        <?php
-                        $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'certified');
-                        echo $trust_certification_icons[$trust_card_icon]
-                            ?? $trust_certification_icons['certified'];
-                        ?>
+                        <div class="hidden md:block w-8 h-[1px] bg-gray-300"></div>
                     </div>
-                    <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
-                        <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
-                    </h3>
-                </div>
+                <?php endif; ?>
 
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
-                    <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
-                </p>
+                <?php if ($trust_certifications_has_heading) : ?>
+                    <!-- Headline -->
+                    <h2
+                        class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
+                        <?php if ($trust_certifications_heading_line_one) : ?>
+                            <?php echo esc_html($trust_certifications_heading_line_one); ?>
+                        <?php endif; ?>
+                        <?php if ($trust_certifications_heading_line_two) : ?>
+                            <?php if ($trust_certifications_heading_line_one) : ?>
+                                <br class="hidden md:block" />
+                            <?php endif; ?>
+                            <?php echo esc_html($trust_certifications_heading_line_two); ?>
+                        <?php endif; ?>
+                        <?php if ($trust_certifications_heading_highlight) : ?>
+                            <span class="text-[#156E8A] font-medium">
+                                <?php echo esc_html($trust_certifications_heading_highlight); ?>
+                            </span>
+                        <?php endif; ?>
+                    </h2>
+                <?php endif; ?>
+
+                <?php if ($trust_certifications_description) : ?>
+                    <!-- Subtext -->
+                    <p
+                        class="text-gray-500 text-[12px] md:text-[15px] font-light leading-relaxed max-w-2xl mx-0 md:mx-auto pr-4 md:pr-0">
+                        <?php echo esc_html($trust_certifications_description); ?>
+                    </p>
+                <?php endif; ?>
             </div>
-            <?php endif; ?>
 
-            <!-- Card 2: Japanese Technology -->
-            <?php $trust_card = $trust_certification_cards[1] ?? null; ?>
-            <?php if (is_array($trust_card)) : ?>
+            <!-- 4-Column Feature Grid (Stacking on mobile, side-by-side flex inside cards) -->
             <div
-                class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 delay-75 rounded-md md:rounded-none">
-                <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mb-16 md:mb-20 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
+                <!-- Card 1: Certified Performance -->
+                <?php $trust_card = $trust_certification_cards[0] ?? null; ?>
+                <?php if (is_array($trust_card)) : ?>
                     <div
-                        class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
-                        <?php
-                        $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'technology');
-                        echo $trust_certification_icons[$trust_card_icon]
-                            ?? $trust_certification_icons['technology'];
-                        ?>
-                    </div>
-                    <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
-                        <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
-                    </h3>
-                </div>
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
-                    <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
-                </p>
-            </div>
-            <?php endif; ?>
+                        class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 rounded-md md:rounded-none">
+                        <!-- Card Header: Flex Row on Mobile, Flex Col on Desktop -->
+                        <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                            <!-- Icon -->
+                            <div
+                                class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
+                                <?php
+                                $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'certified');
+                                echo $trust_certification_icons[$trust_card_icon]
+                                    ?? $trust_certification_icons['certified'];
+                                ?>
+                            </div>
+                            <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
+                                <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
+                            </h3>
+                        </div>
 
-            <!-- Card 3: HEPA H13 Filtration -->
-            <?php $trust_card = $trust_certification_cards[2] ?? null; ?>
-            <?php if (is_array($trust_card)) : ?>
-            <div
-                class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 delay-150 rounded-md md:rounded-none">
-                <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                        <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
+                            <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
+                        </p>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Card 2: Japanese Technology -->
+                <?php $trust_card = $trust_certification_cards[1] ?? null; ?>
+                <?php if (is_array($trust_card)) : ?>
                     <div
-                        class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
-                        <?php
-                        $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'filtration');
-                        echo $trust_certification_icons[$trust_card_icon]
-                            ?? $trust_certification_icons['filtration'];
-                        ?>
+                        class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 delay-75 rounded-md md:rounded-none">
+                        <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                            <div
+                                class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
+                                <?php
+                                $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'technology');
+                                echo $trust_certification_icons[$trust_card_icon]
+                                    ?? $trust_certification_icons['technology'];
+                                ?>
+                            </div>
+                            <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
+                                <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
+                            </h3>
+                        </div>
+                        <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
+                            <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
+                        </p>
                     </div>
-                    <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
-                        <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
-                    </h3>
-                </div>
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
-                    <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
-                </p>
-            </div>
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <!-- Card 4: Service & Support -->
-            <?php $trust_card = $trust_certification_cards[3] ?? null; ?>
-            <?php if (is_array($trust_card)) : ?>
-            <div
-                class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 delay-200 rounded-md md:rounded-none">
-                <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                <!-- Card 3: HEPA H13 Filtration -->
+                <?php $trust_card = $trust_certification_cards[2] ?? null; ?>
+                <?php if (is_array($trust_card)) : ?>
                     <div
-                        class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
-                        <?php
-                        $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'support');
-                        echo $trust_certification_icons[$trust_card_icon]
-                            ?? $trust_certification_icons['support'];
-                        ?>
+                        class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 delay-150 rounded-md md:rounded-none">
+                        <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                            <div
+                                class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
+                                <?php
+                                $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'filtration');
+                                echo $trust_certification_icons[$trust_card_icon]
+                                    ?? $trust_certification_icons['filtration'];
+                                ?>
+                            </div>
+                            <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
+                                <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
+                            </h3>
+                        </div>
+                        <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
+                            <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
+                        </p>
                     </div>
-                    <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
-                        <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
-                    </h3>
-                </div>
-                <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
-                    <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
-                </p>
-            </div>
-            <?php endif; ?>
-        </div>
+                <?php endif; ?>
 
-        <?php if ($trust_certification_logo_ids) : ?>
-            <!-- Certifications Strip -->
-            <!-- Removed borders on mobile -->
-            <div
-                class="max-w-7xl mx-auto md:border-t md:border-b border-[#DCE4E7] py-6 md:py-10 px-0 md:px-6 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200">
-                <div class="flex flex-wrap items-center justify-center gap-8 md:gap-10 lg:gap-12">
-                    <?php foreach ($trust_certification_logo_ids as $trust_certification_logo_id) : ?>
-                        <?php
-                        echo wp_get_attachment_image(
-                            $trust_certification_logo_id,
-                            'full',
-                            false,
-                            [
-                                'class'    => 'h-8 md:h-10 w-auto object-contain md:grayscale hover:grayscale-0 transition-all',
-                                'loading'  => 'lazy',
-                                'decoding' => 'async',
-                                'sizes'    => '(min-width: 768px) 160px, 120px',
-                            ]
-                        );
-                        ?>
-                    <?php endforeach; ?>
-                </div>
+                <!-- Card 4: Service & Support -->
+                <?php $trust_card = $trust_certification_cards[3] ?? null; ?>
+                <?php if (is_array($trust_card)) : ?>
+                    <div
+                        class="bg-white p-6 md:p-10 shadow-sm md:shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:-translate-y-1 transition-transform duration-300 delay-200 rounded-md md:rounded-none">
+                        <div class="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0 mb-3 md:mb-0">
+                            <div
+                                class="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-[#156E8A] shrink-0 md:mb-8">
+                                <?php
+                                $trust_card_icon = (string) ($trust_card['trust_card_icon'] ?? 'support');
+                                echo $trust_certification_icons[$trust_card_icon]
+                                    ?? $trust_certification_icons['support'];
+                                ?>
+                            </div>
+                            <h3 class="text-[17px] md:text-base text-gray-900 font-normal md:font-medium md:mb-4">
+                                <?php echo esc_html((string) ($trust_card['trust_card_title'] ?? '')); ?>
+                            </h3>
+                        </div>
+                        <p class="text-[15px] md:text-xs text-gray-500 font-light leading-relaxed pr-2 md:pr-0">
+                            <?php echo esc_html((string) ($trust_card['trust_card_description'] ?? '')); ?>
+                        </p>
+                    </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+
+            <?php if ($trust_certification_logo_ids) : ?>
+                <!-- Certifications Strip -->
+                <!-- Removed borders on mobile -->
+                <div
+                    class="max-w-7xl mx-auto md:border-t md:border-b border-[#DCE4E7] py-6 md:py-10 px-0 md:px-6 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200">
+                    <div class="flex flex-wrap items-center justify-center gap-8 md:gap-10 lg:gap-12">
+                        <?php foreach ($trust_certification_logo_ids as $trust_certification_logo_id) : ?>
+                            <?php
+                            echo wp_get_attachment_image(
+                                $trust_certification_logo_id,
+                                'full',
+                                false,
+                                [
+                                    'class'    => 'h-8 md:h-10 w-auto object-contain md:grayscale hover:grayscale-0 transition-all',
+                                    'loading'  => 'lazy',
+                                    'decoding' => 'async',
+                                    'sizes'    => '(min-width: 768px) 160px, 120px',
+                                ]
+                            );
+                            ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </section>
     <?php endif; ?>
 
@@ -2482,89 +2510,89 @@ SVG,
     ?>
 
     <?php if ($ownership_experience_has_content) : ?>
-    <!-- Responsive Background: Light on Mobile, Dark on Desktop -->
-    <section class="w-full bg-[#FAFCFD] md:bg-[#0B1115] py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
-        <!-- Header Section (Responsive Alignment & Colors) -->
-        <div
-            class="max-w-4xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-24 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-            <?php if ($ownership_experience_eyebrow) : ?>
-                <!-- Eyebrow -->
-                <span
-                    class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] md:text-[#4A99B2] font-bold mb-4 md:mb-6 block">
-                    <?php echo esc_html($ownership_experience_eyebrow); ?>
-                </span>
-            <?php endif; ?>
-
-            <?php if ($ownership_experience_heading) : ?>
-                <!-- Headline -->
-                <h2
-                    class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 md:text-white leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
-                    <?php echo esc_html($ownership_experience_heading); ?>
-                </h2>
-            <?php endif; ?>
-
-            <?php if ($ownership_experience_description) : ?>
-                <!-- Subtext -->
-                <p
-                    class="text-gray-500 md:text-gray-400 text-[12px] md:text-[15px] font-light leading-relaxed max-w-2xl mx-0 md:mx-auto pr-4 md:pr-0">
-                    <?php echo esc_html($ownership_experience_description); ?>
-                </p>
-            <?php endif; ?>
-        </div>
-
-        <!-- Carousel/Grid Wrapper -->
-        <div
-            class="swiper ownershipSwiper max-w-[1400px] mx-auto md:border md:border-gray-800/60 pb-12 md:pb-0 overflow-visible md:overflow-hidden w-full scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
-            <!-- Swiper Wrapper overrides Swiper's horizontal flex on desktop to use CSS Grid -->
-            <!-- md:!divide-y lg:!divide-y-0 perfectly matches your original border logic -->
+        <!-- Responsive Background: Light on Mobile, Dark on Desktop -->
+        <section class="w-full bg-[#FAFCFD] md:bg-[#0B1115] py-10 md:py-20 px-6 md:px-16 lg:px-24 overflow-hidden">
+            <!-- Header Section (Responsive Alignment & Colors) -->
             <div
-                class="swiper-wrapper md:!grid md:!grid-cols-3 lg:!grid-cols-5 md:!divide-x md:!divide-y lg:!divide-y-0 md:!divide-gray-800/60 md:!transform-none md:!w-full md:!h-auto">
-                <?php foreach ($ownership_experience_items as $ownership_item_index => $ownership_item) : ?>
-                <?php
-                $ownership_item_icon = (string) (
-                    $ownership_item['ownership_experience_item_icon']
-                    ?? 'setup'
-                );
-                $ownership_item_icon_path = $ownership_experience_icon_paths[$ownership_item_icon]
-                    ?? $ownership_experience_icon_paths['setup'];
-                ?>
-                <!-- ================= OWNERSHIP BENEFIT ================= -->
-                <!-- md:!w-auto md:!m-0 strips Swiper's inline width/margin so the grid works perfectly -->
-                <div class="swiper-slide h-auto md:!w-auto md:!m-0">
-                    <div
-                        class="p-6 md:p-10 flex flex-col h-full bg-white md:bg-[#0B1115] shadow-sm md:shadow-none rounded-xl md:rounded-none hover:md:bg-[#0F171C] transition-colors duration-300">
-                        <span
-                            class="hidden md:block text-[11px] text-[#4A99B2] font-medium tracking-widest mb-6"><?php echo esc_html(sprintf('%02d', $ownership_item_index + 1)); ?></span>
+                class="max-w-4xl mx-0 md:mx-auto text-left md:text-center mb-10 md:mb-24 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                <?php if ($ownership_experience_eyebrow) : ?>
+                    <!-- Eyebrow -->
+                    <span
+                        class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] md:text-[#4A99B2] font-bold mb-4 md:mb-6 block">
+                        <?php echo esc_html($ownership_experience_eyebrow); ?>
+                    </span>
+                <?php endif; ?>
 
-                        <div class="flex items-center md:items-start md:flex-col mb-3 md:mb-0">
-                            <div
-                                class="w-12 h-12 md:w-auto md:h-auto rounded-full md:rounded-none bg-[#EDF3F6] md:bg-transparent flex items-center justify-center shrink-0 mr-4 md:mr-0 md:mb-8 text-[#156E8A] md:text-[#4A99B2]">
-                                <svg class="w-6 h-6 stroke-[1.5px]" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="<?php echo esc_attr($ownership_item_icon_path); ?>" />
-                                </svg>
-                            </div>
-                            <h3
-                                class="text-[17px] md:text-lg font-medium md:font-normal text-gray-900 md:text-white mb-0 md:mb-4">
-                                <?php echo esc_html((string) ($ownership_item['ownership_experience_item_title'] ?? '')); ?>
-                            </h3>
-                        </div>
+                <?php if ($ownership_experience_heading) : ?>
+                    <!-- Headline -->
+                    <h2
+                        class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 md:text-white leading-[1.15] md:leading-[1.2] mb-4 md:mb-6">
+                        <?php echo esc_html($ownership_experience_heading); ?>
+                    </h2>
+                <?php endif; ?>
 
-                        <p
-                            class="text-[15px] md:text-xs text-gray-500 md:text-gray-400 font-light leading-relaxed pr-2 md:pr-0">
-                            <?php echo esc_html((string) ($ownership_item['ownership_experience_item_description'] ?? '')); ?>
-                        </p>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-
+                <?php if ($ownership_experience_description) : ?>
+                    <!-- Subtext -->
+                    <p
+                        class="text-gray-500 md:text-gray-400 text-[12px] md:text-[15px] font-light leading-relaxed max-w-2xl mx-0 md:mx-auto pr-4 md:pr-0">
+                        <?php echo esc_html($ownership_experience_description); ?>
+                    </p>
+                <?php endif; ?>
             </div>
 
-            <!-- Swiper Pagination (Mobile Only) -->
-            <div class="swiper-pagination md:hidden !bottom-0"></div>
-        </div>
-    </section>
+            <!-- Carousel/Grid Wrapper -->
+            <div
+                class="swiper ownershipSwiper max-w-[1400px] mx-auto md:border md:border-gray-800/60 pb-12 md:pb-0 overflow-visible md:overflow-hidden w-full scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
+                <!-- Swiper Wrapper overrides Swiper's horizontal flex on desktop to use CSS Grid -->
+                <!-- md:!divide-y lg:!divide-y-0 perfectly matches your original border logic -->
+                <div
+                    class="swiper-wrapper md:!grid md:!grid-cols-3 lg:!grid-cols-5 md:!divide-x md:!divide-y lg:!divide-y-0 md:!divide-gray-800/60 md:!transform-none md:!w-full md:!h-auto">
+                    <?php foreach ($ownership_experience_items as $ownership_item_index => $ownership_item) : ?>
+                        <?php
+                        $ownership_item_icon = (string) (
+                            $ownership_item['ownership_experience_item_icon']
+                            ?? 'setup'
+                        );
+                        $ownership_item_icon_path = $ownership_experience_icon_paths[$ownership_item_icon]
+                            ?? $ownership_experience_icon_paths['setup'];
+                        ?>
+                        <!-- ================= OWNERSHIP BENEFIT ================= -->
+                        <!-- md:!w-auto md:!m-0 strips Swiper's inline width/margin so the grid works perfectly -->
+                        <div class="swiper-slide h-auto md:!w-auto md:!m-0">
+                            <div
+                                class="p-6 md:p-10 flex flex-col h-full bg-white md:bg-[#0B1115] shadow-sm md:shadow-none rounded-xl md:rounded-none hover:md:bg-[#0F171C] transition-colors duration-300">
+                                <span
+                                    class="hidden md:block text-[11px] text-[#4A99B2] font-medium tracking-widest mb-6"><?php echo esc_html(sprintf('%02d', $ownership_item_index + 1)); ?></span>
+
+                                <div class="flex items-center md:items-start md:flex-col mb-3 md:mb-0">
+                                    <div
+                                        class="w-12 h-12 md:w-auto md:h-auto rounded-full md:rounded-none bg-[#EDF3F6] md:bg-transparent flex items-center justify-center shrink-0 mr-4 md:mr-0 md:mb-8 text-[#156E8A] md:text-[#4A99B2]">
+                                        <svg class="w-6 h-6 stroke-[1.5px]" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="<?php echo esc_attr($ownership_item_icon_path); ?>" />
+                                        </svg>
+                                    </div>
+                                    <h3
+                                        class="text-[17px] md:text-lg font-medium md:font-normal text-gray-900 md:text-white mb-0 md:mb-4">
+                                        <?php echo esc_html((string) ($ownership_item['ownership_experience_item_title'] ?? '')); ?>
+                                    </h3>
+                                </div>
+
+                                <p
+                                    class="text-[15px] md:text-xs text-gray-500 md:text-gray-400 font-light leading-relaxed pr-2 md:pr-0">
+                                    <?php echo esc_html((string) ($ownership_item['ownership_experience_item_description'] ?? '')); ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+
+                </div>
+
+                <!-- Swiper Pagination (Mobile Only) -->
+                <div class="swiper-pagination md:hidden !bottom-0"></div>
+            </div>
+        </section>
     <?php endif; ?>
     <!-- ========================================== -->
     <!-- SECTION 14: BROCHURE & DOWNLOAD            -->
@@ -2700,9 +2728,9 @@ SVG,
     ?>
 
     <?php if ($brochure_download_has_content) : ?>
-    <section class="relative w-full bg-[#0A1318] py-16 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden">
-        <!-- Custom Radial Background Glow (Positioned at 85% right, perfectly behind the brochure) -->
-        <div class="absolute inset-0 pointer-events-none" style="
+        <section class="relative w-full bg-[#0A1318] py-16 md:py-28 px-6 md:px-16 lg:px-24 overflow-hidden">
+            <!-- Custom Radial Background Glow (Positioned at 85% right, perfectly behind the brochure) -->
+            <div class="absolute inset-0 pointer-events-none" style="
             background: radial-gradient(
               70% 80% at 85% 50%,
               rgba(21, 110, 138, 0.14) 0%,
@@ -2710,114 +2738,114 @@ SVG,
             );
           "></div>
 
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center relative z-10">
-            <!-- Left Column: Content & CTA -->
-            <div class="flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-                <?php if ($brochure_download_eyebrow) : ?>
-                    <!-- Eyebrow -->
-                    <div class="flex items-center gap-4 mb-5 md:mb-6">
-                        <div class="w-8 h-[1px] bg-[#156E8A]"></div>
-                        <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold">
-                            <?php echo esc_html($brochure_download_eyebrow); ?>
-                        </span>
-                    </div>
-                <?php endif; ?>
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center relative z-10">
+                <!-- Left Column: Content & CTA -->
+                <div class="flex flex-col scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                    <?php if ($brochure_download_eyebrow) : ?>
+                        <!-- Eyebrow -->
+                        <div class="flex items-center gap-4 mb-5 md:mb-6">
+                            <div class="w-8 h-[1px] bg-[#156E8A]"></div>
+                            <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold">
+                                <?php echo esc_html($brochure_download_eyebrow); ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
 
-                <?php if ($brochure_download_has_heading) : ?>
-                    <!-- Headline -->
-                    <h2
-                        class="text-[32px] md:text-5xl lg:text-[44px] font-light tracking-tight text-white leading-[1.15] md:leading-[1.2] mb-5 md:mb-6">
-                        <?php if ($brochure_download_heading_line_one) : ?>
-                            <?php echo esc_html($brochure_download_heading_line_one); ?>
-                        <?php endif; ?>
-                        <?php if ($brochure_download_heading_line_two) : ?>
+                    <?php if ($brochure_download_has_heading) : ?>
+                        <!-- Headline -->
+                        <h2
+                            class="text-[32px] md:text-5xl lg:text-[44px] font-light tracking-tight text-white leading-[1.15] md:leading-[1.2] mb-5 md:mb-6">
                             <?php if ($brochure_download_heading_line_one) : ?>
-                                <br class="hidden md:block" />
+                                <?php echo esc_html($brochure_download_heading_line_one); ?>
                             <?php endif; ?>
-                            <?php echo esc_html($brochure_download_heading_line_two); ?>
-                        <?php endif; ?>
-                    </h2>
-                <?php endif; ?>
-
-                <?php if ($brochure_download_description) : ?>
-                    <!-- Subtext -->
-                    <p class="text-gray-400 text-[12px] md:text-[15px] font-light leading-relaxed mb-8 md:mb-12 max-w-lg">
-                        <?php echo esc_html($brochure_download_description); ?>
-                    </p>
-                <?php endif; ?>
-
-                <?php if ($brochure_download_stats) : ?>
-                    <!-- Divider -->
-                    <div class="w-full h-[1px] bg-gray-800/80 mb-8 md:mb-10"></div>
-
-                    <!-- Stats Row -->
-                    <div class="grid grid-cols-3 gap-4 md:gap-8 mb-10 md:mb-12">
-                        <?php foreach ($brochure_download_stats as $brochure_download_stat) : ?>
-                            <div class="flex flex-col gap-1.5 md:gap-2">
-                                <span class="text-xl md:text-2xl font-semibold text-white tracking-tight">
-                                    <?php echo esc_html((string) ($brochure_download_stat['brochure_download_stat_value'] ?? '')); ?>
-                                </span>
-                                <span
-                                    class="text-[8px] md:text-[13px] uppercase tracking-widest text-gray-500 font-medium">
-                                    <?php echo esc_html((string) ($brochure_download_stat['brochure_download_stat_label'] ?? '')); ?>
-                                </span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($brochure_download_has_actions) : ?>
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 md:gap-6">
-                        <?php if ($brochure_download_button_label) : ?>
-                            <!-- Primary Button (Solid) -->
-                            <a href="<?php echo esc_url($brochure_download_url); ?>"
-                                <?php echo $brochure_download_file_id ? 'download' : ''; ?>
-                                class="flex items-center justify-center gap-3 bg-[#156E8A] hover:bg-[#11576E] text-white text-[12px] md:text-[13px] uppercase tracking-[0.15em] font-bold px-6 md:px-8 py-4 md:py-3.5 rounded-sm transition-colors w-full sm:w-auto">
-                                <span><?php echo esc_html($brochure_download_button_label); ?></span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                </svg>
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($brochure_download_demo_title && $brochure_download_demo_url) : ?>
-                            <!-- Secondary Button (Text on Mobile, Ghost on Desktop) -->
-                            <a href="<?php echo esc_url($brochure_download_demo_url); ?>"
-                                <?php if ($brochure_download_demo_target) : ?>
-                                    target="_blank" rel="noopener noreferrer"
+                            <?php if ($brochure_download_heading_line_two) : ?>
+                                <?php if ($brochure_download_heading_line_one) : ?>
+                                    <br class="hidden md:block" />
                                 <?php endif; ?>
-                                class="flex items-center justify-start sm:justify-center bg-transparent text-white md:border md:border-gray-600 hover:md:border-gray-400 text-[12px] md:text-[13px] uppercase tracking-[0.15em] font-bold px-2 md:px-8 py-3 md:py-3.5 rounded-sm transition-colors w-full sm:w-auto">
-                                <?php echo esc_html($brochure_download_demo_title); ?>
-                            </a>
-                        <?php endif; ?>
+                                <?php echo esc_html($brochure_download_heading_line_two); ?>
+                            <?php endif; ?>
+                        </h2>
+                    <?php endif; ?>
+
+                    <?php if ($brochure_download_description) : ?>
+                        <!-- Subtext -->
+                        <p class="text-gray-400 text-[12px] md:text-[15px] font-light leading-relaxed mb-8 md:mb-12 max-w-lg">
+                            <?php echo esc_html($brochure_download_description); ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if ($brochure_download_stats) : ?>
+                        <!-- Divider -->
+                        <div class="w-full h-[1px] bg-gray-800/80 mb-8 md:mb-10"></div>
+
+                        <!-- Stats Row -->
+                        <div class="grid grid-cols-3 gap-4 md:gap-8 mb-10 md:mb-12">
+                            <?php foreach ($brochure_download_stats as $brochure_download_stat) : ?>
+                                <div class="flex flex-col gap-1.5 md:gap-2">
+                                    <span class="text-xl md:text-2xl font-semibold text-white tracking-tight">
+                                        <?php echo esc_html((string) ($brochure_download_stat['brochure_download_stat_value'] ?? '')); ?>
+                                    </span>
+                                    <span
+                                        class="text-[8px] md:text-[13px] uppercase tracking-widest text-gray-500 font-medium">
+                                        <?php echo esc_html((string) ($brochure_download_stat['brochure_download_stat_label'] ?? '')); ?>
+                                    </span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($brochure_download_has_actions) : ?>
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 md:gap-6">
+                            <?php if ($brochure_download_button_label) : ?>
+                                <!-- Primary Button (Solid) -->
+                                <a href="<?php echo esc_url($brochure_download_url); ?>"
+                                    <?php echo $brochure_download_file_id ? 'download' : ''; ?>
+                                    class="flex items-center justify-center gap-3 bg-[#156E8A] hover:bg-[#11576E] text-white text-[12px] md:text-[13px] uppercase tracking-[0.15em] font-bold px-6 md:px-8 py-4 md:py-3.5 rounded-sm transition-colors w-full sm:w-auto">
+                                    <span><?php echo esc_html($brochure_download_button_label); ?></span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if ($brochure_download_demo_title && $brochure_download_demo_url) : ?>
+                                <!-- Secondary Button (Text on Mobile, Ghost on Desktop) -->
+                                <a href="<?php echo esc_url($brochure_download_demo_url); ?>"
+                                    <?php if ($brochure_download_demo_target) : ?>
+                                    target="_blank" rel="noopener noreferrer"
+                                    <?php endif; ?>
+                                    class="flex items-center justify-start sm:justify-center bg-transparent text-white md:border md:border-gray-600 hover:md:border-gray-400 text-[12px] md:text-[13px] uppercase tracking-[0.15em] font-bold px-2 md:px-8 py-3 md:py-3.5 rounded-sm transition-colors w-full sm:w-auto">
+                                    <?php echo esc_html($brochure_download_demo_title); ?>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <?php if ($brochure_download_preview_image_id) : ?>
+                    <!-- Right Column: Full Brochure Preview Image -->
+                    <div
+                        class="hidden lg:flex justify-center md:justify-end scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200">
+                        <?php
+                        echo wp_get_attachment_image(
+                            $brochure_download_preview_image_id,
+                            'full',
+                            false,
+                            [
+                                'class'    => 'w-full max-w-[380px] h-auto object-contain shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#16252C] hover:-translate-y-2 transition-transform duration-500',
+                                'loading'  => 'lazy',
+                                'decoding' => 'async',
+                                'sizes'    => '(min-width: 1024px) 380px, 0px',
+                            ]
+                        );
+                        ?>
                     </div>
                 <?php endif; ?>
             </div>
-
-            <?php if ($brochure_download_preview_image_id) : ?>
-                <!-- Right Column: Full Brochure Preview Image -->
-                <div
-                    class="hidden lg:flex justify-center md:justify-end scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200">
-                    <?php
-                    echo wp_get_attachment_image(
-                        $brochure_download_preview_image_id,
-                        'full',
-                        false,
-                        [
-                            'class'    => 'w-full max-w-[380px] h-auto object-contain shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#16252C] hover:-translate-y-2 transition-transform duration-500',
-                            'loading'  => 'lazy',
-                            'decoding' => 'async',
-                            'sizes'    => '(min-width: 1024px) 380px, 0px',
-                        ]
-                    );
-                    ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- ========================================== -->
@@ -2994,143 +3022,143 @@ SVG,
     ?>
 
     <?php if ($why_choose_has_content) : ?>
-    <section class="w-full bg-[#0000000A] dark:bg-black py-16 md:py-24 px-6 md:px-16 lg:px-24 overflow-hidden">
-        <div class="max-w-[1400px] mx-auto">
-            <!-- Header Section -->
-            <div
-                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-12 mb-10 md:mb-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
-                <!-- Left: Eyebrow & Headline -->
-                <div class="max-w-xl">
-                    <?php if ($why_choose_eyebrow) : ?>
-                        <div class="flex items-center gap-3 mb-4 md:mb-6">
-                            <div class="w-8 h-[1px] bg-[#156E8A]"></div>
-                            <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold">
-                                <?php echo esc_html($why_choose_eyebrow); ?>
-                            </span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ($why_choose_has_heading) : ?>
-                        <h2
-                            class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 dark:text-white leading-[1.15] md:leading-[1.2]">
-                            <?php if ($why_choose_heading) : ?>
-                                <?php echo esc_html($why_choose_heading); ?>
-                            <?php endif; ?>
-                            <?php if ($why_choose_heading_highlight) : ?>
-                                <?php if ($why_choose_heading) : ?>
-                                    <br class="hidden md:block" />
-                                <?php endif; ?>
-                                <span class="text-[#156E8A]">
-                                    <?php echo esc_html($why_choose_heading_highlight); ?>
+        <section class="w-full bg-[#0000000A] dark:bg-black py-16 md:py-24 px-6 md:px-16 lg:px-24 overflow-hidden">
+            <div class="max-w-[1400px] mx-auto">
+                <!-- Header Section -->
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-12 mb-10 md:mb-16 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out">
+                    <!-- Left: Eyebrow & Headline -->
+                    <div class="max-w-xl">
+                        <?php if ($why_choose_eyebrow) : ?>
+                            <div class="flex items-center gap-3 mb-4 md:mb-6">
+                                <div class="w-8 h-[1px] bg-[#156E8A]"></div>
+                                <span class="text-[11px] uppercase tracking-[0.25em] text-[#156E8A] font-bold">
+                                    <?php echo esc_html($why_choose_eyebrow); ?>
                                 </span>
-                            <?php endif; ?>
-                        </h2>
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($why_choose_has_heading) : ?>
+                            <h2
+                                class="text-[32px] md:text-5xl font-light tracking-tight text-gray-900 dark:text-white leading-[1.15] md:leading-[1.2]">
+                                <?php if ($why_choose_heading) : ?>
+                                    <?php echo esc_html($why_choose_heading); ?>
+                                <?php endif; ?>
+                                <?php if ($why_choose_heading_highlight) : ?>
+                                    <?php if ($why_choose_heading) : ?>
+                                        <br class="hidden md:block" />
+                                    <?php endif; ?>
+                                    <span class="text-[#156E8A]">
+                                        <?php echo esc_html($why_choose_heading_highlight); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </h2>
+                        <?php endif; ?>
+                    </div>
+                    <!-- Right: Subtext -->
+                    <?php if ($why_choose_description) : ?>
+                        <p
+                            class="text-gray-500 dark:text-gray-400 text-[15px] md:text-[14px] font-light leading-relaxed max-w-md md:text-right">
+                            <?php echo esc_html($why_choose_description); ?>
+                        </p>
                     <?php endif; ?>
                 </div>
-                <!-- Right: Subtext -->
-                <?php if ($why_choose_description) : ?>
-                    <p
-                        class="text-gray-500 dark:text-gray-400 text-[15px] md:text-[14px] font-light leading-relaxed max-w-md md:text-right">
-                        <?php echo esc_html($why_choose_description); ?>
-                    </p>
-                <?php endif; ?>
-            </div>
 
-            <div
-                class="swiper whyChooseSwiper pb-12 md:pb-0 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
-                <!-- 
+                <div
+                    class="swiper whyChooseSwiper pb-12 md:pb-0 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-100">
+                    <!-- 
               THE FIX: 
               Using md:gap-[1px] and md:bg-gray-200 to automatically generate perfect inner borders on desktop! 
             -->
-                <div
-                    class="swiper-wrapper md:!grid md:!grid-cols-3 md:gap-[1px] md:bg-gray-200 dark:md:bg-gray-800 md:border md:border-gray-200 dark:md:border-gray-800 md:!transform-none md:!w-full md:!h-auto">
-                    <?php foreach ($why_choose_features as $why_choose_feature_index => $why_choose_feature) : ?>
-                    <?php
-                    $why_choose_icon_key = (string) (
-                        $why_choose_feature['why_choose_item_icon']
-                        ?? 'certification'
-                    );
-                    $why_choose_icon = $why_choose_icons[$why_choose_icon_key]
-                        ?? $why_choose_icons['certification'];
-                    ?>
-                    <!-- Why Choose Feature -->
-                    <!-- md:border-none is used because the grid gap provides the borders on desktop -->
                     <div
-                        class="swiper-slide md:!w-auto md:!m-0 h-auto bg-white dark:bg-[#111a20] p-6 md:p-8 lg:p-10 border border-gray-200 dark:border-gray-800 md:border-none shadow-sm md:shadow-none rounded-[4px] md:rounded-none flex flex-col">
-                        <div class="flex justify-between items-start mb-8 md:mb-12">
-                            <span class="text-[12px] text-[#156E8A] font-medium tracking-widest"><?php echo esc_html(sprintf('%02d', $why_choose_feature_index + 1)); ?></span>
+                        class="swiper-wrapper md:!grid md:!grid-cols-3 md:gap-[1px] md:bg-gray-200 dark:md:bg-gray-800 md:border md:border-gray-200 dark:md:border-gray-800 md:!transform-none md:!w-full md:!h-auto">
+                        <?php foreach ($why_choose_features as $why_choose_feature_index => $why_choose_feature) : ?>
+                            <?php
+                            $why_choose_icon_key = (string) (
+                                $why_choose_feature['why_choose_item_icon']
+                                ?? 'certification'
+                            );
+                            $why_choose_icon = $why_choose_icons[$why_choose_icon_key]
+                                ?? $why_choose_icons['certification'];
+                            ?>
+                            <!-- Why Choose Feature -->
+                            <!-- md:border-none is used because the grid gap provides the borders on desktop -->
                             <div
-                                class="w-8 h-8 rounded border border-gray-100 dark:border-gray-700 flex items-center justify-center text-gray-400">
-                                <svg width="<?php echo esc_attr((string) $why_choose_icon['width']); ?>"
-                                    height="<?php echo esc_attr((string) $why_choose_icon['height']); ?>"
-                                    viewBox="<?php echo esc_attr((string) $why_choose_icon['view_box']); ?>" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                    <?php foreach ($why_choose_icon['paths'] as $why_choose_icon_path) : ?>
-                                        <path d="<?php echo esc_attr($why_choose_icon_path); ?>"
-                                            stroke="currentColor" stroke-width="0.933106" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    <?php endforeach; ?>
-                                </svg>
-                            </div>
-                        </div>
-                        <h3
-                            class="text-base md:text-[17px] text-gray-900 dark:text-white font-medium md:font-normal mb-3">
-                            <?php echo esc_html((string) ($why_choose_feature['why_choose_item_title'] ?? '')); ?>
-                        </h3>
-                        <p
-                            class="text-[13px] md:text-[13px] lg:text-xs text-gray-500 dark:text-gray-400 font-light leading-relaxed">
-                            <?php echo esc_html((string) ($why_choose_feature['why_choose_item_description'] ?? '')); ?>
-                        </p>
-                    </div>
-                    <?php endforeach; ?>
-
-                </div>
-
-                <!-- Swiper Pagination (Mobile Only) -->
-                <div class="swiper-pagination md:hidden !bottom-0"></div>
-            </div>
-
-            <?php if ($why_choose_has_footer) : ?>
-                <!-- Footer Stats & CTA -->
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center mt-12 md:mt-16 pt-8 md:pt-10 border-t border-gray-200/80 dark:border-gray-800 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200">
-                    <?php if ($why_choose_stats) : ?>
-                        <!-- Stats Grid -->
-                        <div
-                            class="grid grid-cols-2 md:flex gap-y-8 gap-x-6 md:gap-12 lg:gap-16 w-full md:w-auto mb-10 md:mb-0">
-                            <?php foreach ($why_choose_stats as $why_choose_stat) : ?>
-                                <div class="flex flex-col gap-1">
-                                    <span
-                                        class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                        <?php echo esc_html((string) ($why_choose_stat['why_choose_stat_value'] ?? '')); ?>
-                                    </span>
-                                    <span
-                                        class="text-[8px] md:text-[13px] uppercase tracking-widest text-gray-400 font-medium">
-                                        <?php echo esc_html((string) ($why_choose_stat['why_choose_stat_label'] ?? '')); ?>
-                                    </span>
+                                class="swiper-slide md:!w-auto md:!m-0 h-auto bg-white dark:bg-[#111a20] p-6 md:p-8 lg:p-10 border border-gray-200 dark:border-gray-800 md:border-none shadow-sm md:shadow-none rounded-[4px] md:rounded-none flex flex-col">
+                                <div class="flex justify-between items-start mb-8 md:mb-12">
+                                    <span class="text-[12px] text-[#156E8A] font-medium tracking-widest"><?php echo esc_html(sprintf('%02d', $why_choose_feature_index + 1)); ?></span>
+                                    <div
+                                        class="w-8 h-8 rounded border border-gray-100 dark:border-gray-700 flex items-center justify-center text-gray-400">
+                                        <svg width="<?php echo esc_attr((string) $why_choose_icon['width']); ?>"
+                                            height="<?php echo esc_attr((string) $why_choose_icon['height']); ?>"
+                                            viewBox="<?php echo esc_attr((string) $why_choose_icon['view_box']); ?>" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                            <?php foreach ($why_choose_icon['paths'] as $why_choose_icon_path) : ?>
+                                                <path d="<?php echo esc_attr($why_choose_icon_path); ?>"
+                                                    stroke="currentColor" stroke-width="0.933106" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            <?php endforeach; ?>
+                                        </svg>
+                                    </div>
                                 </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                                <h3
+                                    class="text-base md:text-[17px] text-gray-900 dark:text-white font-medium md:font-normal mb-3">
+                                    <?php echo esc_html((string) ($why_choose_feature['why_choose_item_title'] ?? '')); ?>
+                                </h3>
+                                <p
+                                    class="text-[13px] md:text-[13px] lg:text-xs text-gray-500 dark:text-gray-400 font-light leading-relaxed">
+                                    <?php echo esc_html((string) ($why_choose_feature['why_choose_item_description'] ?? '')); ?>
+                                </p>
+                            </div>
+                        <?php endforeach; ?>
 
-                    <?php if ($why_choose_cta_title && $why_choose_cta_url) : ?>
-                        <!-- CTA Button -->
-                        <a href="<?php echo esc_url($why_choose_cta_url); ?>"
-                            <?php if ($why_choose_cta_target) : ?>
-                                target="_blank" rel="noopener noreferrer"
-                            <?php endif; ?>
-                            class="flex items-center justify-center gap-3 bg-[#156E8A] hover:bg-[#11576E] text-white text-[12px] md:text-[13px] uppercase tracking-[0.15em] font-bold px-8 py-4 md:py-3.5 rounded-sm transition-colors w-full md:w-auto shrink-0">
-                            <span><?php echo esc_html($why_choose_cta_title); ?></span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
-                        </a>
-                    <?php endif; ?>
+                    </div>
+
+                    <!-- Swiper Pagination (Mobile Only) -->
+                    <div class="swiper-pagination md:hidden !bottom-0"></div>
                 </div>
-            <?php endif; ?>
-        </div>
-    </section>
+
+                <?php if ($why_choose_has_footer) : ?>
+                    <!-- Footer Stats & CTA -->
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-start md:items-center mt-12 md:mt-16 pt-8 md:pt-10 border-t border-gray-200/80 dark:border-gray-800 scroll-reveal opacity-0 translate-y-6 transition-all duration-700 delay-200">
+                        <?php if ($why_choose_stats) : ?>
+                            <!-- Stats Grid -->
+                            <div
+                                class="grid grid-cols-2 md:flex gap-y-8 gap-x-6 md:gap-12 lg:gap-16 w-full md:w-auto mb-10 md:mb-0">
+                                <?php foreach ($why_choose_stats as $why_choose_stat) : ?>
+                                    <div class="flex flex-col gap-1">
+                                        <span
+                                            class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+                                            <?php echo esc_html((string) ($why_choose_stat['why_choose_stat_value'] ?? '')); ?>
+                                        </span>
+                                        <span
+                                            class="text-[8px] md:text-[13px] uppercase tracking-widest text-gray-400 font-medium">
+                                            <?php echo esc_html((string) ($why_choose_stat['why_choose_stat_label'] ?? '')); ?>
+                                        </span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($why_choose_cta_title && $why_choose_cta_url) : ?>
+                            <!-- CTA Button -->
+                            <a href="<?php echo esc_url($why_choose_cta_url); ?>"
+                                <?php if ($why_choose_cta_target) : ?>
+                                target="_blank" rel="noopener noreferrer"
+                                <?php endif; ?>
+                                class="flex items-center justify-center gap-3 bg-[#156E8A] hover:bg-[#11576E] text-white text-[12px] md:text-[13px] uppercase tracking-[0.15em] font-bold px-8 py-4 md:py-3.5 rounded-sm transition-colors w-full md:w-auto shrink-0">
+                                <span><?php echo esc_html($why_choose_cta_title); ?></span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
     <?php endif; ?>
 
     <!-- ========================================== -->
@@ -3339,130 +3367,130 @@ SVG,
     ?>
 
     <?php if ($final_cta_has_content) : ?>
-    <section
-        class="w-full relative overflow-hidden flex flex-col items-center justify-center min-h-[70vh] bg-[#FAFCFD] py-16 md:py-20 px-6 md:px-16 lg:px-24">
-        <!-- Mobile-Only Background Image & Dark Overlay -->
-        <div class="absolute inset-0 md:hidden z-0">
-            <?php if ($final_cta_mobile_background_id) : ?>
-                <?php
-                echo wp_get_attachment_image(
-                    $final_cta_mobile_background_id,
-                    'full',
-                    false,
-                    [
-                        'class'       => 'w-full h-full object-cover object-center',
-                        'alt'         => '',
-                        'aria-hidden' => 'true',
-                        'loading'     => 'lazy',
-                        'decoding'    => 'async',
-                        'sizes'       => '(max-width: 767px) 100vw, 0px',
-                    ]
-                );
-                ?>
-            <?php endif; ?>
-            <!-- Heavy dark overlay to ensure text legibility -->
-            <div class="absolute inset-0 bg-[#0A1216]/90"></div>
-        </div>
+        <section
+            class="w-full relative overflow-hidden flex flex-col items-center justify-center min-h-[70vh] bg-[#FAFCFD] py-16 md:py-20 px-6 md:px-16 lg:px-24">
+            <!-- Mobile-Only Background Image & Dark Overlay -->
+            <div class="absolute inset-0 md:hidden z-0">
+                <?php if ($final_cta_mobile_background_id) : ?>
+                    <?php
+                    echo wp_get_attachment_image(
+                        $final_cta_mobile_background_id,
+                        'full',
+                        false,
+                        [
+                            'class'       => 'w-full h-full object-cover object-center',
+                            'alt'         => '',
+                            'aria-hidden' => 'true',
+                            'loading'     => 'lazy',
+                            'decoding'    => 'async',
+                            'sizes'       => '(max-width: 767px) 100vw, 0px',
+                        ]
+                    );
+                    ?>
+                <?php endif; ?>
+                <!-- Heavy dark overlay to ensure text legibility -->
+                <div class="absolute inset-0 bg-[#0A1216]/90"></div>
+            </div>
 
-        <!-- Giant Background Watermark ('B') -->
-        <!-- Hidden on mobile to keep the dark theme clean, visible on desktop -->
-        <div class="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none select-none z-0"
-            aria-hidden="true">
-            <span
-                class="text-[400px] lg:text-[600px] font-bold text-gray-900 opacity-[0.02] leading-none transform absolute bottom-[-100px]">B</span>
-        </div>
-
-        <!-- Content Container -->
-        <div
-            class="relative z-10 max-w-5xl mx-auto text-center scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out w-full">
-            <?php if ($final_cta_eyebrow) : ?>
-                <!-- Eyebrow -->
+            <!-- Giant Background Watermark ('B') -->
+            <!-- Hidden on mobile to keep the dark theme clean, visible on desktop -->
+            <div class="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none select-none z-0"
+                aria-hidden="true">
                 <span
-                    class="text-[11px] uppercase tracking-[0.25em] text-[#4A99B2] md:text-[#156E8A] font-bold mb-6 md:mb-8 block">
-                    <?php echo esc_html($final_cta_eyebrow); ?>
-                </span>
-            <?php endif; ?>
+                    class="text-[400px] lg:text-[600px] font-bold text-gray-900 opacity-[0.02] leading-none transform absolute bottom-[-100px]">B</span>
+            </div>
 
-            <?php if ($final_cta_has_heading) : ?>
-                <!-- Headline -->
-                <!-- Mobile: White text. Desktop: Dark text with blue highlight -->
-                <h2
-                    class="text-[34px] md:text-5xl lg:text-7xl font-light tracking-tight text-white md:text-gray-900 leading-[1.2] md:leading-[1.1] mb-6 md:mb-8">
-                    <?php if ($final_cta_heading_opening) : ?>
-                        <?php echo esc_html($final_cta_heading_opening); ?>
-                    <?php endif; ?>
-                    <?php if ($final_cta_heading_middle) : ?>
-                        <?php if ($final_cta_heading_opening) : ?><br class="md:hidden" /><?php endif; ?>
-                        <?php echo esc_html($final_cta_heading_middle); ?>
-                    <?php endif; ?>
-                    <?php if ($final_cta_heading_connector || $final_cta_heading_highlight) : ?>
-                        <?php if ($final_cta_heading_opening || $final_cta_heading_middle) : ?><br class="hidden md:block" /><?php endif; ?>
-                        <?php if ($final_cta_heading_connector) : ?>
-                            <?php echo esc_html($final_cta_heading_connector); ?>
+            <!-- Content Container -->
+            <div
+                class="relative z-10 max-w-5xl mx-auto text-center scroll-reveal opacity-0 translate-y-6 transition-all duration-700 ease-out w-full">
+                <?php if ($final_cta_eyebrow) : ?>
+                    <!-- Eyebrow -->
+                    <span
+                        class="text-[11px] uppercase tracking-[0.25em] text-[#4A99B2] md:text-[#156E8A] font-bold mb-6 md:mb-8 block">
+                        <?php echo esc_html($final_cta_eyebrow); ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ($final_cta_has_heading) : ?>
+                    <!-- Headline -->
+                    <!-- Mobile: White text. Desktop: Dark text with blue highlight -->
+                    <h2
+                        class="text-[34px] md:text-5xl lg:text-7xl font-light tracking-tight text-white md:text-gray-900 leading-[1.2] md:leading-[1.1] mb-6 md:mb-8">
+                        <?php if ($final_cta_heading_opening) : ?>
+                            <?php echo esc_html($final_cta_heading_opening); ?>
                         <?php endif; ?>
-                        <?php if ($final_cta_heading_highlight) : ?>
-                            <span class="text-white md:text-[#156E8A] font-normal md:font-medium"><?php echo esc_html($final_cta_heading_highlight); ?></span>
+                        <?php if ($final_cta_heading_middle) : ?>
+                            <?php if ($final_cta_heading_opening) : ?><br class="md:hidden" /><?php endif; ?>
+                            <?php echo esc_html($final_cta_heading_middle); ?>
                         <?php endif; ?>
-                    <?php endif; ?>
-                </h2>
-            <?php endif; ?>
-
-            <?php if ($final_cta_has_description) : ?>
-                <!-- Subtext -->
-                <p
-                    class="text-gray-300 md:text-gray-500 text-[15px] md:text-base font-light leading-relaxed max-w-2xl mx-auto mb-10 md:mb-14 px-2 md:px-0">
-                    <?php if ($final_cta_description_line_one) : ?>
-                        <?php echo esc_html($final_cta_description_line_one); ?>
-                    <?php endif; ?>
-                    <?php if ($final_cta_description_line_two) : ?>
-                        <?php if ($final_cta_description_line_one) : ?><br class="hidden md:block" /><?php endif; ?>
-                        <?php echo esc_html($final_cta_description_line_two); ?>
-                    <?php endif; ?>
-                    <?php if ($final_cta_starting_price_prefix && $final_cta_formatted_price) : ?>
-                        <?php if ($final_cta_description_line_one || $final_cta_description_line_two) : ?><br class="hidden md:block" /><?php endif; ?>
-                        <?php echo esc_html($final_cta_starting_price_prefix . ' ' . $final_cta_formatted_price . '.'); ?>
-                    <?php endif; ?>
-                </p>
-            <?php endif; ?>
-
-            <?php if ($final_cta_has_actions) : ?>
-                <!-- CTA Buttons -->
-                <!-- Mobile: Stacked vertically. Desktop: Side-by-side -->
-                <div
-                    class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full max-w-[280px] mx-auto md:max-w-none">
-                    <?php if ($final_cta_primary_title && $final_cta_primary_url) : ?>
-                        <!-- Primary Solid Button -->
-                        <!-- Mobile: White BG, Dark Text. Desktop: Dark BG, White Text -->
-                        <a href="<?php echo esc_url($final_cta_primary_url); ?>"
-                            <?php if ($final_cta_primary_target) : ?>
-                                target="_blank" rel="noopener noreferrer"
+                        <?php if ($final_cta_heading_connector || $final_cta_heading_highlight) : ?>
+                            <?php if ($final_cta_heading_opening || $final_cta_heading_middle) : ?><br class="hidden md:block" /><?php endif; ?>
+                            <?php if ($final_cta_heading_connector) : ?>
+                                <?php echo esc_html($final_cta_heading_connector); ?>
                             <?php endif; ?>
-                            class="bg-white md:bg-[#111111] text-gray-900 md:text-white text-[11px] md:text-[12px] tracking-[0.15em] font-bold uppercase px-8 py-4 md:py-5 hover:bg-gray-100 md:hover:bg-[#156E8A] transition-colors flex items-center justify-center gap-3 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)] md:shadow-xl md:shadow-gray-200 w-full md:w-auto">
-                            <span><?php echo esc_html($final_cta_primary_title); ?></span>
-                            <!-- Sleek SVG Arrow -->
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
-                        </a>
-                    <?php endif; ?>
-
-                    <?php if ($final_cta_secondary_title && $final_cta_secondary_url) : ?>
-                        <!-- Secondary Ghost/Underline Button -->
-                        <!-- Mobile: Light gray text, tight border. Desktop: Dark text -->
-                        <a href="<?php echo esc_url($final_cta_secondary_url); ?>"
-                            <?php if ($final_cta_secondary_target) : ?>
-                                target="_blank" rel="noopener noreferrer"
+                            <?php if ($final_cta_heading_highlight) : ?>
+                                <span class="text-white md:text-[#156E8A] font-normal md:font-medium"><?php echo esc_html($final_cta_heading_highlight); ?></span>
                             <?php endif; ?>
-                            class="text-gray-300 md:text-gray-900 text-[11px] md:text-[12px] tracking-[0.15em] font-bold uppercase border-b border-gray-600 md:border-gray-300 pb-1.5 md:py-5 hover:border-white md:hover:border-[#156E8A] hover:text-white md:hover:text-[#156E8A] transition-colors mt-2 md:mt-0 w-full md:w-auto text-center md:text-left">
-                            <?php echo esc_html($final_cta_secondary_title); ?>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
+                        <?php endif; ?>
+                    </h2>
+                <?php endif; ?>
+
+                <?php if ($final_cta_has_description) : ?>
+                    <!-- Subtext -->
+                    <p
+                        class="text-gray-300 md:text-gray-500 text-[15px] md:text-base font-light leading-relaxed max-w-2xl mx-auto mb-10 md:mb-14 px-2 md:px-0">
+                        <?php if ($final_cta_description_line_one) : ?>
+                            <?php echo esc_html($final_cta_description_line_one); ?>
+                        <?php endif; ?>
+                        <?php if ($final_cta_description_line_two) : ?>
+                            <?php if ($final_cta_description_line_one) : ?><br class="hidden md:block" /><?php endif; ?>
+                            <?php echo esc_html($final_cta_description_line_two); ?>
+                        <?php endif; ?>
+                        <?php if ($final_cta_starting_price_prefix && $final_cta_formatted_price) : ?>
+                            <?php if ($final_cta_description_line_one || $final_cta_description_line_two) : ?><br class="hidden md:block" /><?php endif; ?>
+                            <?php echo esc_html($final_cta_starting_price_prefix . ' ' . $final_cta_formatted_price . '.'); ?>
+                        <?php endif; ?>
+                    </p>
+                <?php endif; ?>
+
+                <?php if ($final_cta_has_actions) : ?>
+                    <!-- CTA Buttons -->
+                    <!-- Mobile: Stacked vertically. Desktop: Side-by-side -->
+                    <div
+                        class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full max-w-[280px] mx-auto md:max-w-none">
+                        <?php if ($final_cta_primary_title && $final_cta_primary_url) : ?>
+                            <!-- Primary Solid Button -->
+                            <!-- Mobile: White BG, Dark Text. Desktop: Dark BG, White Text -->
+                            <a href="<?php echo esc_url($final_cta_primary_url); ?>"
+                                <?php if ($final_cta_primary_target) : ?>
+                                target="_blank" rel="noopener noreferrer"
+                                <?php endif; ?>
+                                class="bg-white md:bg-[#111111] text-gray-900 md:text-white text-[11px] md:text-[12px] tracking-[0.15em] font-bold uppercase px-8 py-4 md:py-5 hover:bg-gray-100 md:hover:bg-[#156E8A] transition-colors flex items-center justify-center gap-3 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)] md:shadow-xl md:shadow-gray-200 w-full md:w-auto">
+                                <span><?php echo esc_html($final_cta_primary_title); ?></span>
+                                <!-- Sleek SVG Arrow -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if ($final_cta_secondary_title && $final_cta_secondary_url) : ?>
+                            <!-- Secondary Ghost/Underline Button -->
+                            <!-- Mobile: Light gray text, tight border. Desktop: Dark text -->
+                            <a href="<?php echo esc_url($final_cta_secondary_url); ?>"
+                                <?php if ($final_cta_secondary_target) : ?>
+                                target="_blank" rel="noopener noreferrer"
+                                <?php endif; ?>
+                                class="text-gray-300 md:text-gray-900 text-[11px] md:text-[12px] tracking-[0.15em] font-bold uppercase border-b border-gray-600 md:border-gray-300 pb-1.5 md:py-5 hover:border-white md:hover:border-[#156E8A] hover:text-white md:hover:text-[#156E8A] transition-colors mt-2 md:mt-0 w-full md:w-auto text-center md:text-left">
+                                <?php echo esc_html($final_cta_secondary_title); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
     <?php endif; ?>
 </main>
 

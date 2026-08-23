@@ -24,9 +24,10 @@ endif;
 
 $product_id = $product->get_id();
 $product_name = $product->get_name();
-$shop_url = function_exists('wc_get_page_permalink')
-    ? wc_get_page_permalink('shop')
-    : home_url('/shop/');
+$products_page = get_page_by_path('products', OBJECT, 'page');
+$shop_url = $products_page
+    ? get_permalink($products_page)
+    : home_url('/products/');
 
 $defaults = function_exists('breathein_product_detail_defaults')
     ? breathein_product_detail_defaults($product)

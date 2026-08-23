@@ -475,7 +475,7 @@ $aqi_locations = [
                 href="<?php echo esc_url($cart_link_url); ?>"
                 target="<?php echo esc_attr($cart_link_target); ?>"
                 <?php if ('_blank' === $cart_link_target) : ?>
-                    rel="noopener noreferrer"
+                rel="noopener noreferrer"
                 <?php endif; ?>
                 class="relative flex items-center justify-center p-1.5 text-gray-900 transition-colors hover:text-brandTeal"
                 aria-label="<?php esc_attr_e('View shopping cart', 'breathein'); ?>">
@@ -579,7 +579,7 @@ $aqi_locations = [
             <button
                 id="themeToggle"
                 type="button"
-                class="hidden items-center gap-1.5 rounded-full border border-gray-200 px-4 py-2 transition-colors hover:border-black lg:flex"
+                class="flex items-center gap-1.5 border border-gray-200 rounded-full px-4 py-2 hover:border-black transition-colorsl"
                 aria-label="<?php esc_attr_e('Toggle dark mode', 'breathein'); ?>"
                 aria-pressed="false">
                 <svg

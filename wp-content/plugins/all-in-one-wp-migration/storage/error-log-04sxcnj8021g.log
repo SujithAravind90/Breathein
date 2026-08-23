@@ -1,0 +1,9 @@
+Aug 15 2026 16:31:48
+{"Number":2,"Message":"rmdir(C:\\laragon\\www\\Breathein\\wp-content\\plugins\\all-in-one-wp-migration\\storage\\04sxcnj8021g): Directory not empty","File":"C:\\laragon\\www\\Breathein\\wp-content\\plugins\\all-in-one-wp-migration\\lib\\vendor\\servmask\\filesystem\\class-ai1wm-directory.php","Line":74}
+
+Aug 15 2026 16:31:50
+{"Number":2,"Message":"unlink(C:\\laragon\\www\\Breathein\\wp-content\\plugins\\all-in-one-wp-migration\\storage\\04sxcnj8021g\\plugins.list): Permission denied","File":"C:\\laragon\\www\\Breathein\\wp-content\\plugins\\all-in-one-wp-migration\\lib\\vendor\\servmask\\filesystem\\class-ai1wm-directory.php","Line":68}
+
+Aug 15 2026 16:31:50
+{"Number":2,"Message":"rmdir(C:\\laragon\\www\\Breathein\\wp-content\\plugins\\all-in-one-wp-migration\\storage\\04sxcnj8021g): Directory not empty","File":"C:\\laragon\\www\\Breathein\\wp-content\\plugins\\all-in-one-wp-migration\\lib\\vendor\\servmask\\filesystem\\class-ai1wm-directory.php","Line":74}
+

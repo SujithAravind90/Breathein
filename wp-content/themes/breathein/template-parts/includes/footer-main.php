@@ -27,10 +27,10 @@ if ($custom_logo_id) {
     $logo_alt = get_bloginfo('name');
 }
 
-$collection_page = get_page_by_path('collection');
-$shop_url = $collection_page instanceof WP_Post
-    ? get_permalink($collection_page)
-    : home_url('/collection/');
+$products_page = get_page_by_path('products');
+$shop_url = $products_page instanceof WP_Post
+    ? get_permalink($products_page)
+    : home_url('/products/');
 
 $brochure_url = apply_filters(
     'breathein_brochure_url',
@@ -198,7 +198,7 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
                 <div class="breathein-footer-nav flex flex-col">
                     <h2
                         class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 md:text-[12px]">
-                        <?php esc_html_e('Collection', 'breathein'); ?>
+                        <?php esc_html_e('products', 'breathein'); ?>
                     </h2>
                     <?php
                     $render_footer_menu(
