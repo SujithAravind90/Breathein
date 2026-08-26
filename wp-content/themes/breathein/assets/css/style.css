@@ -7,7 +7,6 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -20,25 +19,21 @@ body {
     opacity: 0;
     transform: translateY(-20px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
 @keyframes fadeInUp {
   0% {
     opacity: 0;
     transform: translateY(15px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
 .animate-fade-in-down {
   opacity: 0;
   /* Hidden before animation starts */
@@ -59,7 +54,6 @@ body {
   opacity: 0.4;
   transition: all 0.3s ease;
 }
-
 .heroSwiper .swiper-pagination-bullet-active {
   background: #1A7388;
   opacity: 1;
@@ -74,20 +68,16 @@ body {
   0% {
     transform: translateX(0%);
   }
-
   100% {
     transform: translateX(-50%);
   }
-
   /* It translates by -50% because the container holds two identical blocks. 
        Once it shifts half its width, it snaps back to 0 perfectly seamlessly. */
 }
-
 .animate-marquee {
   animation: marquee 25s linear infinite;
   /* Optional: Pause the scrolling when a user hovers over the bar */
 }
-
 .animate-marquee:hover {
   animation-play-state: paused;
 }
@@ -99,20 +89,16 @@ body {
   0% {
     transform: translate(0px, 0px);
   }
-
   33% {
     transform: translate(10px, -15px);
   }
-
   66% {
     transform: translate(-10px, 10px);
   }
-
   100% {
     transform: translate(0px, 0px);
   }
 }
-
 .float-slow {
   animation: floatSlow 8s ease-in-out infinite;
 }
@@ -121,16 +107,13 @@ body {
   0% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-12px);
   }
-
   100% {
     transform: translateY(0px);
   }
 }
-
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -152,7 +135,7 @@ body {
 .custom-slider {
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
+       appearance: none;
   background: transparent;
   cursor: pointer;
 }
@@ -222,6 +205,10 @@ body {
   /* Brand Teal */
 }
 
+.bgDarkBlue {
+  background-color: #0B1115;
+}
+
 /* ==========================================
    GLOBAL DARK MODE SYSTEM
    ========================================== */
@@ -251,6 +238,14 @@ html.dark .bg-white,
 html.dark section.bg-white,
 html.dark main.bg-white {
   background-color: #0D1418 !important;
+}
+
+html.dark .bgDarkBlue .bg-white {
+  background-color: #fff !important;
+}
+
+html.dark .bgDarkBlue .bg-white:hover {
+  background-color: #22D3EE !important;
 }
 
 html.dark .bg-gray-50,
@@ -332,9 +327,9 @@ html.dark .border-\[\#DCE4E7\],
 html.dark .border-\[\#E5E7EB\],
 html.dark .border-gray-200\/60,
 html.dark .border-gray-200\/80,
-html.dark .divide-gray-100> :not([hidden])~ :not([hidden]),
-html.dark .divide-gray-200> :not([hidden])~ :not([hidden]),
-html.dark .divide-gray-200\/60> :not([hidden])~ :not([hidden]) {
+html.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-gray-200\/60 > :not([hidden]) ~ :not([hidden]) {
   border-color: #1F2937 !important;
 }
 
@@ -368,12 +363,10 @@ html.dark .bg-black:hover {
     border: none !important;
     color: #22D3EE !important;
   }
-
   html.dark .bg-\[\#111111\]:hover.lg\:text-brandTeal {
     color: #156E8A !important;
   }
 }
-
 /* Outline Buttons (e.g. SHOP NOW header, TALK TO EXPERT header) */
 html.dark .border-black,
 html.dark .border-gray-900,
@@ -420,8 +413,7 @@ html.dark select {
   color: #FFFFFF !important;
 }
 
-html.dark input::-moz-placeholder,
-html.dark textarea::-moz-placeholder {
+html.dark input::-moz-placeholder, html.dark textarea::-moz-placeholder {
   color: #6B7280 !important;
 }
 
@@ -496,39 +488,31 @@ html.dark [class*=shadow-gray] {
 
 /* 10. App Section Mobile Dark Mode Consistency */
 @media (max-width: 1023px) {
-
   #app-section,
   .app-section {
     background-color: #0A1014 !important;
   }
-
   #app-section h2,
   .app-section h2 {
     color: #FFFFFF !important;
   }
-
   #app-section p,
   .app-section p {
     color: #8E989E !important;
   }
-
   #app-section h4,
   .app-section h4 {
     color: #FFFFFF !important;
   }
-
   #app-section .app-icon-badge,
   .app-section .app-icon-badge {
     background-color: #0F222B !important;
     color: #22D3EE !important;
   }
-
   #app-section .app-store-btn,
   .app-section .app-store-btn {
     background-color: #0A1014 !important;
     border: 1px solid #1F2937 !important;
     color: #FFFFFF !important;
   }
-}
-
-/*# sourceMappingURL=style.css.map */
+}/*# sourceMappingURL=style.css.map */
