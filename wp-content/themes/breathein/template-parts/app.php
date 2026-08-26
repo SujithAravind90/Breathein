@@ -93,7 +93,7 @@ get_header();
         ?>
         <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-3 md:gap-4">
           <!-- iOS Button -->
-          <a href="<?php echo esc_url($ios_url); ?>" class="flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]">
+          <a href="<?php echo esc_url($ios_url); ?>" class="flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-xl group text-white md:text-[#141414]">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M15.6292 11.4953C15.6109 9.47859 17.2793 8.50693 17.3526 8.46109C16.4176 7.08609 14.9601 6.90276 14.4376 6.88443C13.2001 6.75609 12.0176 7.61776 11.3851 7.61776C10.7526 7.61776 9.79008 6.90276 8.76342 6.92109C7.41592 6.93943 6.16925 7.70943 5.47258 8.91943C4.07008 11.3578 5.11508 14.9694 6.48092 16.9494C7.15008 17.9211 7.94758 19.0119 8.99258 18.9753C10.0009 18.9386 10.3859 18.3244 11.6051 18.3244C12.8243 18.3244 13.1726 18.9753 14.2359 18.9569C15.3176 18.9386 16.0051 17.9669 16.6651 16.9861C17.4351 15.8586 17.7467 14.7678 17.7651 14.7128C17.7376 14.7036 15.6659 13.9061 15.6476 11.5136L15.6292 11.4953ZM13.6401 5.46359C14.1901 4.79443 14.5659 3.86859 14.4651 2.93359C13.6676 2.97026 12.6959 3.46526 12.1184 4.13443C11.6051 4.72109 11.1559 5.66526 11.2751 6.56359C12.1642 6.63693 13.0809 6.11443 13.6401 5.46359Z"/></svg>
             <div class="flex flex-col">
               <span class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Download on the</span>
@@ -102,7 +102,7 @@ get_header();
           </a>
 
           <!-- Android Button -->
-          <a href="<?php echo esc_url($android_url); ?>" class="flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-sm group text-white md:text-[#141414]">
+          <a href="<?php echo esc_url($android_url); ?>" class="flex items-center justify-center md:justify-start gap-2.5 md:gap-3 px-3 md:px-5 py-3 md:py-2.5 border border-gray-800 md:border-gray-200 hover:border-gray-500 md:hover:border-gray-300 md:hover:bg-gray-50 transition-all rounded-xl group text-white md:text-[#141414]">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><path d="M3.30042 2.20013C3.05292 2.4568 2.90625 2.86013 2.90625 3.37346V18.6268C2.90625 19.1401 3.05292 19.5435 3.30042 19.8001L3.35542 19.846L11.9171 11.0643V10.936L3.35542 2.1543L3.30042 2.20013ZM14.9421 14.0893L12.1004 11.2476V11.1193L14.9421 8.27763L15.0063 8.3143L18.3704 10.2301C19.3329 10.7801 19.3329 11.6693 18.3704 12.2193L15.0063 14.1351L14.9421 14.181V14.0893ZM14.6029 14.4285L11.6971 11.4585L3.30042 19.846C3.62125 20.1851 4.14375 20.2218 4.73958 19.8918L14.6029 14.4285ZM14.6029 8.48846L4.73958 3.02513C4.14375 2.69513 3.62125 2.7318 3.30042 3.07096L11.6971 11.4585L14.6029 8.48846Z"/></svg>
             <div class="flex flex-col">
               <span class="text-[6px] md:text-[7px] uppercase tracking-widest text-gray-500 font-bold leading-none mb-1">Get it on</span>
@@ -148,7 +148,7 @@ get_header();
       <?php if (have_rows('setup_steps')) : ?>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
           <?php while (have_rows('setup_steps')) : the_row(); ?>
-            <div class="flex flex-col lg:justify-between gap-4 lg:gap-0 lg:min-h-[280px] p-6 lg:p-12 border border-gray-800 lg:border-none bg-transparent lg:bg-white rounded-sm lg:rounded-none">
+            <div class="flex flex-col lg:justify-between gap-4 lg:gap-0 lg:min-h-[280px] p-6 lg:p-12 border border-gray-800 lg:border-none bg-transparent lg:bg-white rounded-xl lg:rounded-none">
               <span class="text-[11px] lg:text-[15px] tracking-[0.2em] lg:tracking-normal font-bold text-[#156E8A] uppercase lg:normal-case">
                 <?php echo esc_html(get_sub_field('step_label')); ?>
               </span>

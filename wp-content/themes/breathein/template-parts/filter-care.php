@@ -223,7 +223,9 @@ get_header();
                 <?php if ($filter_care_maintenance_steps) : ?>
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
                         <?php foreach ($filter_care_maintenance_steps as $step) : ?>
-                            <?php if (!is_array($step)) { continue; } ?>
+                            <?php if (!is_array($step)) {
+                                continue;
+                            } ?>
                             <article class="flex flex-col rounded-[4px] border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-[#111a20] lg:p-8 lg:shadow-none">
                                 <span class="mb-4 text-[14px] font-medium tracking-wide text-[#156E8A] dark:text-[#2094B6]">
                                     <?php echo esc_html((string) ($step['step_label'] ?? '')); ?>
@@ -251,64 +253,100 @@ get_header();
                 </div>
 
                 <?php if ($filter_care_filter_products) : ?>
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
-                        <?php foreach ($filter_care_filter_products as $filter) : ?>
-                            <?php
-                            if (!is_array($filter)) {
-                                continue;
-                            }
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
 
-                            $filter_name = (string) ($filter['name'] ?? '');
-                            $filter_image = $filter['image'] ?? null;
-                            $filter_image_url = $filter_care_image_url($filter_image);
-                            ?>
-                            <article class="flex flex-col rounded-[4px] border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-[#111a20] lg:p-10 lg:shadow-none">
-                                <h3 class="mb-8 text-center text-[22px] font-normal text-gray-900 dark:text-white">
-                                    <?php echo esc_html($filter_name); ?>
-                                </h3>
+        <?php foreach ($filter_care_filter_products as $filter) : ?>
 
-                                <div class="mb-10 flex h-[180px] w-full items-center justify-center">
-                                    <?php if ($filter_image_url) : ?>
-                                        <img
-                                            src="<?php echo esc_url($filter_image_url); ?>"
-                                            alt="<?php echo esc_attr($filter_care_image_alt($filter_image, $filter_name . ' Filter')); ?>"
-                                            class="h-full object-contain"
-                                            loading="lazy">
-                                    <?php endif; ?>
-                                </div>
+            <?php
+            if (!is_array($filter)) {
+                continue;
+            }
 
-                                <div class="flex w-full flex-col">
-                                    <div class="border-t border-gray-100 py-4 dark:border-gray-800">
-                                        <p class="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
-                                            <?php esc_html_e('Filter Type', 'breathein'); ?>
-                                        </p>
-                                        <p class="text-[13px] font-light text-gray-900 dark:text-gray-300">
-                                            <?php echo esc_html((string) ($filter['filter_type'] ?? '')); ?>
-                                        </p>
-                                    </div>
-                                    <div class="border-t border-gray-100 py-4 dark:border-gray-800">
-                                        <p class="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
-                                            <?php esc_html_e('Typical Filter Life', 'breathein'); ?>
-                                        </p>
-                                        <p class="text-[13px] font-light text-gray-900 dark:text-gray-300">
-                                            <?php echo esc_html((string) ($filter['filter_life'] ?? '')); ?>
-                                        </p>
-                                    </div>
-                                    <div class="border-t border-gray-100 pb-2 pt-4 dark:border-gray-800">
-                                        <p class="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
-                                            <?php esc_html_e('Replacement Price', 'breathein'); ?>
-                                        </p>
-                                        <div class="inline-flex items-center justify-center rounded-[2px] border border-dashed border-[#8E989E] bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-[#0D1418]">
-                                            <span class="text-[13px] font-medium text-gray-800 dark:text-gray-200">
-                                                <?php echo esc_html((string) ($filter['replacement_price'] ?? '')); ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
+            $filter_name      = (string) ($filter['name'] ?? '');
+            $filter_image     = $filter['image'] ?? null;
+            $filter_image_url = $filter_care_image_url($filter_image);
+
+            // Get product link from ACF repeater sub-field.
+            $filter_url = (string) ($filter['product_link'] ?? '');
+            ?>
+
+            <a
+                href="<?php echo esc_url($filter_url); ?>"
+                class="block"
+            >
+                <article class="flex flex-col rounded-[4px] border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-[#111a20] lg:p-10 lg:shadow-none">
+
+                    <h3 class="mb-8 text-center text-[22px] font-normal text-gray-900 dark:text-white">
+                        <?php echo esc_html($filter_name); ?>
+                    </h3>
+
+                    <div class="mb-10 flex h-[180px] w-full items-center justify-center">
+                        <?php if ($filter_image_url) : ?>
+                            <img
+                                src="<?php echo esc_url($filter_image_url); ?>"
+                                alt="<?php echo esc_attr(
+                                    $filter_care_image_alt(
+                                        $filter_image,
+                                        $filter_name . ' Filter'
+                                    )
+                                ); ?>"
+                                class="h-full object-contain"
+                                loading="lazy"
+                            >
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+
+                    <div class="flex w-full flex-col">
+
+                        <div class="border-t border-gray-100 py-4 dark:border-gray-800">
+                            <p class="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
+                                <?php esc_html_e('Filter Type', 'breathein'); ?>
+                            </p>
+
+                            <p class="text-[13px] font-light text-gray-900 dark:text-gray-300">
+                                <?php echo esc_html(
+                                    (string) ($filter['filter_type'] ?? '')
+                                ); ?>
+                            </p>
+                        </div>
+
+                        <div class="border-t border-gray-100 py-4 dark:border-gray-800">
+                            <p class="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
+                                <?php esc_html_e('Typical Filter Life', 'breathein'); ?>
+                            </p>
+
+                            <p class="text-[13px] font-light text-gray-900 dark:text-gray-300">
+                                <?php echo esc_html(
+                                    (string) ($filter['filter_life'] ?? '')
+                                ); ?>
+                            </p>
+                        </div>
+
+                        <div class="border-t border-gray-100 pb-2 pt-4 dark:border-gray-800">
+                            <p class="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
+                                <?php esc_html_e('Replacement Price', 'breathein'); ?>
+                            </p>
+
+                            <div class="inline-flex items-center justify-center rounded-[2px] border border-dashed border-[#8E989E] bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-[#0D1418]">
+
+                                <span class="text-[13px] font-medium text-gray-800 dark:text-gray-200">
+                                    <?php echo esc_html(
+                                        (string) ($filter['replacement_price'] ?? '')
+                                    ); ?>
+                                </span>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </article>
+            </a>
+
+        <?php endforeach; ?>
+
+    </div>
+<?php endif; ?>
 
                 <?php if ($filter_care_filter_note) : ?>
                     <div class="mb-10 mt-2">
@@ -333,7 +371,7 @@ get_header();
 
                     <a
                         href="<?php echo esc_url($filter_care_subscription_url); ?>"
-                        <?php if ($filter_care_subscription_target === '_blank') : ?>target="_blank" rel="noopener noreferrer"<?php endif; ?>
+                        <?php if ($filter_care_subscription_target === '_blank') : ?>target="_blank" rel="noopener noreferrer" <?php endif; ?>
                         class="flex w-full shrink-0 items-center justify-center gap-3 rounded-[2px] bg-white px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-black transition-colors hover:bg-gray-100 md:w-auto lg:py-5">
                         <?php echo esc_html($filter_care_subscription_label); ?>
                         <span class="mb-[2px] text-lg leading-none" aria-hidden="true">&rarr;</span>
@@ -353,7 +391,7 @@ get_header();
         <div class="flex w-full max-w-md flex-row items-center justify-center gap-6 sm:max-w-none sm:gap-10">
             <a
                 href="<?php echo esc_url($filter_care_collection_url); ?>"
-                class="flex w-full items-center justify-center gap-3 rounded-sm bg-white px-4 py-4 text-[12px] font-bold uppercase tracking-[0.2em] text-[#0B1115] transition-colors hover:bg-gray-200 sm:w-auto md:py-4 md:text-[13px]">
+                class="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-4 text-[12px] font-bold uppercase tracking-[0.2em] text-[#0B1115] transition-colors hover:bg-gray-200 sm:w-auto md:py-4 md:text-[13px]">
                 <span><?php esc_html_e('Shop the Collection', 'breathein'); ?></span>
                 <span aria-hidden="true">&rarr;</span>
             </a>

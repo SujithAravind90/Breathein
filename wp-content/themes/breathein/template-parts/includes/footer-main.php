@@ -11,7 +11,7 @@
 defined('ABSPATH') || exit;
 
 $theme_uri = get_template_directory_uri();
-$home_url  = home_url('/');
+$home_url = home_url('/');
 
 $custom_logo_id = get_theme_mod('custom_logo');
 
@@ -27,9 +27,9 @@ if ($custom_logo_id) {
     $logo_alt = get_bloginfo('name');
 }
 
-$products_page = get_page_by_path('products');
-$shop_url = $products_page instanceof WP_Post
-    ? get_permalink($products_page)
+$collection_page = get_page_by_path('products');
+$shop_url = $collection_page instanceof WP_Post
+    ? get_permalink($collection_page)
     : home_url('/products/');
 
 $brochure_url = apply_filters(
@@ -104,16 +104,16 @@ $footer_fallbacks = [
  */
 $render_footer_menu = static function ($location, $fallback_items, $menu_class) {
     $locations = get_nav_menu_locations();
-    $menu_id   = isset($locations[$location]) ? (int) $locations[$location] : 0;
-    $items     = $menu_id ? wp_get_nav_menu_items($menu_id) : [];
+    $menu_id = isset($locations[$location]) ? (int) $locations[$location] : 0;
+    $items = $menu_id ? wp_get_nav_menu_items($menu_id) : [];
 
     if ($menu_id && !empty($items)) {
         wp_nav_menu([
             'theme_location' => $location,
-            'container'      => false,
-            'menu_class'     => $menu_class,
-            'fallback_cb'    => false,
-            'depth'          => 1,
+            'container' => false,
+            'menu_class' => $menu_class,
+            'fallback_cb' => false,
+            'depth' => 1,
         ]);
         return;
     }
@@ -137,26 +137,17 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
 <!-- ========================================== -->
 <!-- SECTION 17: FOOTER                         -->
 <!-- ========================================== -->
-<footer
-    class="site-footer w-full bg-[#0B1115] px-6 pt-16 pb-8 md:px-16 md:pt-24 lg:px-24">
+<footer class="site-footer w-full bg-[#0B1115] px-6 pt-16 pb-8 md:px-16 md:pt-24 lg:px-24">
     <div class="mx-auto max-w-[1400px]">
-        <div
-            class="mb-10 flex flex-col justify-between gap-12 lg:mb-20 lg:flex-row lg:gap-8">
+        <div class="mb-10 flex flex-col justify-between gap-12 lg:mb-20 lg:flex-row lg:gap-8">
             <div class="flex flex-col lg:w-5/12">
-                <a
-                    href="<?php echo esc_url($home_url); ?>"
-                    class="mb-6 self-start"
+                <a href="<?php echo esc_url($home_url); ?>" class="mb-6 self-start"
                     aria-label="<?php echo esc_attr(get_bloginfo('name')); ?>">
-                    <img
-                        src="<?php echo esc_url($logo_url); ?>"
-                        alt="<?php echo esc_attr($logo_alt); ?>"
-                        class="h-9 w-auto object-contain object-left md:h-10"
-                        width="180"
-                        height="40">
+                    <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr($logo_alt); ?>"
+                        class="h-9 w-auto object-contain object-left md:h-10" width="180" height="40">
                 </a>
 
-                <p
-                    class="mb-8 max-w-sm text-[15px] font-light leading-[1.8] text-gray-400 md:text-[14px]">
+                <p class="mb-8 max-w-sm text-[15px] font-light leading-[1.8] text-gray-400 md:text-[14px]">
                     <span class="hidden md:inline">
                         <?php esc_html_e('Clean air isn’t a luxury, it’s a necessity', 'breathein'); ?><br>
                         <?php esc_html_e('Sophisticated Japanese air-purification', 'breathein'); ?><br>
@@ -173,18 +164,15 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
                     </span>
                 </p>
 
-                <div
-                    class="flex w-full max-w-[400px] flex-row items-center gap-3 md:gap-4">
-                    <a
-                        href="<?php echo esc_url($shop_url); ?>"
-                        class="flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-sm bg-[#156E8A] px-2 py-4 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-[#11576E] md:text-[13px]">
+                <div class="flex w-full max-w-[400px] flex-row items-center gap-3 md:gap-4">
+                    <a href="<?php echo esc_url($shop_url); ?>"
+                        class="flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#156E8A] px-2 py-4 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-[#11576E] md:text-[13px]">
                         <span><?php esc_html_e('Shop Now', 'breathein'); ?></span>
                         <span aria-hidden="true">&rarr;</span>
                     </a>
 
-                    <a
-                        href="<?php echo esc_url($brochure_url); ?>"
-                        class="flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-sm border border-[#156E8A] bg-[#156E8A] px-2 py-4 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-[#11576E] md:bg-transparent md:text-[13px] md:hover:bg-[#156E8A]">
+                    <a href="<?php echo esc_url($brochure_url); ?>"
+                        class="flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-[#156E8A] bg-[#156E8A] px-2 py-4 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-[#11576E] md:bg-transparent md:text-[13px] md:hover:bg-[#156E8A]">
                         <span><?php esc_html_e('Download Brochure', 'breathein'); ?></span>
                         <span aria-hidden="true">&rarr;</span>
                     </a>
@@ -193,12 +181,10 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
 
             <div class="mt-2 mb-2 h-px w-full bg-gray-800/80 lg:hidden"></div>
 
-            <div
-                class="grid grid-cols-3 gap-4 lg:w-7/12 lg:grid-cols-4 lg:gap-8">
+            <div class="grid grid-cols-3 gap-4 lg:w-7/12 lg:grid-cols-4 lg:gap-8">
                 <div class="breathein-footer-nav flex flex-col">
-                    <h2
-                        class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 md:text-[12px]">
-                        <?php esc_html_e('products', 'breathein'); ?>
+                    <h2 class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 md:text-[12px]">
+                        <?php esc_html_e('Collection', 'breathein'); ?>
                     </h2>
                     <?php
                     $render_footer_menu(
@@ -210,8 +196,7 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
                 </div>
 
                 <div class="breathein-footer-nav flex flex-col">
-                    <h2
-                        class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 md:text-[12px]">
+                    <h2 class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 md:text-[12px]">
                         <?php esc_html_e('Explore', 'breathein'); ?>
                     </h2>
                     <?php
@@ -224,8 +209,7 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
                 </div>
 
                 <div class="breathein-footer-nav flex flex-col">
-                    <h2
-                        class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 lg:hidden">
+                    <h2 class="mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-gray-500 lg:hidden">
                         <?php esc_html_e('Support', 'breathein'); ?>
                     </h2>
                     <div class="hidden h-[34px] lg:block"></div>
@@ -239,8 +223,7 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
                 </div>
 
                 <div class="breathein-footer-nav hidden flex-col lg:flex">
-                    <h2
-                        class="mb-6 text-[12px] font-medium uppercase tracking-[0.2em] text-gray-500">
+                    <h2 class="mb-6 text-[12px] font-medium uppercase tracking-[0.2em] text-gray-500">
                         <?php esc_html_e('Contact', 'breathein'); ?>
                     </h2>
                     <?php
@@ -256,10 +239,8 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
 
         <div class="mb-6 h-px w-full bg-gray-800/80 lg:mb-8"></div>
 
-        <div
-            class="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
-            <nav
-                class="breathein-footer-nav breathein-footer-legal lg:order-2"
+        <div class="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+            <nav class="breathein-footer-nav breathein-footer-legal lg:order-2"
                 aria-label="<?php esc_attr_e('Legal navigation', 'breathein'); ?>">
                 <?php
                 $render_footer_menu(
@@ -270,8 +251,7 @@ $render_footer_menu = static function ($location, $fallback_items, $menu_class) 
                 ?>
             </nav>
 
-            <p
-                class="text-[11px] font-light text-gray-500 lg:order-1 md:text-[13px]">
+            <p class="text-[11px] font-light text-gray-500 lg:order-1 md:text-[13px]">
                 &copy; <?php echo esc_html(wp_date('Y')); ?>
                 <?php echo esc_html(get_bloginfo('name')); ?>
                 &mdash; <?php esc_html_e('The Right Air. All rights reserved. Made in India.', 'breathein'); ?>

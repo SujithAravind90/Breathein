@@ -95,26 +95,60 @@ if ($custom_logo_id) {
  */
 $fallback_menu = [
     [
-        'label' => __('COLLECTION', 'breathein'),
+        'label' => __('HOME', 'breathein'),
+        'url'   => $home_url,
+    ],
+    [
+        'label' => __('ABOUT US', 'breathein'),
+        'url'   => $get_page_url('about-us'),
+    ],
+    [
+        'label' => __('PRODUCTS', 'breathein'),
         'url'   => $get_page_url('collection'),
     ],
     [
-        'label' => __('TECHNOLOGY', 'breathein'),
-        'url'   => $get_page_url('technology'),
+        'label' => __('AIR CHECK', 'breathein'),
+        'url'   => $purifier_finder,
     ],
     [
-        'label' => __('APP', 'breathein'),
-        'url'   => $get_page_url('app'),
+        'label' => __('SUPPORT', 'breathein'),
+        'url'   => $support_url,
     ],
     [
-        'label' => __('REAL HOMES', 'breathein'),
-        'url'   => $get_page_url('real-homes'),
-    ],
-    [
-        'label' => __('COMPARE', 'breathein'),
-        'url'   => $get_page_url('compare'),
+        'label' => __('CONTACT', 'breathein'),
+        'url'   => $get_page_url('contact'),
     ],
 ];
+
+/**
+ * Talk to Expert (WhatsApp CTA).
+ */
+$whatsapp_option = function_exists('get_field') ? get_field('whatsapp_talk_expert', 'option') : null;
+$whatsapp_url    = is_array($whatsapp_option) && !empty($whatsapp_option['url'])
+    ? $whatsapp_option['url']
+    : (function_exists('get_field') && get_field('whatsapp_url', 'option') ? get_field('whatsapp_url', 'option') : 'https://wa.me/919076636639');
+$whatsapp_title  = is_array($whatsapp_option) && !empty($whatsapp_option['title'])
+    ? $whatsapp_option['title']
+    : __('TALK TO EXPERT', 'breathein');
+$whatsapp_target = is_array($whatsapp_option) && !empty($whatsapp_option['target'])
+    ? $whatsapp_option['target']
+    : '_blank';
+
+/**
+ * Shop Now CTA.
+ */
+$shop_now_option = function_exists('get_field')
+    ? (get_field('shop_now_button', 'option') ?: get_field('find_my_purifier', 'option'))
+    : null;
+$shop_now_url    = is_array($shop_now_option) && !empty($shop_now_option['url'])
+    ? $shop_now_option['url']
+    : $get_page_url('collection');
+$shop_now_title  = is_array($shop_now_option) && !empty($shop_now_option['title'])
+    ? $shop_now_option['title']
+    : __('SHOP NOW', 'breathein');
+$shop_now_target = is_array($shop_now_option) && !empty($shop_now_option['target'])
+    ? $shop_now_option['target']
+    : '_self';
 
 /**
  * Temporary AQI ticker data.
@@ -323,7 +357,7 @@ $aqi_locations = [
                                 </span>
 
                                 <span
-                                    class="<?php echo esc_attr($location['badge_class']); ?> rounded-sm px-2 py-0.5 text-[12px] font-bold text-white">
+                                    class="<?php echo esc_attr($location['badge_class']); ?> rounded-xl px-2 py-0.5 text-[12px] font-bold text-white">
                                     <?php
                                     echo esc_html(
                                         $location['value']
@@ -451,7 +485,7 @@ $aqi_locations = [
         <!-- ================================== -->
 
         <div
-            class="flex shrink-0 items-center gap-3 md:gap-5">
+            class="flex shrink-0 items-center gap-2.5 sm:gap-3 md:gap-4">
             <?php
             $cart_link = function_exists('get_field')
                 ? get_field('cart', 'option')
@@ -469,6 +503,33 @@ $aqi_locations = [
                 $cart_link_target = '_self';
             }
             ?>
+
+            <!-- WhatsApp Talk to Expert CTA (HIDDEN ON MOBILE VIEW) -->
+            <a
+                href="<?php echo esc_url($whatsapp_url); ?>"
+                target="<?php echo esc_attr($whatsapp_target); ?>"
+                <?php if ('_blank' === $whatsapp_target) : ?>
+                rel="noopener noreferrer"
+                <?php endif; ?>
+                class="hidden md:inline-flex items-center gap-2 border border-gray-900 dark:border-gray-300 rounded px-3 py-1.5 lg:px-4 lg:py-2 text-[11px] lg:text-[12px] font-semibold uppercase tracking-wider text-gray-900 dark:text-white hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-all shrink-0"
+                aria-label="<?php esc_attr_e('Talk to an expert on WhatsApp', 'breathein'); ?>">
+                <svg
+                    class="h-4 w-4 shrink-0 text-[#25D366] fill-current"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-5.805 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+                <span><?php echo esc_html($whatsapp_title); ?></span>
+            </a>
+
+            <!-- Shop Now CTA Button -->
+            <a
+                href="<?php echo esc_url($shop_now_url); ?>"
+                target="<?php echo esc_attr($shop_now_target); ?>"
+                class="inline-flex items-center justify-center border border-gray-900 dark:border-gray-300 rounded px-3 py-1.5 lg:px-4 lg:py-2 text-[11px] lg:text-[12px] font-semibold uppercase tracking-wider text-gray-900 dark:text-white hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-all shrink-0">
+                <span><?php echo esc_html($shop_now_title); ?></span>
+            </a>
+
             <!-- WooCommerce Cart -->
             <a
                 id="cartBtn"
@@ -477,7 +538,7 @@ $aqi_locations = [
                 <?php if ('_blank' === $cart_link_target) : ?>
                 rel="noopener noreferrer"
                 <?php endif; ?>
-                class="relative flex items-center justify-center p-1.5 text-gray-900 transition-colors hover:text-brandTeal"
+                class="relative flex items-center justify-center p-1.5 text-gray-900 dark:text-gray-200 transition-colors hover:text-brandTeal"
                 aria-label="<?php esc_attr_e('View shopping cart', 'breathein'); ?>">
                 <svg
                     width="22"
@@ -489,18 +550,9 @@ $aqi_locations = [
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     aria-hidden="true">
-                    <circle
-                        cx="9"
-                        cy="21"
-                        r="1.5"></circle>
-
-                    <circle
-                        cx="20"
-                        cy="21"
-                        r="1.5"></circle>
-
-                    <path
-                        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
                 </svg>
 
                 <span
@@ -530,7 +582,7 @@ $aqi_locations = [
             <a
                 id="accountBtn"
                 href="<?php echo esc_url($account_url); ?>"
-                class="flex items-center justify-center p-1.5 text-gray-900 transition-colors hover:text-brandTeal"
+                class="flex items-center justify-center p-1.5 text-gray-900 dark:text-gray-200 transition-colors hover:text-brandTeal"
                 aria-label="<?php echo esc_attr(function_exists('breathein_customer_is_logged_in') && breathein_customer_is_logged_in() ? __('Open my account dashboard', 'breathein') : __('Sign in to my account', 'breathein')); ?>">
                 <svg
                     width="22"
@@ -547,39 +599,11 @@ $aqi_locations = [
                 </svg>
             </a>
 
-            <!-- Purifier Finder CTA -->
-            <?php
-            $button = get_field('find_my_purifier', 'option');
-            $url    = $button['url'] ?? $purifier_finder;
-            $title  = $button['title'] ?? 'FIND MY PURIFIER';
-            $target = $button['target'] ?? '_self';
-            ?>
-            <a
-                href="<?php echo esc_url($url); ?>"
-                target="<?php echo esc_attr($target); ?>"
-                class="border border-black px-3 py-2 text-[10px] font-bold uppercase tracking-widest transition-all duration-200 hover:bg-black hover:text-white sm:text-[11px] md:px-6 md:py-2.5 md:text-[13px]">
-                <span class="hidden sm:inline">
-                    <?php echo esc_html($title); ?>
-                </span>
-
-                <?php
-                $purifier_mobile_title = function_exists('get_field')
-                    ? get_field('find_my_purifier_mobile_text', 'option')
-                    : '';
-
-                $purifier_mobile_title = $purifier_mobile_title ?: __('FIND', 'breathein');
-                ?>
-
-                <span class="sm:hidden">
-                    <?php echo esc_html($purifier_mobile_title); ?>
-                </span>
-            </a>
-
             <!-- Dark Mode Toggle -->
             <button
                 id="themeToggle"
                 type="button"
-                class="flex items-center gap-1.5 border border-gray-200 rounded-full px-4 py-2 hover:border-black transition-colorsl"
+                class="flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 rounded-full px-3.5 py-1.5 hover:border-gray-900 dark:hover:border-white transition-colors"
                 aria-label="<?php esc_attr_e('Toggle dark mode', 'breathein'); ?>"
                 aria-pressed="false">
                 <svg
@@ -597,7 +621,7 @@ $aqi_locations = [
                 </svg>
 
                 <span
-                    class="text-[12px] font-bold tracking-widest">
+                    class="text-[11px] font-bold tracking-widest text-gray-900 dark:text-white">
                     <?php esc_html_e('DARK', 'breathein'); ?>
                 </span>
             </button>
@@ -606,7 +630,7 @@ $aqi_locations = [
             <button
                 id="openMobileNav"
                 type="button"
-                class="p-1 lg:hidden"
+                class="p-1 lg:hidden text-gray-900 dark:text-white"
                 aria-label="<?php esc_attr_e('Open menu', 'breathein'); ?>"
                 aria-controls="mobileNavOverlay"
                 aria-expanded="false">
@@ -616,7 +640,7 @@ $aqi_locations = [
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="h-7 w-7 text-gray-900"
+                    class="h-7 w-7"
                     aria-hidden="true">
                     <path
                         stroke-linecap="round"

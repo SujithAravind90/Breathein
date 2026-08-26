@@ -182,7 +182,7 @@ get_header();
 
                 <!-- Mobile Only Button (Inside padding) -->
                 <button
-                    class="lg:hidden w-full mt-12 bg-[#111111] text-white px-8 py-4 uppercase text-[12px] tracking-[0.2em] font-bold flex justify-center items-center gap-3 hover:bg-[#156E8A] transition-colors rounded-sm">
+                    class="lg:hidden w-full mt-12 bg-[#111111] text-white px-8 py-4 uppercase text-[12px] tracking-[0.2em] font-bold flex justify-center items-center gap-3 hover:bg-[#156E8A] transition-colors rounded-xl">
                     CONTINUE <span class="text-lg leading-none mb-[2px]">&rarr;</span>
                 </button>
             </div>
@@ -194,7 +194,7 @@ get_header();
             <div
                 class="hidden lg:flex justify-end px-20 py-8 bg-[#F9FAFB] border-t border-gray-100">
                 <button
-                    class="bg-[#111111] text-white px-10 py-4 uppercase text-[11px] tracking-[0.2em] font-bold flex justify-center items-center gap-3 hover:bg-[#156E8A] transition-colors rounded-sm">
+                    class="bg-[#111111] text-white px-10 py-4 uppercase text-[11px] tracking-[0.2em] font-bold flex justify-center items-center gap-3 hover:bg-[#156E8A] transition-colors rounded-xl">
                     CONTINUE <span class="text-lg leading-none mb-[2px]">&rarr;</span>
                 </button>
             </div>
@@ -247,7 +247,7 @@ get_header();
             <!-- Primary Solid Button -->
             <a
                 href="#"
-                class="bg-white text-[#0B1115] px-4 py-4 md:py-4 uppercase text-[12px] md:text-[13px] tracking-[0.2em] font-bold flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors rounded-sm w-full sm:w-auto">
+                class="bg-white text-[#0B1115] px-4 py-4 md:py-4 uppercase text-[12px] md:text-[13px] tracking-[0.2em] font-bold flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors rounded-xl w-full sm:w-auto">
                 <span>View the Collection</span>
                 <svg
                     class="w-3.5 h-3.5"

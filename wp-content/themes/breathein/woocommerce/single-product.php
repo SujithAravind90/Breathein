@@ -24,10 +24,10 @@ endif;
 
 $product_id = $product->get_id();
 $product_name = $product->get_name();
-$products_page = get_page_by_path('products', OBJECT, 'page');
-$shop_url = $products_page
-    ? get_permalink($products_page)
-    : home_url('/products/');
+$collection_page = get_page_by_path('collection', OBJECT, 'page');
+$shop_url = $collection_page
+    ? get_permalink($collection_page)
+    : home_url('/collection/');
 
 $defaults = function_exists('breathein_product_detail_defaults')
     ? breathein_product_detail_defaults($product)
@@ -201,7 +201,7 @@ $reviews = get_comments([
 ?>
 
 <main class="breathein-product-page mx-auto max-w-[1300px] px-6 py-8 md:px-10 lg:px-16 lg:py-16">
-    <nav class="mb-8 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 lg:mb-12" aria-label="Breadcrumb">
+    <!-- <nav class="mb-8 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 lg:mb-12" aria-label="Breadcrumb">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="transition-colors hover:text-gray-900">
             <?php esc_html_e('Home', 'breathein'); ?>
         </a>
@@ -211,7 +211,7 @@ $reviews = get_comments([
         </a>
         <span>/</span>
         <span class="text-gray-800"><?php echo esc_html($product_name); ?></span>
-    </nav>
+    </nav> -->
 
     <section class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-20">
         <div class="flex w-full flex-col bg-[#F4F9FA] pb-8 pt-4 md:bg-transparent md:pb-0 md:pt-0">

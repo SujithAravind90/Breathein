@@ -29,13 +29,13 @@ get_header();
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-10 items-center md:border-b md:border-gray-200/60 md:pb-10 lg:pb-20 bg-white md:bg-transparent">
           
           <!-- Image Column -->
-          <div class="relative rounded-sm overflow-hidden h-[215px] md:h-[350px] lg:h-[450px] <?php echo $is_even ? 'order-1' : 'order-1 lg:order-2'; ?>">
+          <div class="relative rounded-xl overflow-hidden h-[215px] md:h-[350px] lg:h-[450px] <?php echo $is_even ? 'order-1' : 'order-1 lg:order-2'; ?>">
             <?php if ($img): ?>
               <img src="<?php echo esc_url($img['url']); ?>" alt="<?php echo esc_attr($img['alt']); ?>" class="absolute inset-0 w-full h-full object-cover" />
             <?php endif; ?>
 
             <?php if (get_sub_field('badge_value')) : ?>
-              <div class="absolute bottom-6 right-6 md:right-auto md:left-6 bg-white/95 backdrop-blur-md px-5 py-3 shadow-md rounded-sm border border-gray-100 flex flex-col">
+              <div class="absolute bottom-6 right-6 md:right-auto md:left-6 bg-white/95 backdrop-blur-md px-5 py-3 shadow-md rounded-xl border border-gray-100 flex flex-col">
                 <span class="text-xl md:text-2xl font-light text-gray-900 tracking-tight leading-none mb-1">
                   <?php echo esc_html(get_sub_field('badge_value')); ?>
                 </span>
@@ -200,7 +200,7 @@ get_header();
             
             <!-- Mobile-Only Square Tag (Hidden on Desktop) -->
             <?php if ($banner_badge_title) : ?>
-            <div class="md:hidden bg-[#0A1F26] text-[#156E8A] font-semibold px-2.5 py-1 text-[11px] tracking-wider rounded-sm shrink-0 mt-0.5">
+            <div class="md:hidden bg-[#0A1F26] text-[#156E8A] font-semibold px-2.5 py-1 text-[11px] tracking-wider rounded-xl shrink-0 mt-0.5">
                 <?php echo nl2br(esc_html($banner_badge_title)); ?>
             </div>
             <?php endif; ?>

@@ -3,8 +3,8 @@
 defined('ABSPATH') || exit;
 
 const BREATHEIN_MATCHER_COVERAGE = '_breathein_matcher_coverage';
-const BREATHEIN_MATCHER_IDEAL    = '_breathein_matcher_ideal_for';
-const BREATHEIN_MATCHER_FILTER   = '_breathein_matcher_filtration';
+const BREATHEIN_MATCHER_IDEAL = '_breathein_matcher_ideal_for';
+const BREATHEIN_MATCHER_FILTER = '_breathein_matcher_filtration';
 
 /**
  * Add homepage matcher fields to WooCommerce's General product panel.
@@ -24,55 +24,55 @@ function breathein_render_product_matcher_fields(): void
     echo '<div class=options_group>';
 
     woocommerce_wp_text_input([
-        'id'                => BREATHEIN_MATCHER_COVERAGE,
-        'value'             => $product_object->get_meta(
+        'id' => BREATHEIN_MATCHER_COVERAGE,
+        'value' => $product_object->get_meta(
             BREATHEIN_MATCHER_COVERAGE,
             true,
             'edit'
         ),
-        'label'             => __('Matcher coverage (sq ft)', 'breathein'),
-        'description'       => __(
+        'label' => __('Matcher coverage (sq ft)', 'breathein'),
+        'description' => __(
             'Maximum recommended room area. Leave blank to exclude this product from Find Your Match.',
             'breathein'
         ),
-        'desc_tip'          => true,
-        'type'              => 'number',
+        'desc_tip' => true,
+        'type' => 'number',
         'custom_attributes' => [
-            'min'  => '1',
+            'min' => '1',
             'step' => '1',
         ],
     ]);
 
     woocommerce_wp_text_input([
-        'id'          => BREATHEIN_MATCHER_IDEAL,
-        'value'       => $product_object->get_meta(
+        'id' => BREATHEIN_MATCHER_IDEAL,
+        'value' => $product_object->get_meta(
             BREATHEIN_MATCHER_IDEAL,
             true,
             'edit'
         ),
-        'label'       => __('Matcher ideal for', 'breathein'),
+        'label' => __('Matcher ideal for', 'breathein'),
         'placeholder' => __('Large living rooms', 'breathein'),
         'description' => __(
             'Short room label displayed in the homepage result card.',
             'breathein'
         ),
-        'desc_tip'    => true,
+        'desc_tip' => true,
     ]);
 
     woocommerce_wp_text_input([
-        'id'          => BREATHEIN_MATCHER_FILTER,
-        'value'       => $product_object->get_meta(
+        'id' => BREATHEIN_MATCHER_FILTER,
+        'value' => $product_object->get_meta(
             BREATHEIN_MATCHER_FILTER,
             true,
             'edit'
         ),
-        'label'       => __('Matcher filtration', 'breathein'),
+        'label' => __('Matcher filtration', 'breathein'),
         'placeholder' => __('HEPA H13', 'breathein'),
         'description' => __(
             'Short filtration label displayed in the homepage result card.',
             'breathein'
         ),
-        'desc_tip'    => true,
+        'desc_tip' => true,
     ]);
 
     echo '</div>';
@@ -133,7 +133,10 @@ add_action(
 );
 
 /**
- * Get all published products available to the homepage collection.
+ * Get all published Air Purifier products available to the homepage collection.
+ *
+ * Only products assigned to the WooCommerce category
+ * with slug "air_purifier" will be returned.
  *
  * @return array<int, WC_Product>
  */
@@ -144,17 +147,24 @@ function breathein_get_collection_products(): array
     }
 
     $products = wc_get_products([
-        'status'  => 'publish',
-        'limit'   => -1,
-        'return'  => 'objects',
+        'status' => 'publish',
+        'limit' => -1,
+        'return' => 'objects',
         'orderby' => 'menu_order',
-        'order'   => 'ASC',
+        'order' => 'ASC',
+
+        // Only products from Air Purifier category.
+        'category' => ['air_purifier'],
     ]);
 
     if (!is_array($products)) {
         return [];
     }
 
+    /**
+     * Make sure only valid and visible WooCommerce
+     * products are shown on the frontend.
+     */
     $products = array_values(
         array_filter(
             $products,
@@ -191,11 +201,11 @@ function breathein_get_matcher_products(): array
     }
 
     $products = wc_get_products([
-        'status'  => 'publish',
-        'limit'   => -1,
-        'return'  => 'objects',
+        'status' => 'publish',
+        'limit' => -1,
+        'return' => 'objects',
         'orderby' => 'menu_order',
-        'order'   => 'ASC',
+        'order' => 'ASC',
     ]);
 
     if (!is_array($products)) {
@@ -223,9 +233,9 @@ function breathein_get_matcher_products(): array
         }
 
         $matches[] = [
-            'product'    => $product,
-            'coverage'   => $coverage,
-            'ideal_for'  => sanitize_text_field(
+            'product' => $product,
+            'coverage' => $coverage,
+            'ideal_for' => sanitize_text_field(
                 (string) $product->get_meta(
                     BREATHEIN_MATCHER_IDEAL,
                     true

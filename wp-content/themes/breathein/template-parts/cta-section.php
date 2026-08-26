@@ -51,7 +51,7 @@ $s_btn        = get_field('secondary_button', $target_id);
       
       <!-- Primary Button -->
       <?php if ($p_btn) : ?>
-        <a href="<?php echo esc_url($p_btn['url']); ?>" target="<?php echo esc_attr(!empty($p_btn['target']) ? $p_btn['target'] : '_self'); ?>" class="bg-white text-[#0B1115] px-4 py-4 md:py-4 uppercase text-[12px] md:text-[13px] tracking-[0.2em] font-bold flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors rounded-sm w-full sm:w-auto">
+        <a href="<?php echo esc_url($p_btn['url']); ?>" target="<?php echo esc_attr(!empty($p_btn['target']) ? $p_btn['target'] : '_self'); ?>" class="bg-white text-[#0B1115] px-4 py-4 md:py-4 uppercase text-[12px] md:text-[13px] tracking-[0.2em] font-bold flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors rounded-xl w-full sm:w-auto">
           <span><?php echo esc_html($p_btn['title']); ?></span>
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </a>

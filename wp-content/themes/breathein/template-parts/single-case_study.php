@@ -47,7 +47,7 @@ while (have_posts()) : the_post();
 
         <div class="relative z-10 w-full max-w-[1300px] mx-auto px-6 md:px-10 lg:px-16 pt-12 md:pt-0">
             <div class="max-w-3xl">
-                <div class="inline-flex items-center bg-[#156E8A] text-white px-3 py-1.5 mb-6 lg:mb-8 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.15em] rounded-sm">
+                <div class="inline-flex items-center bg-[#156E8A] text-white px-3 py-1.5 mb-6 lg:mb-8 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.15em] rounded-xl">
                     <?php echo esc_html($cat_tag); ?>
                 </div>
                 <h1 class="text-3xl md:text-5xl lg:text-[60px] font-light text-white leading-[1.2] lg:leading-[1.15] tracking-tight">

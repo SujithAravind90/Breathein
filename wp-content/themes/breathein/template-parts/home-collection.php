@@ -50,7 +50,7 @@ $collection_product_count = count($collection_products);
             </p>
         </div>
 
-        <?php if ($collection_products) : ?>
+        <?php if ($collection_products): ?>
             <?php
             $collection_numerals = ['I', 'II', 'III', 'IV'];
             $collection_delays = [
@@ -61,7 +61,7 @@ $collection_product_count = count($collection_products);
             ];
             ?>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
-                <?php foreach ($collection_products as $collection_index => $collection_product) : ?>
+                <?php foreach ($collection_products as $collection_index => $collection_product): ?>
                     <?php
                     $collection_product_id = (int) $collection_product->get_id();
                     $collection_product_name = $collection_product->get_name();
@@ -69,12 +69,44 @@ $collection_product_count = count($collection_products);
                     $collection_image_id = !empty($collection_gallery_ids)
                         ? (int) $collection_gallery_ids[0]
                         : (int) $collection_product->get_image_id();
-                    $collection_coverage = absint(
-                        $collection_product->get_meta(
-                            BREATHEIN_MATCHER_COVERAGE,
-                            true
-                        )
-                    );
+                    $collection_coverage_value = '';
+                    $collection_specs = function_exists('get_field')
+                        ? get_field('breathein_product_specs', $collection_product_id)
+                        : [];
+
+                    if (is_array($collection_specs)) {
+                        foreach ($collection_specs as $collection_spec) {
+                            if (
+                                !is_array($collection_spec)
+                                || strcasecmp(
+                                    trim((string) ($collection_spec['label'] ?? '')),
+                                    'coverage'
+                                ) !== 0
+                            ) {
+                                continue;
+                            }
+
+                            $collection_coverage_value = trim(
+                                wp_strip_all_tags((string) ($collection_spec['value'] ?? ''))
+                            );
+                            break;
+                        }
+                    }
+
+                    if ($collection_coverage_value === '') {
+                        $collection_coverage = absint(
+                            $collection_product->get_meta(
+                                BREATHEIN_MATCHER_COVERAGE,
+                                true
+                            )
+                        );
+                        $collection_coverage_value = $collection_coverage > 0
+                            ? sprintf(
+                                __('%s sq ft', 'breathein'),
+                                number_format_i18n($collection_coverage)
+                            )
+                            : '';
+                    }
                     $collection_ideal_for = sanitize_text_field(
                         (string) $collection_product->get_meta(
                             BREATHEIN_MATCHER_IDEAL,
@@ -92,12 +124,8 @@ $collection_product_count = count($collection_products);
                         '…'
                     );
                     $collection_price = $collection_product->get_price_html();
-                    $collection_model_number = $collection_numerals[
-                        $collection_index
-                    ] ?? number_format_i18n($collection_index + 1);
-                    $collection_delay = $collection_delays[
-                        min($collection_index, count($collection_delays) - 1)
-                    ];
+                    $collection_model_number = $collection_numerals[$collection_index] ?? number_format_i18n($collection_index + 1);
+                    $collection_delay = $collection_delays[min($collection_index, count($collection_delays) - 1)];
                     $collection_card_classes = implode(
                         ' ',
                         array_filter([
@@ -107,13 +135,10 @@ $collection_product_count = count($collection_products);
                         ])
                     );
                     ?>
-                    <article
-                        data-collection-product-id="<?php echo esc_attr((string) $collection_product_id); ?>"
+                    <article data-collection-product-id="<?php echo esc_attr((string) $collection_product_id); ?>"
                         class="<?php echo esc_attr($collection_card_classes); ?>">
                         <div class="relative w-full aspect-[4/3] md:aspect-[4/5] bg-gray-100 overflow-hidden">
-                            <a
-                                href="<?php echo esc_url($collection_product->get_permalink()); ?>"
-                                class="block w-full h-full"
+                            <a href="<?php echo esc_url($collection_product->get_permalink()); ?>" class="block w-full h-full"
                                 aria-label="<?php echo esc_attr(sprintf(__('View %s', 'breathein'), $collection_product_name)); ?>">
                                 <?php
                                 $collection_image_attributes = [
@@ -138,7 +163,7 @@ $collection_product_count = count($collection_products);
                                 ?>
                             </a>
 
-                            <?php if ($collection_ideal_for !== '') : ?>
+                            <?php if ($collection_ideal_for !== ''): ?>
                                 <div
                                     class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[8.5px] font-bold uppercase tracking-widest text-brandTeal">
                                     <?php echo esc_html($collection_ideal_for); ?>
@@ -152,8 +177,7 @@ $collection_product_count = count($collection_products);
                                 <?php echo esc_html($collection_product_name); ?>
                             </span>
                             <h3 class="text-2xl font-light text-gray-900 mb-3">
-                                <a
-                                    href="<?php echo esc_url($collection_product->get_permalink()); ?>"
+                                <a href="<?php echo esc_url($collection_product->get_permalink()); ?>"
                                     class="hover:text-brandTeal transition-colors">
                                     <?php echo esc_html($collection_product_name); ?>
                                 </a>
@@ -176,15 +200,8 @@ $collection_product_count = count($collection_products);
                                     <div>
                                         <div class="text-sm font-medium text-gray-900 mb-0.5">
                                             <?php
-                                            echo $collection_coverage > 0
-                                                ? esc_html(
-                                                    sprintf(
-                                                        __('%s sq ft', 'breathein'),
-                                                        number_format_i18n(
-                                                            $collection_coverage
-                                                        )
-                                                    )
-                                                )
+                                            echo $collection_coverage_value !== ''
+                                                ? esc_html($collection_coverage_value)
                                                 : esc_html__('See details', 'breathein');
                                             ?>
                                         </div>
@@ -209,9 +226,8 @@ $collection_product_count = count($collection_products);
                                     </div>
                                 </div>
 
-                                <a
-                                    href="<?php echo esc_url($collection_product->get_permalink()); ?>"
-                                    class="flex lg:inline-flex items-center justify-between lg:justify-start gap-3 lg:gap-1.5 w-full lg:w-auto px-6 py-5 lg:p-0 bg-[#111111] lg:bg-transparent text-white lg:text-brandTeal text-[12px] lg:text-[11px] tracking-[0.15em] lg:tracking-widest font-bold uppercase rounded-sm lg:rounded-none hover:bg-[#156E8A] lg:hover:bg-transparent lg:hover:text-gray-900 transition-colors">
+                                <a href="<?php echo esc_url($collection_product->get_permalink()); ?>"
+                                    class="flex lg:inline-flex items-center justify-between lg:justify-start gap-3 lg:gap-1.5 w-full lg:w-auto px-6 py-5 lg:p-0 bg-[#111111] lg:bg-transparent text-white lg:text-brandTeal text-[12px] lg:text-[11px] tracking-[0.15em] lg:tracking-widest font-bold uppercase rounded-xl lg:rounded-none hover:bg-[#156E8A] lg:hover:bg-transparent lg:hover:text-gray-900 transition-colors">
                                     <span>
                                         <?php esc_html_e('Explore', 'breathein'); ?>
                                         <span class="lg:hidden">
@@ -225,7 +241,7 @@ $collection_product_count = count($collection_products);
                     </article>
                 <?php endforeach; ?>
             </div>
-        <?php else : ?>
+        <?php else: ?>
             <div class="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
                 <?php esc_html_e('The product collection will be available soon.', 'breathein'); ?>
             </div>

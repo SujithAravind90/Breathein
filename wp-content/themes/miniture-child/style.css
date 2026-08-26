@@ -1,0 +1,203 @@
+/*
+Theme Name: Miniture Child
+Theme URI: http://miniture.novaworks.net
+Description: This is a child theme for Miniture Theme.
+Author: Novaworks
+Author URI: http: //www.novaworks.net/
+Template: miniture
+Version: 1.6.11.5
+*/
+
+/****************************************************************/
+/*************** ADD YOUR CUSTOM CSS IN THIS AREA ***************/
+/****************************************************************/
+/* Smooth transition */
+
+input:focus::-webkit-input-placeholder {
+    color: transparent !important;
+}
+
+input:focus::-moz-placeholder {
+    color: transparent !important;
+}
+
+input:focus:-ms-input-placeholder {
+    color: transparent !important;
+}
+
+input:focus::placeholder {
+    color: transparent !important;
+}
+
+
+.wpcf7-form input::placeholder,
+.wpcf7-form textarea::placeholder {
+    transition: opacity 0.3s ease !important;
+}
+
+/* Chrome, Safari */
+
+
+.wpcf7-form input:focus::-webkit-input-placeholder,
+.wpcf7-form textarea:focus::-webkit-input-placeholder {
+    opacity: 0 !important;
+}
+
+/* Firefox */
+.wpcf7-form input:focus::-moz-placeholder,
+.wpcf7-form textarea:focus::-moz-placeholder {
+    opacity: 0 !important;
+}
+
+/* Edge */
+.wpcf7-form input:focus:-ms-input-placeholder,
+.wpcf7-form textarea:focus:-ms-input-placeholder {
+    opacity: 0 !important;
+}
+
+/* Standard */
+.wpcf7-form input:focus::placeholder,
+.wpcf7-form textarea:focus::placeholder {
+    opacity: 0 !important;
+}
+
+.subscribe-form {
+    position: relative;
+    max-width: 600px;
+	margin-top: 50px!important;
+}
+
+.subscribe-input {
+    width: 100%;
+    padding: 18px 160px 18px 25px;
+    border-radius: 50px;
+    border: 1px solid #444;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+	height: 4rem;
+}
+
+.subscribe-input::placeholder {
+    color: #888;
+}
+
+.subscribe-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    padding: 0 35px !important;
+    border-radius: 50px !important;
+    border: none !important;
+    background-color: #e5e5e5 !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: 0.3s ease !important;
+	font-size: 16px !important;
+}
+
+.subscribe-btn:hover {
+    background-color: #ffffff;
+}
+
+.subscribe-form input[type="submit"] {
+        margin: 5px 5px 40px 5px;
+	margin-top: 0 !important;
+}
+body.woocommerce-checkout .woocommerce table.woocommerce-checkout-review-order-table tr th,
+body.woocommerce-checkout .woocommerce table.woocommerce-checkout-review-order-table tr.cart-subtotal, body.woocommerce-checkout .woocommerce table.woocommerce-checkout-review-order-table tr.woocommerce-shipping-totals,
+body.woocommerce-checkout .woocommerce table.woocommerce-checkout-review-order-table tr.order-total,
+body.woocommerce-checkout .woocommerce table.woocommerce-checkout-review-order-table tr.cart-subtotal, body.woocommerce-checkout .woocommerce table.woocommerce-checkout-review-order-table tr.woocommerce-shipping-totals{background:#000 !important;}
+.blog-listing .blog-articles .nova_portfolio .entry-content__readmore, .blog-listing .blog-articles .post .entry-content__readmore, .blog-listing .blog-articles .type-page .entry-content__readmore,
+.widget_calendar table thead tr th,
+a.nova-sidebar__toggle.js-sidebar-toogle,
+.woocommerce-sidebar-sticky.sidebar-scrollable,
+.widget_calendar table tbody tr > td:not(.pad):hover{background:#000 !important;}
+#trustedsite-tm-image{display:none;}
+body.woocommerce-checkout .woocommerce form.checkout{padding:15px;}
+.elementor-4669 .elementor-element.elementor-element-6ccb9fb0 .widget .widget-title{color:#fff;}
+.woocommerce table tbody td, .woocommerce table tbody th, .woocommerce table tr, .woocommerce table thead td, .woocommerce table thead th, .woocommerce table tr {
+    border: solid 1px #ddd;
+}
+.nova-form-container.grid-x.grid-padding-x {
+    justify-content: center;
+}
+
+.login-divider.cell.large-2 {
+    width: 5%;
+}
+.woocommerce-checkout .woocommerce,
+.woocommerce-account .woocommerce{padding:5%;}
+#woocommerce_product_tag_cloud-1{display:none;}
+mark{color:#fff;}
+.woocommerce-account.woocommerce-view-order .woocommerce-MyAccount-content .woocommerce-order-details .order_details tr td a{color:#000;}
+@media print, screen and (max-width: 47.9988em) {
+	body.woocommerce-cart .woocommerce .woocommerce-cart-form td{padding:1rem;}
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr.cart_item .product-name {
+    display: block;
+    margin: 0;
+}
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr.cart_item .product-name a.remove{margin:0;position: absolute;}
+body.woocommerce-cart .cart-collaterals .cart_totals table.shop_table tr{display:table-row;}
+
+body.woocommerce-cart .cart-collaterals .cart_totals table.shop_table tr th {
+    padding-right: 0;
+}
+
+.wc-proceed-to-checkout {
+    margin-top: 15px;
+}
+
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr:not(.cart_item) td.actions {
+    padding: 1rem;
+}
+
+body.woocommerce-cart .cart-collaterals .cart_totals {
+    padding: 1rem;
+}
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr.cart_item .product-name a {
+    float: none;
+    text-align: left;
+    display: inline-block;
+}
+
+}
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr:not(.cart_item) td.actions button[name=update_cart]:hover{color:#000;}
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr:not(.cart_item) td.actions .coupon{width: calc(100% - 130px); margin-right: 10px;}
+body.woocommerce-cart .woocommerce .woocommerce-cart-form tr:not(.cart_item) td.actions button[name=update_cart]{margin-top: -29px; margin-right: 20px;}
+@media print, screen and (max-width: 1199px) {
+body.woocommerce-cart .woocommerce .woocommerce-cart-form{width:100%;}
+    body.woocommerce-cart .cart-collaterals{width:100%; margin:0;}
+a.checkout-button.button.alt.wc-forward {
+    width: auto;
+    max-width: 220px;
+    margin: 0 auto;
+}
+
+.wc-proceed-to-checkout {
+    text-align: center;
+    margin-top:20px;
+}
+
+body.woocommerce-cart .cart-collaterals .cart_totals table.shop_table tr {
+        display: table-row;
+    }
+body.woocommerce-cart .cart-collaterals .cart_totals table.shop_table tbody{display: table-row-group;}
+}
+
+.woocommerce p.stars a:before{color: #333;}
+.woocommerce p.stars.selected a.active:before{color:#ececec;}
+.woocommerce p.stars:hover a:before {color: #ececec;}
+.woocommerce p.stars a:hover~a:before{color:#333;}
+.woocommerce p.stars.selected a.active~a:before{color: #333;}
+.woocommerce p.stars.selected a:not(.active):before{color:#ececec;}
+
+
+
+
+/****************************************************************/
+/****************************************************************/
+/****************************************************************/

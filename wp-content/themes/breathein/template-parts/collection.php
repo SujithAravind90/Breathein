@@ -278,7 +278,7 @@ get_header();
                                 <?php if ($action_link['target'] === '_blank') : ?>
                                     target="_blank" rel="noopener noreferrer"
                                 <?php endif; ?>
-                                class="flex shrink-0 items-center gap-3 rounded-sm bg-[#111111] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#156E8A] lg:px-8">
+                                class="flex shrink-0 items-center gap-3 rounded-xl bg-[#111111] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#156E8A] lg:px-8">
                                 <span class="hidden lg:inline"><?php echo esc_html($action_link['title']); ?></span>
                                 <span class="lg:hidden"><?php echo esc_html($model['mobile_action_label']); ?></span>
                                 <span class="mb-[2px] text-base leading-none" aria-hidden="true">&rarr;</span>
@@ -330,7 +330,7 @@ get_header();
                 <?php if ($primary_link['target'] === '_blank') : ?>
                     target="_blank" rel="noopener noreferrer"
                 <?php endif; ?>
-                class="flex w-full items-center justify-center gap-3 rounded-sm bg-white px-4 py-4 text-[12px] font-bold uppercase tracking-[0.2em] text-[#0B1115] transition-colors hover:bg-gray-200 md:py-4 md:text-[13px] sm:w-auto">
+                class="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-4 text-[12px] font-bold uppercase tracking-[0.2em] text-[#0B1115] transition-colors hover:bg-gray-200 md:py-4 md:text-[13px] sm:w-auto">
                 <span><?php echo esc_html($primary_link['title']); ?></span>
                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
